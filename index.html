@@ -70,8 +70,9 @@
   position:absolute; inset:0;
   background-image: var(--heroImg);
   background-size: cover;
-  background-position: 50%, 30%;
+  background-position: 50% 30%; /* FIXED (was 50%, 30%) */
   background-repeat:no-repeat;
+  transform: none;
   filter: saturate(1.05) contrast(1.05) brightness(0.92);
 }
 #beacon-hero .hero-vignette{
@@ -539,8 +540,8 @@
 
 /* =========================
    WAITLIST FOOTER
-   FIXED: use footerimage.png (and no ./ needed)
-   Put footerimage.png in SAME folder as index.html
+   FIXED: footerimage.jpg (matches your repo)
+   Put footerimage.jpg in SAME folder as index.html
    ========================= */
 #beacon-hero .waitlist-footer{
   position: relative;
@@ -550,7 +551,7 @@
   align-items: center;
   justify-content: center;
   padding: clamp(2.5rem, 6vw, 4rem) clamp(1.25rem, 5vw, 2rem);
-  background-image: url("footerimage.png");
+  background-image: url("footerimage.jpg");
   background-size: cover;
   background-position: center -10px;
   background-repeat: no-repeat;
