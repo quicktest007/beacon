@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Beacon Browser — Faith-forward, family-safe browsing with strict SafeSearch, blocking, gentle nudges, and optional accountability. A calmer internet, rooted in faith." />
+  <meta
+    name="description"
+    content="Beacon Browser — Faith-forward, family-safe browsing with strict SafeSearch, blocking, gentle nudges, and optional accountability. A calmer internet, rooted in faith."
+  />
   <title>Beacon Browser — A Calmer Internet, Rooted in Faith</title>
   <link rel="preconnect" href="https://cdn.prod.website-files.com" crossorigin />
   <style>
     html, body { margin: 0; padding: 0; min-height: 100%; }
-    body { min-height: 100vh; }
+    body { min-height: 100vh; background:#0E1628; }
   </style>
 </head>
 
@@ -36,11 +39,11 @@
   --beamFocusY: 15%;
 
   /* Updated by JS */
-  --beamAngle: 20deg;        /* beam points toward cursor */
-  --beamScrollAngle: 0deg;   /* slow sweep with scroll */
+  --beamAngle: 20deg;
+  --beamScrollAngle: 0deg;
   --spotX: 50%;
   --spotY: 40%;
-  --spotOn: 0;               /* 0..1 */
+  --spotOn: 0;
 
   font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   width:100%;
@@ -57,13 +60,16 @@
 #beacon-hero .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* =========================
-   HERO BACKGROUND
+   HERO BACKGROUND (performance tuned)
    ========================= */
 #beacon-hero .hero-bg{
   position:absolute; inset:0;
   z-index:0;
   pointer-events:none;
   isolation:isolate;
+  contain: paint;
+  transform: translateZ(0);
+  backface-visibility:hidden;
 }
 #beacon-hero .hero-photo{
   position:absolute; inset:0;
@@ -71,12 +77,15 @@
   background-size: 85%;
   background-position: center center;
   filter: saturate(1.05) contrast(1.05) brightness(0.92);
+  transform: translateZ(0);
+  backface-visibility:hidden;
 }
 #beacon-hero .hero-vignette{
   position:absolute; inset:0;
   background:
     radial-gradient(ellipse 70% 55% at 50% 35%, rgba(14,22,40,.08) 0%, rgba(14,22,40,.58) 55%, rgba(14,22,40,.86) 100%),
     linear-gradient(to bottom, rgba(14,22,40,.55) 0%, rgba(14,22,40,.70) 45%, rgba(14,22,40,.92) 100%);
+  transform: translateZ(0);
 }
 #beacon-hero .hero-grid{
   position:absolute; inset:-10%;
@@ -86,12 +95,14 @@
     linear-gradient(to bottom, rgba(255,255,255,.10) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(circle at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+  transform: translateZ(0);
 }
 #beacon-hero .hero-noise{
   position:absolute; inset:0;
-  opacity:.12;
+  opacity:.10; /* slightly reduced to avoid shimmer */
   mix-blend-mode: overlay;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  transform: translateZ(0);
 }
 #beacon-hero .cursor-spot{
   position:absolute; inset:0;
@@ -102,7 +113,7 @@
       transparent 45%);
   opacity: calc(var(--spotOn) * .9);
   mix-blend-mode: screen;
-  filter: blur(0.2px);
+  transform: translateZ(0);
 }
 #beacon-hero .hero-beam{
   position:absolute;
@@ -121,9 +132,12 @@
     rgba(255,183,3,0.22) 120deg,
     transparent 165deg
   );
-  filter: blur(.2px);
+  /* keep effects but avoid fractional blur shimmer */
+  filter: none;
   mix-blend-mode: screen;
-  will-change: transform, opacity;
+  will-change: opacity;
+  transform: translateZ(0);
+  backface-visibility:hidden;
 }
 #beacon-hero .hero-beam-soft{
   position:absolute;
@@ -144,7 +158,9 @@
   );
   filter: blur(2px);
   mix-blend-mode: screen;
-  will-change: transform, opacity;
+  will-change: opacity;
+  transform: translateZ(0);
+  backface-visibility:hidden;
 }
 #beacon-hero .hero-haze{
   position:absolute; inset:0;
@@ -156,6 +172,7 @@
     radial-gradient(ellipse 60% 45% at 55% 42%, rgba(255,183,3,.10) 0%, transparent 60%);
   opacity:.9;
   mix-blend-mode: screen;
+  transform: translateZ(0);
 }
 @media (prefers-reduced-motion: reduce){
   #beacon-hero .cursor-spot{ display:none; }
@@ -172,10 +189,18 @@
   position:relative; z-index:2;
 }
 #beacon-hero .hero-brand{
+  display:flex;
+  align-items:center;
+  gap:.65rem;
   font-size: clamp(1rem,2vw,1.125rem);
   font-weight: 700;
   font-style: italic;
   letter-spacing: -0.02em;
+}
+#beacon-hero .top-actions{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
 }
 #beacon-hero .hero-cta-pill{
   display:inline-flex; align-items:center; gap:.5rem;
@@ -195,6 +220,28 @@
   filter: brightness(1.03);
 }
 #beacon-hero .hero-cta-pill:focus-visible{outline:2px solid var(--white);outline-offset:3px}
+
+/* Demo button (outlined) */
+#beacon-hero .hero-demo-pill{
+  display:inline-flex; align-items:center; gap:.55rem;
+  padding:.6rem 1.05rem;
+  border-radius:999px;
+  background: rgba(14,22,40,.35);
+  border: 1px solid rgba(255,255,255,.18);
+  color: rgba(255,255,255,.92);
+  cursor:pointer;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+#beacon-hero .hero-demo-pill:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,183,3,.35);
+  box-shadow: 0 16px 44px rgba(0,0,0,.28);
+}
+#beacon-hero .hero-demo-pill:focus-visible{outline:2px solid var(--white);outline-offset:3px}
 
 /* =========================
    HERO CONTENT
@@ -241,6 +288,7 @@
   #beacon-hero .hero-subcopy{ margin-left:auto; margin-right:auto; }
 }
 #beacon-hero .hero-subcopy strong{ color: var(--white); font-weight: 900; }
+
 #beacon-hero .hero-stance{
   margin: .95rem 0 0;
   display:inline-block;
@@ -255,6 +303,7 @@
   -webkit-backdrop-filter: blur(10px);
 }
 #beacon-hero .hero-stance em{ font-style:normal; color: rgba(255,183,3,.95); }
+
 #beacon-hero .hero-cta-row{
   margin-top: 1.2rem;
   display:flex;
@@ -287,6 +336,12 @@
 #beacon-hero .hero-cta-secondary:focus-visible{outline:2px solid var(--white);outline-offset:3px}
 
 /* Right-side "glass" value panel */
+#beacon-hero .hero-right{
+  display:flex;
+  flex-direction:column;
+  gap: clamp(1rem, 2vw, 1.25rem);
+  min-width:0;
+}
 #beacon-hero .hero-panel{
   background: rgba(14,22,40,.58);
   border: 1px solid rgba(255,255,255,.12);
@@ -356,564 +411,6 @@
 #beacon-hero .chip .dot{
   width:8px;height:8px;border-radius:999px;background: rgba(255,183,3,.9);
   box-shadow:0 0 0 4px rgba(255,183,3,.12);
-}
-
-/* =========================
-   BROWSER DEMO (NEW)
-   ========================= */
-#beacon-hero .hero-right{
-  display:flex;
-  flex-direction:column;
-  gap: clamp(1rem, 2vw, 1.25rem);
-  min-width:0;
-}
-#beacon-hero .browser-demo{
-  background: rgba(14,22,40,.75);
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.15);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-#beacon-hero .browser-demo .browser-titlebar{
-  height: 38px;
-  padding: 0 14px;
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  background: rgba(0,0,0,.35);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
-#beacon-hero .browser-demo .browser-dots{ display:flex; gap:6px; }
-#beacon-hero .browser-demo .browser-dots span{ width:12px; height:12px; border-radius:50%; }
-#beacon-hero .browser-demo .browser-dots .dot-red{ background:#ff5f57; }
-#beacon-hero .browser-demo .browser-dots .dot-yellow{ background:#febc2e; }
-#beacon-hero .browser-demo .browser-dots .dot-green{ background:#28c840; }
-#beacon-hero .browser-demo .browser-title{
-  flex:1;
-  text-align:center;
-  font-size:.8rem;
-  font-weight:700;
-  color: rgba(255,255,255,.72);
-  letter-spacing:-0.01em;
-}
-#beacon-hero .browser-demo .browser-address-bar{
-  height: 44px;
-  padding: 0 12px;
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  background: rgba(0,0,0,.25);
-  border-bottom: 1px solid rgba(255,255,255,.06);
-}
-#beacon-hero .browser-demo .browser-address-bar .addr-icon{
-  color: var(--amber);
-  font-size: 1rem;
-  flex-shrink:0;
-}
-#beacon-hero .browser-demo .browser-address-bar .addr-url{
-  flex:1;
-  min-width:0;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  font-size: .8rem;
-  color: rgba(255,255,255,.88);
-  font-family: inherit;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-#beacon-hero .browser-demo .browser-frame{
-  position:relative;
-  background: #f2f4f8;
-  overflow:hidden;
-  min-height: 280px;
-}
-#beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 340px; }
-#beacon-hero .how .browser-demo .browser-frame{ min-height: 300px; }
-
-/* The “cool” fake UI */
-#beacon-hero .beacon-ui{
-  position:relative;
-  height:100%;
-  min-height: inherit;
-  display:flex;
-  flex-direction:column;
-  padding: 12px;
-  background:
-    radial-gradient(ellipse 90% 70% at 20% 0%, rgba(255,183,3,.10) 0%, transparent 60%),
-    linear-gradient(to bottom, #f8f9fc 0%, #eef2f7 100%);
-}
-
-/* top mini-toolbar inside page */
-#beacon-hero .ui-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: 12px;
-  background: rgba(14,22,40,.05);
-  border: 1px solid rgba(14,22,40,.10);
-}
-#beacon-hero .ui-brand{
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  min-width:0;
-}
-#beacon-hero .ui-mark{
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  display:grid;
-  place-items:center;
-  background: rgba(255,183,3,.22);
-  border: 1px solid rgba(255,183,3,.38);
-  box-shadow: 0 10px 24px rgba(255,183,3,.14);
-  color:#0E1628;
-  font-weight: 950;
-  letter-spacing:-0.03em;
-}
-#beacon-hero .ui-title{
-  min-width:0;
-  line-height:1.1;
-}
-#beacon-hero .ui-title strong{
-  display:block;
-  color:#0E1628;
-  font-weight: 950;
-  font-size: .88rem;
-  letter-spacing:-0.02em;
-}
-#beacon-hero .ui-title span{
-  display:block;
-  color:#5a6376;
-  font-weight: 750;
-  font-size: .68rem;
-  letter-spacing:.02em;
-}
-#beacon-hero .ui-badges{
-  display:flex;
-  gap: 8px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-#beacon-hero .ui-badge{
-  display:inline-flex;
-  align-items:center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background:#fff;
-  border: 1px solid rgba(14,22,40,.12);
-  color:#0E1628;
-  font-size:.68rem;
-  font-weight: 900;
-  letter-spacing:.02em;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
-}
-#beacon-hero .ui-badge .led{
-  width:8px;height:8px;border-radius:999px;
-  background: rgba(255,183,3,.95);
-  box-shadow: 0 0 0 4px rgba(255,183,3,.16);
-}
-
-/* tab row */
-#beacon-hero .ui-tabs{
-  margin-top: 10px;
-  display:flex;
-  gap: 8px;
-  flex-wrap:wrap;
-}
-#beacon-hero .ui-tab{
-  appearance:none;
-  border:0;
-  cursor:pointer;
-  padding: 8px 10px;
-  border-radius: 12px;
-  background: rgba(255,255,255,.9);
-  border: 1px solid rgba(14,22,40,.12);
-  color:#0E1628;
-  font-weight: 900;
-  font-size: .72rem;
-  letter-spacing: .01em;
-  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
-}
-#beacon-hero .ui-tab:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(0,0,0,.10);
-  border-color: rgba(255,183,3,.40);
-}
-#beacon-hero .ui-tab[aria-selected="true"]{
-  background: rgba(14,22,40,.92);
-  color:#fff;
-  border-color: rgba(255,255,255,.12);
-  box-shadow: 0 16px 30px rgba(14,22,40,.22);
-}
-#beacon-hero .ui-tab .mini{
-  opacity:.9;
-  margin-right:6px;
-}
-
-/* scene viewport */
-#beacon-hero .ui-stage{
-  position:relative;
-  margin-top: 10px;
-  flex:1;
-  min-height: 190px;
-  border-radius: 16px;
-  overflow:hidden;
-  background: #fff;
-  border: 1px solid rgba(14,22,40,.12);
-  box-shadow: 0 18px 46px rgba(0,0,0,.12);
-}
-#beacon-hero .scene{
-  position:absolute;
-  inset:0;
-  padding: 14px;
-  opacity:0;
-  transform: translateY(6px);
-  transition: opacity .35s ease, transform .35s ease;
-  pointer-events:none;
-}
-#beacon-hero .scene.is-active{
-  opacity:1;
-  transform: translateY(0);
-  pointer-events:auto;
-}
-
-/* Scene: Search */
-#beacon-hero .search-head{
-  display:flex; align-items:center; gap:10px;
-}
-#beacon-hero .search-input{
-  flex:1;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(14,22,40,.14);
-  background: rgba(14,22,40,.03);
-  font-weight: 850;
-  color:#0E1628;
-  font-size: .82rem;
-}
-#beacon-hero .search-pill{
-  padding: 8px 10px;
-  border-radius: 999px;
-  background: rgba(255,183,3,.18);
-  border: 1px solid rgba(255,183,3,.32);
-  font-weight: 950;
-  color:#0E1628;
-  font-size: .70rem;
-  display:inline-flex;
-  align-items:center;
-  gap: 6px;
-}
-#beacon-hero .results{
-  margin-top: 12px;
-  display:grid;
-  gap: 10px;
-}
-#beacon-hero .result{
-  border-radius: 14px;
-  border: 1px solid rgba(14,22,40,.10);
-  background: rgba(14,22,40,.02);
-  padding: 10px 12px;
-}
-#beacon-hero .result .url{
-  font-size: .65rem;
-  font-weight: 900;
-  color: rgba(14,22,40,.62);
-}
-#beacon-hero .result .title{
-  margin-top: 4px;
-  font-size: .84rem;
-  font-weight: 950;
-  color:#0E1628;
-  letter-spacing:-0.01em;
-}
-#beacon-hero .result .desc{
-  margin-top: 4px;
-  font-size: .72rem;
-  color:#3f4758;
-  line-height:1.35;
-}
-#beacon-hero .result.muted{
-  position:relative;
-  overflow:hidden;
-}
-#beacon-hero .result.muted::after{
-  content:"Filtered";
-  position:absolute;
-  top:10px;
-  right:10px;
-  padding: 5px 8px;
-  border-radius: 999px;
-  background: rgba(14,22,40,.82);
-  color:#fff;
-  font-weight: 950;
-  font-size: .62rem;
-}
-#beacon-hero .result.muted .title,
-#beacon-hero .result.muted .desc{
-  filter: blur(2.5px);
-  opacity:.55;
-}
-
-/* Scene: Block */
-#beacon-hero .block-card{
-  height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding: 18px;
-  background:
-    radial-gradient(circle at 50% 10%, rgba(255,183,3,.10) 0%, transparent 55%),
-    linear-gradient(to bottom, rgba(14,22,40,.04), rgba(14,22,40,.00));
-}
-#beacon-hero .block-inner{
-  width:min(420px, 100%);
-  border-radius: 18px;
-  border: 1px solid rgba(14,22,40,.12);
-  background: #fff;
-  box-shadow: 0 20px 50px rgba(0,0,0,.12);
-  padding: 16px 14px;
-}
-#beacon-hero .shield{
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
-  display:grid;
-  place-items:center;
-  margin: 0 auto 10px;
-  background: rgba(255,183,3,.18);
-  border: 1px solid rgba(255,183,3,.34);
-  color:#0E1628;
-  font-size: 1.1rem;
-}
-#beacon-hero .block-title{
-  margin:0;
-  font-weight: 980;
-  letter-spacing:-0.02em;
-  color:#0E1628;
-  font-size: 1.05rem;
-}
-#beacon-hero .block-sub{
-  margin: 8px 0 0;
-  color:#4b5466;
-  font-size: .78rem;
-  line-height:1.45;
-}
-#beacon-hero .block-actions{
-  margin-top: 12px;
-  display:flex;
-  gap: 10px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-#beacon-hero .mini-btn{
-  border: 0;
-  cursor:pointer;
-  padding: 9px 12px;
-  border-radius: 12px;
-  font-weight: 950;
-  font-size: .72rem;
-  letter-spacing:.01em;
-}
-#beacon-hero .mini-btn.primary{
-  background: rgba(14,22,40,.92);
-  color:#fff;
-}
-#beacon-hero .mini-btn.ghost{
-  background: rgba(14,22,40,.06);
-  color:#0E1628;
-  border: 1px solid rgba(14,22,40,.12);
-}
-
-/* Scene: Nudge */
-#beacon-hero .nudge-wrap{
-  height:100%;
-  display:grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-#beacon-hero .nudge-banner{
-  border-radius: 16px;
-  border: 1px solid rgba(255,183,3,.34);
-  background: rgba(255,183,3,.14);
-  padding: 12px 12px;
-}
-#beacon-hero .nudge-banner strong{
-  display:block;
-  color:#0E1628;
-  font-weight: 980;
-  letter-spacing:-0.02em;
-  margin-bottom: 4px;
-}
-#beacon-hero .nudge-banner span{
-  display:block;
-  color:#3f4758;
-  font-size: .78rem;
-  line-height:1.4;
-}
-#beacon-hero .nudge-grid{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-#beacon-hero .tile{
-  border-radius: 16px;
-  border: 1px solid rgba(14,22,40,.10);
-  background: rgba(14,22,40,.03);
-  padding: 12px;
-}
-#beacon-hero .tile .k{
-  display:flex; align-items:center; gap:8px;
-  font-weight: 950;
-  color:#0E1628;
-  font-size: .78rem;
-}
-#beacon-hero .tile .k i{
-  width: 28px; height: 28px;
-  border-radius: 10px;
-  display:grid; place-items:center;
-  background: rgba(14,22,40,.08);
-  border: 1px solid rgba(14,22,40,.10);
-  font-style: normal;
-}
-#beacon-hero .tile .v{
-  margin-top: 6px;
-  color:#4b5466;
-  font-size: .72rem;
-  line-height:1.4;
-}
-
-/* Scene: Accountability */
-#beacon-hero .acct{
-  height:100%;
-  display:grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-#beacon-hero .acct-card{
-  border-radius: 16px;
-  border: 1px solid rgba(14,22,40,.10);
-  background: rgba(14,22,40,.03);
-  padding: 12px;
-}
-#beacon-hero .acct-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 10px;
-}
-#beacon-hero .acct-top strong{
-  color:#0E1628;
-  font-weight: 980;
-  letter-spacing:-0.02em;
-}
-#beacon-hero .toggle{
-  position:relative;
-  width: 44px;
-  height: 26px;
-  border-radius: 999px;
-  background: rgba(14,22,40,.16);
-  border: 1px solid rgba(14,22,40,.18);
-}
-#beacon-hero .toggle::after{
-  content:"";
-  position:absolute;
-  top: 50%;
-  left: 4px;
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  background:#fff;
-  transform: translateY(-50%);
-  box-shadow: 0 6px 14px rgba(0,0,0,.14);
-  transition: left .25s ease, background .25s ease;
-}
-#beacon-hero .acct.is-on .toggle{
-  background: rgba(255,183,3,.42);
-  border-color: rgba(255,183,3,.55);
-}
-#beacon-hero .acct.is-on .toggle::after{ left: 20px; }
-#beacon-hero .acct-desc{
-  margin-top: 6px;
-  color:#4b5466;
-  font-size: .76rem;
-  line-height:1.45;
-}
-#beacon-hero .people{
-  display:flex;
-  gap: 10px;
-  margin-top: 10px;
-  flex-wrap:wrap;
-}
-#beacon-hero .person{
-  display:flex;
-  align-items:center;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: 14px;
-  border: 1px solid rgba(14,22,40,.10);
-  background:#fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
-}
-#beacon-hero .avatar{
-  width: 30px;
-  height: 30px;
-  border-radius: 12px;
-  display:grid;
-  place-items:center;
-  background: rgba(255,183,3,.16);
-  border: 1px solid rgba(255,183,3,.28);
-  color:#0E1628;
-  font-weight: 980;
-  font-size: .78rem;
-}
-#beacon-hero .pmeta strong{
-  display:block;
-  color:#0E1628;
-  font-weight: 980;
-  font-size: .78rem;
-  letter-spacing:-0.01em;
-}
-#beacon-hero .pmeta span{
-  display:block;
-  color:#6b7384;
-  font-weight: 800;
-  font-size: .68rem;
-}
-#beacon-hero .footnote{
-  margin-top: auto;
-  padding-top: 10px;
-  color:#7a8293;
-  font-size: .66rem;
-  font-weight: 850;
-  letter-spacing:.02em;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 10px;
-  flex-wrap:wrap;
-}
-#beacon-hero .footnote .lock{
-  display:inline-flex;
-  align-items:center;
-  gap: 6px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: rgba(14,22,40,.06);
-  border: 1px solid rgba(14,22,40,.10);
-  color:#0E1628;
-  font-size: .66rem;
-  font-weight: 950;
 }
 
 /* =========================
@@ -999,7 +496,7 @@
 }
 
 /* =========================
-   HOW IT WORKS
+   HOW IT WORKS (NO DEMO HERE)
    ========================= */
 #beacon-hero .how{
   position:relative;
@@ -1081,14 +578,11 @@
   line-height:1.6;
 }
 
-/* Image collage */
+/* Image cards */
 #beacon-hero .how-media{
   display:grid;
   grid-template-columns: 1fr;
   gap: 1rem;
-}
-@media(min-width: 980px){
-  #beacon-hero .how-media{ grid-template-columns: 1fr; grid-auto-rows: 1fr; }
 }
 #beacon-hero .imgCard{
   position:relative;
@@ -1153,8 +647,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(to bottom, rgba(14,22,40,.75) 0%, rgba(14,22,40,.88) 50%, rgba(14,22,40,.92) 100%);
+  background: linear-gradient(to bottom, rgba(14,22,40,.75) 0%, rgba(14,22,40,.88) 50%, rgba(14,22,40,.92) 100%);
 }
 #beacon-hero .waitlist-footer-inner{
   position: relative;
@@ -1179,7 +672,7 @@
 #beacon-hero .waitlist-footer .hero-cta-pill{ margin: 0; }
 
 /* =========================
-   MODAL
+   MODALS (shared overlay + base)
    ========================= */
 #beacon-hero .overlay{
   position:fixed; inset:0;
@@ -1233,6 +726,8 @@
   outline: 2px solid var(--amber);
   outline-offset: 2px;
 }
+
+/* Waitlist modal bits */
 #beacon-hero .modal h2{
   font-size: 1.5rem;
   font-weight: 950;
@@ -1296,6 +791,360 @@
   border: 1px solid rgba(255,183,3,.16);
   font-weight: 900;
 }
+
+/* =========================
+   DEMO MODAL (inspired by screenshot)
+   ========================= */
+#beacon-hero .modal.demo{
+  max-width: 980px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 22px;
+}
+#beacon-hero .demo-wrap{
+  background: rgba(14,22,40,.96);
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+#beacon-hero .demo-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  background:
+    radial-gradient(ellipse 70% 90% at 20% 0%, rgba(255,183,3,.14) 0%, transparent 55%),
+    linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+#beacon-hero .demo-head .lhs{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width:0;
+}
+#beacon-hero .demo-mark{
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,183,3,.20);
+  border: 1px solid rgba(255,183,3,.30);
+  color:#0E1628;
+  font-weight: 950;
+  letter-spacing:-0.02em;
+}
+#beacon-hero .demo-titles{
+  min-width:0;
+}
+#beacon-hero .demo-titles strong{
+  display:block;
+  font-weight: 950;
+  letter-spacing:-0.02em;
+}
+#beacon-hero .demo-titles span{
+  display:block;
+  color: rgba(255,255,255,.72);
+  font-weight: 850;
+  font-size: .85rem;
+}
+#beacon-hero .demo-head .rhs{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+#beacon-hero .demo-chip{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.88);
+  font-weight: 900;
+  font-size: .85rem;
+  letter-spacing: -0.01em;
+}
+#beacon-hero .demo-chip .i{
+  width: 22px;
+  height: 22px;
+  border-radius: 9px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,183,3,.18);
+  border: 1px solid rgba(255,183,3,.20);
+  color: rgba(255,255,255,.92);
+  font-style: normal;
+  font-size: .85rem;
+}
+
+/* fake browser chrome */
+#beacon-hero .demo-browser{
+  padding: 0;
+  border-top: 1px solid rgba(0,0,0,.15);
+}
+#beacon-hero .demo-topbar{
+  height: 56px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  padding: 0 16px;
+  background: linear-gradient(to bottom, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+#beacon-hero .demo-brand-left{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width:0;
+}
+#beacon-hero .demo-app{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width:0;
+  font-weight: 950;
+  letter-spacing:-0.02em;
+}
+#beacon-hero .demo-app .icon{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,183,3,.18);
+  border: 1px solid rgba(255,183,3,.22);
+}
+#beacon-hero .demo-tabs{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width:0;
+}
+#beacon-hero .demo-tab{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.18);
+  border: 1px solid rgba(255,183,3,.20);
+  color: rgba(255,255,255,.90);
+  font-weight: 900;
+  white-space:nowrap;
+}
+#beacon-hero .demo-tab .dot{
+  width: 8px; height: 8px; border-radius:999px;
+  background: rgba(255,183,3,.95);
+  box-shadow: 0 0 0 4px rgba(255,183,3,.16);
+}
+#beacon-hero .demo-plus{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.90);
+  font-weight: 950;
+  display:grid;
+  place-items:center;
+}
+
+#beacon-hero .demo-badges{
+  display:flex;
+  align-items:center;
+  gap: 8px;
+}
+#beacon-hero .demo-badge{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,183,3,.28);
+  background: rgba(255,183,3,.12);
+  color: rgba(255,255,255,.92);
+  font-weight: 950;
+  font-size: .85rem;
+}
+#beacon-hero .demo-badge .mini-i{
+  width: 22px; height: 22px; border-radius: 9px;
+  display:grid; place-items:center;
+  background: rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.12);
+  font-style: normal;
+}
+
+#beacon-hero .demo-urlrow{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(0,0,0,.14);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+#beacon-hero .demo-nav{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  color: rgba(255,255,255,.70);
+  font-weight: 950;
+}
+#beacon-hero .demo-nav button{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.05);
+  color: rgba(255,255,255,.86);
+  cursor: pointer;
+  font-weight: 950;
+}
+#beacon-hero .demo-omnibox{
+  flex:1;
+  min-width:0;
+  padding: 11px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.92);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#beacon-hero .demo-omnibox .lock{ color: rgba(255,183,3,.95); margin-right: 10px; }
+
+/* demo “page” */
+#beacon-hero .demo-page{
+  padding: 34px 18px 28px;
+  min-height: 420px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255,183,3,.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.06) 0%, transparent 55%),
+    linear-gradient(to bottom, rgba(255,255,255,.04), rgba(255,255,255,.02));
+}
+#beacon-hero .demo-heroIcon{
+  width: 112px;
+  height: 112px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  margin: 0 auto 16px;
+  background: rgba(255,183,3,.14);
+  border: 1px solid rgba(255,183,3,.24);
+  box-shadow: 0 24px 90px rgba(255,183,3,.10);
+  position:relative;
+}
+#beacon-hero .demo-heroIcon::before{
+  content:"";
+  position:absolute;
+  inset:-28px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,183,3,.14), transparent 65%);
+}
+#beacon-hero .demo-heroIcon span{
+  width: 80px;
+  height: 80px;
+  border-radius: 999px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,183,3,.95);
+  color: #0E1628;
+  font-weight: 980;
+  font-size: 2rem;
+  box-shadow: 0 24px 80px rgba(255,183,3,.20);
+}
+
+#beacon-hero .demo-title{
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 980;
+  letter-spacing:-0.04em;
+  color: rgba(255,183,3,.98);
+}
+#beacon-hero .demo-sub{
+  margin: 10px 0 0;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: rgba(255,255,255,.86);
+  letter-spacing:-0.01em;
+}
+#beacon-hero .demo-lede{
+  margin: 10px 0 0;
+  max-width: 62ch;
+  color: rgba(255,255,255,.72);
+  line-height: 1.6;
+  font-weight: 750;
+}
+#beacon-hero .demo-cta{
+  margin-top: 18px;
+  display:inline-flex;
+  align-items:center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 0;
+  cursor:pointer;
+  background: rgba(255,183,3,.95);
+  color:#0E1628;
+  font-weight: 980;
+  letter-spacing:-0.01em;
+  box-shadow: 0 18px 60px rgba(255,183,3,.18);
+}
+#beacon-hero .demo-cta:focus-visible{ outline:2px solid rgba(255,255,255,.9); outline-offset:4px; }
+
+#beacon-hero .demo-cards{
+  margin-top: 28px;
+  width: min(980px, 100%);
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media(min-width: 860px){
+  #beacon-hero .demo-cards{ grid-template-columns: repeat(4, 1fr); }
+}
+#beacon-hero .demo-card{
+  text-align:left;
+  border-radius: 18px;
+  padding: 14px 14px;
+  background: rgba(0,0,0,.18);
+  border: 1px solid rgba(255,183,3,.16);
+}
+#beacon-hero .demo-card .ic{
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,183,3,.16);
+  border: 1px solid rgba(255,183,3,.22);
+  margin-bottom: 10px;
+}
+#beacon-hero .demo-card strong{
+  display:block;
+  font-weight: 980;
+  letter-spacing:-0.02em;
+}
+#beacon-hero .demo-card span{
+  display:block;
+  margin-top: 6px;
+  color: rgba(255,255,255,.72);
+  line-height: 1.5;
+  font-weight: 750;
+  font-size: .95rem;
+}
+
 /* big success ring */
 #beacon-hero .flash-ring{
   position:fixed;
@@ -1319,21 +1168,31 @@
   <div class="hero-vignette"></div>
   <div class="hero-grid"></div>
   <div class="hero-noise"></div>
+
   <div class="hero-beam"></div>
   <div class="hero-beam-soft"></div>
   <div class="hero-haze"></div>
+
   <div class="cursor-spot"></div>
 </div>
 
 <header class="hero-bar">
   <span class="hero-brand">Beacon Browser</span>
-  <button type="button" class="hero-cta-pill" data-open aria-haspopup="dialog" aria-expanded="false">Join Waitlist →</button>
+
+  <div class="top-actions">
+    <button type="button" class="hero-demo-pill" data-open-demo aria-haspopup="dialog" aria-expanded="false">
+      <span aria-hidden="true">🧪</span> Demo
+    </button>
+    <button type="button" class="hero-cta-pill" data-open aria-haspopup="dialog" aria-expanded="false">
+      Join Waitlist →
+    </button>
+  </div>
 </header>
 
 <div class="hero-center">
   <div class="hero-wrap">
     <div class="hero-copy">
-      <h1 class="hero-headline">A Calmer Internet,<br>Rooted in Faith.</h1>
+      <h1 class="hero-headline">A Calmer Internet,<br />Rooted in Faith.</h1>
 
       <p class="hero-subcopy">
         <strong>Faith-forward, family-safe browsing</strong> with strict SafeSearch, blocking, gentle nudges, and optional accountability—
@@ -1350,154 +1209,6 @@
     </div>
 
     <div class="hero-right">
-      <!-- HERO DEMO -->
-      <div class="browser-demo" aria-label="Beacon Browser demo">
-        <div class="browser-titlebar">
-          <div class="browser-dots" aria-hidden="true">
-            <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
-          </div>
-          <span class="browser-title">Beacon</span>
-        </div>
-        <div class="browser-address-bar">
-          <span class="addr-icon" aria-hidden="true">🔒</span>
-          <span class="addr-url" data-demo-url>beacon://search?q=family%20devotionals</span>
-        </div>
-
-        <div class="browser-frame">
-          <div class="beacon-ui" data-beacon-demo>
-            <div class="ui-top">
-              <div class="ui-brand">
-                <div class="ui-mark">B</div>
-                <div class="ui-title">
-                  <strong>Beacon Start</strong>
-                  <span>Calm defaults • Clear choices</span>
-                </div>
-              </div>
-              <div class="ui-badges" aria-label="Safety and privacy badges">
-                <div class="ui-badge"><span class="led"></span>SafeSearch</div>
-                <div class="ui-badge">Privacy-first</div>
-              </div>
-            </div>
-
-            <div class="ui-tabs" role="tablist" aria-label="Demo scenes">
-              <button class="ui-tab" type="button" role="tab" aria-selected="true" data-scene="search"><span class="mini">🔎</span>Search</button>
-              <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="block"><span class="mini">🛡️</span>Block</button>
-              <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="nudge"><span class="mini">🕊️</span>Nudge</button>
-              <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="acct"><span class="mini">🤝</span>Accountability</button>
-            </div>
-
-            <div class="ui-stage" aria-label="Demo content">
-              <!-- Search scene -->
-              <div class="scene is-active" data-scene-panel="search" role="tabpanel">
-                <div class="search-head">
-                  <div class="search-input" aria-label="Search query (decorative)">family devotionals for teens</div>
-                  <div class="search-pill" aria-label="SafeSearch status"><span aria-hidden="true">🛡️</span> On</div>
-                </div>
-
-                <div class="results" role="list" aria-label="Search results">
-                  <div class="result" role="listitem">
-                    <div class="url">beacon://results • trusted</div>
-                    <div class="title">15 short family devotionals for busy weeknights</div>
-                    <div class="desc">Simple, grace-filled prompts you can read in under 5 minutes.</div>
-                  </div>
-                  <div class="result" role="listitem">
-                    <div class="url">example.org • community</div>
-                    <div class="title">Teen discussion starters (faith-forward)</div>
-                    <div class="desc">Questions that invite honesty without pressure.</div>
-                  </div>
-                  <div class="result muted" role="listitem" aria-label="Filtered result (decorative)">
-                    <div class="url">somewhere.com</div>
-                    <div class="title">[Filtered]</div>
-                    <div class="desc">This result is hidden by SafeSearch.</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Block scene -->
-              <div class="scene" data-scene-panel="block" role="tabpanel" aria-hidden="true">
-                <div class="block-card">
-                  <div class="block-inner">
-                    <div class="shield" aria-hidden="true">🛡️</div>
-                    <h3 class="block-title">This page is blocked</h3>
-                    <p class="block-sub">
-                      Beacon prevented explicit content from loading. Take a breath — you’re in control.
-                    </p>
-                    <div class="block-actions" aria-label="Actions (decorative)">
-                      <button class="mini-btn primary" type="button">Go back</button>
-                      <button class="mini-btn ghost" type="button">Open Settings</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Nudge scene -->
-              <div class="scene" data-scene-panel="nudge" role="tabpanel" aria-hidden="true">
-                <div class="nudge-wrap">
-                  <div class="nudge-banner">
-                    <strong>Gentle nudge</strong>
-                    <span>You’ve been scrolling for a bit. Want a short reset?</span>
-                  </div>
-                  <div class="nudge-grid" aria-label="Nudge options (decorative)">
-                    <div class="tile">
-                      <div class="k"><i aria-hidden="true">⏳</i> 60-second pause</div>
-                      <div class="v">Breathe, refocus, and choose what’s next.</div>
-                    </div>
-                    <div class="tile">
-                      <div class="k"><i aria-hidden="true">📖</i> Daily verse</div>
-                      <div class="v">A quiet reminder you can return to anytime.</div>
-                    </div>
-                    <div class="tile">
-                      <div class="k"><i aria-hidden="true">🧭</i> Intent check</div>
-                      <div class="v">“What am I here for?” — quick clarity.</div>
-                    </div>
-                    <div class="tile">
-                      <div class="k"><i aria-hidden="true">🔕</i> Reduce noise</div>
-                      <div class="v">Dim clickbait + temptation loops automatically.</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Accountability scene -->
-              <div class="scene" data-scene-panel="acct" role="tabpanel" aria-hidden="true">
-                <div class="acct is-on" data-acct>
-                  <div class="acct-card">
-                    <div class="acct-top">
-                      <strong>Optional accountability</strong>
-                      <div class="toggle" aria-hidden="true"></div>
-                    </div>
-                    <div class="acct-desc">
-                      Invite trusted support on your terms. Private by default — no creepy tracking.
-                    </div>
-
-                    <div class="people" aria-label="Trusted contacts (decorative)">
-                      <div class="person">
-                        <div class="avatar">J</div>
-                        <div class="pmeta"><strong>Jordan</strong><span>Accountability partner</span></div>
-                      </div>
-                      <div class="person">
-                        <div class="avatar">M</div>
-                        <div class="pmeta"><strong>Maria</strong><span>Family admin</span></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="footnote">
-                    <span class="lock"><span aria-hidden="true">🔒</span> Encrypted summaries</span>
-                    <span>Nothing shared without your choice</span>
-                  </div>
-                </div>
-              </div>
-            </div><!-- /ui-stage -->
-
-            <div class="footnote" style="margin-top:10px;">
-              <span class="lock"><span aria-hidden="true">✨</span> Click tabs to preview features</span>
-              <span>Demo — not a live browser</span>
-            </div>
-          </div><!-- /beacon-ui -->
-        </div><!-- /browser-frame -->
-      </div>
-
       <aside class="hero-panel" aria-label="Beacon Browser highlights">
         <h2 class="panel-title">Built for calm, consistent guardrails</h2>
         <ul class="panel-list">
@@ -1579,130 +1290,14 @@
         </article>
       </div>
 
+      <!-- No demo here (per request) -->
       <div class="how-media" aria-label="How it works images">
-        <!-- HOW SECTION DEMO (same component, different initial scene) -->
-        <div class="browser-demo" aria-label="Beacon Browser demo">
-          <div class="browser-titlebar">
-            <div class="browser-dots" aria-hidden="true">
-              <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
-            </div>
-            <span class="browser-title">Beacon</span>
-          </div>
-          <div class="browser-address-bar">
-            <span class="addr-icon" aria-hidden="true">🔒</span>
-            <span class="addr-url" data-demo-url>beacon://blocked</span>
-          </div>
-
-          <div class="browser-frame">
-            <div class="beacon-ui" data-beacon-demo data-initial="block">
-              <div class="ui-top">
-                <div class="ui-brand">
-                  <div class="ui-mark">B</div>
-                  <div class="ui-title">
-                    <strong>Beacon Protect</strong>
-                    <span>Prevents explicit content before it loads</span>
-                  </div>
-                </div>
-                <div class="ui-badges">
-                  <div class="ui-badge"><span class="led"></span>Protection</div>
-                  <div class="ui-badge">Grace-first</div>
-                </div>
-              </div>
-
-              <div class="ui-tabs" role="tablist" aria-label="Demo scenes">
-                <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="search"><span class="mini">🔎</span>Search</button>
-                <button class="ui-tab" type="button" role="tab" aria-selected="true" data-scene="block"><span class="mini">🛡️</span>Block</button>
-                <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="nudge"><span class="mini">🕊️</span>Nudge</button>
-                <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="acct"><span class="mini">🤝</span>Accountability</button>
-              </div>
-
-              <div class="ui-stage">
-                <div class="scene" data-scene-panel="search" role="tabpanel" aria-hidden="true">
-                  <div class="search-head">
-                    <div class="search-input">kids bible stories</div>
-                    <div class="search-pill"><span aria-hidden="true">🛡️</span> On</div>
-                  </div>
-                  <div class="results">
-                    <div class="result">
-                      <div class="url">beacon://results • trusted</div>
-                      <div class="title">Short Bible stories for kids (ages 6–10)</div>
-                      <div class="desc">Simple lessons with gentle discussion prompts.</div>
-                    </div>
-                    <div class="result muted">
-                      <div class="url">somewhere.com</div>
-                      <div class="title">[Filtered]</div>
-                      <div class="desc">This result is hidden by SafeSearch.</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="scene is-active" data-scene-panel="block" role="tabpanel">
-                  <div class="block-card">
-                    <div class="block-inner">
-                      <div class="shield" aria-hidden="true">🛡️</div>
-                      <h3 class="block-title">Blocked — you’re protected</h3>
-                      <p class="block-sub">
-                        Beacon stopped this page automatically. You can adjust rules anytime in Settings.
-                      </p>
-                      <div class="block-actions">
-                        <button class="mini-btn primary" type="button">Back to safety</button>
-                        <button class="mini-btn ghost" type="button">View rules</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="scene" data-scene-panel="nudge" role="tabpanel" aria-hidden="true">
-                  <div class="nudge-wrap">
-                    <div class="nudge-banner">
-                      <strong>Quick reset</strong>
-                      <span>Want to refocus? Try a 60-second pause or a verse.</span>
-                    </div>
-                    <div class="nudge-grid">
-                      <div class="tile"><div class="k"><i>⏳</i> 60-second pause</div><div class="v">A small reset that actually helps.</div></div>
-                      <div class="tile"><div class="k"><i>📖</i> Daily verse</div><div class="v">A calm anchor in the moment.</div></div>
-                      <div class="tile"><div class="k"><i>🧭</i> Intent check</div><div class="v">A fast “why am I here?” prompt.</div></div>
-                      <div class="tile"><div class="k"><i>🔕</i> Reduce noise</div><div class="v">Less clickbait, fewer rabbit holes.</div></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="scene" data-scene-panel="acct" role="tabpanel" aria-hidden="true">
-                  <div class="acct is-on" data-acct>
-                    <div class="acct-card">
-                      <div class="acct-top">
-                        <strong>Accountability (optional)</strong>
-                        <div class="toggle" aria-hidden="true"></div>
-                      </div>
-                      <div class="acct-desc">Share only what you choose — designed for trust, not surveillance.</div>
-                      <div class="people">
-                        <div class="person"><div class="avatar">T</div><div class="pmeta"><strong>Taylor</strong><span>Trusted friend</span></div></div>
-                        <div class="person"><div class="avatar">A</div><div class="pmeta"><strong>Alex</strong><span>Spouse</span></div></div>
-                      </div>
-                    </div>
-                    <div class="footnote">
-                      <span class="lock"><span aria-hidden="true">🔒</span> Encrypted summaries</span>
-                      <span>Always your choice</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="footnote" style="margin-top:10px;">
-                <span class="lock"><span aria-hidden="true">✨</span> Same browser — different moments</span>
-                <span>Demo — not live</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="imgCard" style="background-image:url('https://cdn.prod.website-files.com/6967b271d84e0620304acc1f/6983b0ab7f60426d56c3dac4_pexels-jplenio-1118874.jpg');">
           <div class="cap">
             <strong>Calm, consistent defaults</strong>
             <span>More peace in everyday browsing — not a constant battle.</span>
           </div>
         </div>
-
         <div class="imgCard" style="background-image:url('https://cdn.prod.website-files.com/6967b271d84e0620304acc1f/6983b238b84e6b5746b7c41d_pexels-gabby-k-5997313.jpg'); min-height: 280px;">
           <div class="cap">
             <strong>Built for families</strong>
@@ -1722,7 +1317,7 @@
   </div>
 </section>
 
-<!-- Modal -->
+<!-- Waitlist Modal -->
 <div class="overlay" id="beacon-overlay" role="dialog" aria-modal="true" aria-labelledby="beacon-modal-title" aria-hidden="true">
   <div class="modal" id="beacon-modal">
     <button type="button" class="modal-close" id="beacon-modal-close" aria-label="Close">×</button>
@@ -1746,15 +1341,163 @@
   </div>
 </div>
 
+<!-- Demo Modal -->
+<div class="overlay" id="beacon-demo-overlay" role="dialog" aria-modal="true" aria-labelledby="beacon-demo-title" aria-hidden="true">
+  <div class="modal demo" id="beacon-demo-modal">
+    <button type="button" class="modal-close" id="beacon-demo-close" aria-label="Close demo">×</button>
+
+    <div class="demo-wrap">
+      <div class="demo-head">
+        <div class="lhs">
+          <div class="demo-mark">⛯</div>
+          <div class="demo-titles">
+            <strong id="beacon-demo-title">Beacon Demo</strong>
+            <span>A calm, protected browsing experience</span>
+          </div>
+        </div>
+        <div class="rhs" aria-label="Status chips">
+          <span class="demo-chip"><i class="i" aria-hidden="true">i</i> Safe Page</span>
+          <span class="demo-chip"><i class="i" aria-hidden="true">🛡️</i> SafeSearch On</span>
+        </div>
+      </div>
+
+      <div class="demo-browser" aria-label="Demo browser window">
+        <div class="demo-topbar">
+          <div class="demo-brand-left">
+            <div class="demo-app">
+              <span class="icon" aria-hidden="true">🗼</span>
+              Beacon
+            </div>
+            <div class="demo-tabs" aria-label="Tabs (decorative)">
+              <span class="demo-tab"><span class="dot" aria-hidden="true"></span> Website Loading</span>
+              <span class="demo-plus" aria-hidden="true">+</span>
+            </div>
+          </div>
+
+          <div class="demo-badges" aria-label="Badges (decorative)">
+            <span class="demo-badge"><i class="mini-i" aria-hidden="true">i</i> Safe Page</span>
+          </div>
+        </div>
+
+        <div class="demo-urlrow" aria-label="Address bar">
+          <div class="demo-nav" aria-hidden="true">
+            <button type="button">←</button>
+            <button type="button">→</button>
+            <button type="button">⟳</button>
+          </div>
+          <div class="demo-omnibox" role="img" aria-label="Address bar (decorative)">
+            <span class="lock" aria-hidden="true">🔒</span> beacon://welcome
+          </div>
+        </div>
+
+        <div class="demo-page">
+          <div class="demo-heroIcon" aria-hidden="true"><span>🗼</span></div>
+          <h3 class="demo-title">Welcome to Beacon</h3>
+          <div class="demo-sub">A Light in the Darkness</div>
+          <p class="demo-lede">
+            Your safe harbor for navigating the web with faith and confidence.
+            Built for calm: strict filtering, fewer rabbit holes, and privacy-first defaults.
+          </p>
+          <button type="button" class="demo-cta" aria-label="Start browsing safely (decorative)">
+            <span aria-hidden="true">🔍</span> Start Browsing Safely
+          </button>
+
+          <div class="demo-cards" aria-label="Feature cards (decorative)">
+            <div class="demo-card">
+              <div class="ic" aria-hidden="true">🛡️</div>
+              <strong>Blocking that works</strong>
+              <span>Stops explicit content upstream—before it loads.</span>
+            </div>
+            <div class="demo-card">
+              <div class="ic" aria-hidden="true">🔒</div>
+              <strong>Privacy-first</strong>
+              <span>No creepy tracking. Your browsing stays yours.</span>
+            </div>
+            <div class="demo-card">
+              <div class="ic" aria-hidden="true">🕊️</div>
+              <strong>Gentle nudges</strong>
+              <span>Respectful, stigma-free prompts when you need them.</span>
+            </div>
+            <div class="demo-card">
+              <div class="ic" aria-hidden="true">🤝</div>
+              <strong>Optional accountability</strong>
+              <span>Invite trusted support—only on your terms.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /demo-wrap -->
+  </div>
+</div>
+
 <script>
 (function(){
   var root = document.getElementById('beacon-hero');
   if(!root) return;
 
+  // ---------- Shared modal helpers ----------
+  function trapFocus(overlayEl, modalEl){
+    function focusables(){
+      return modalEl.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    }
+    function onKeyDown(e){
+      if(e.key === 'Escape'){ closeOverlay(overlayEl); return; }
+      if(e.key !== 'Tab') return;
+      var els = focusables(); if(!els.length) return;
+      var first = els[0], last = els[els.length - 1];
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+    }
+    overlayEl._trap = onKeyDown;
+    overlayEl.addEventListener('keydown', onKeyDown);
+  }
+  function untrapFocus(overlayEl){
+    if(overlayEl._trap){
+      overlayEl.removeEventListener('keydown', overlayEl._trap);
+      overlayEl._trap = null;
+    }
+  }
+  function openOverlay(overlayEl, modalEl, lastBtn){
+    overlayEl.setAttribute('aria-hidden','false');
+    overlayEl._lastBtn = lastBtn || null;
+    document.body.style.overflow = 'hidden';
+    // focus first focusable
+    var first = modalEl.querySelector('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])');
+    if(first) first.focus();
+    trapFocus(overlayEl, modalEl);
+  }
+  function closeOverlay(overlayEl){
+    overlayEl.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+    untrapFocus(overlayEl);
+    if(overlayEl._lastBtn) overlayEl._lastBtn.focus();
+  }
+
+  // ---------- Waitlist modal ----------
   var openBtns = root.querySelectorAll('[data-open]');
   var overlay = document.getElementById('beacon-overlay');
   var modal = document.getElementById('beacon-modal');
   var closeBtn = document.getElementById('beacon-modal-close');
+
+  openBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      openBtns.forEach(function(b){ b.setAttribute('aria-expanded','true'); });
+      openOverlay(overlay, modal, btn);
+    });
+  });
+  if(closeBtn) closeBtn.addEventListener('click', function(){
+    openBtns.forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+    closeOverlay(overlay);
+  });
+  overlay.addEventListener('click', function(e){
+    if(e.target === overlay){
+      openBtns.forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+      closeOverlay(overlay);
+    }
+  });
+  modal.addEventListener('click', function(e){ e.stopPropagation(); });
+
+  // Waitlist validation + submit
   var form = document.getElementById('beacon-form');
   var nameInput = document.getElementById('beacon-name');
   var emailInput = document.getElementById('beacon-email');
@@ -1762,43 +1505,6 @@
   var success = document.getElementById('beacon-success');
   var nameErr = document.getElementById('beacon-name-err');
   var emailErr = document.getElementById('beacon-email-err');
-  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* =========================
-     MODAL
-     ========================= */
-  function focusables(){ return modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'); }
-
-  function openModal(btn){
-    overlay.setAttribute('aria-hidden','false');
-    openBtns.forEach(function(b){ b.setAttribute('aria-expanded','true'); });
-    overlay._lastBtn = btn || null;
-    document.body.style.overflow = 'hidden';
-    var first = focusables()[0];
-    if(first) first.focus();
-  }
-  function closeModal(){
-    overlay.setAttribute('aria-hidden','true');
-    openBtns.forEach(function(b){ b.setAttribute('aria-expanded','false'); });
-    document.body.style.overflow = '';
-    if(overlay._lastBtn) overlay._lastBtn.focus();
-  }
-
-  if(closeBtn) closeBtn.addEventListener('click', closeModal);
-  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
-  overlay.addEventListener('keydown', function(e){
-    if(e.key === 'Escape'){ closeModal(); return; }
-    if(e.key !== 'Tab') return;
-    var els = focusables(); if(!els.length) return;
-    var first = els[0], last = els[els.length-1];
-    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
-    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
-  });
-  modal.addEventListener('click', function(e){ e.stopPropagation(); });
-
-  openBtns.forEach(function(btn){
-    btn.addEventListener('click', function(){ openModal(btn); });
-  });
 
   function setInvalid(input, invalid){
     input.classList.toggle('error', invalid);
@@ -1807,6 +1513,8 @@
   function showErr(el,msg){ el.textContent = msg; }
   function validName(v){ return (v||'').trim().length >= 2; }
   function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim()); }
+
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function flashRingFrom(el){
     var r = el.getBoundingClientRect();
@@ -1849,123 +1557,101 @@
     });
   });
 
-  /* =========================
-     SCROLL + CURSOR REACTIVE BEAM
-     ========================= */
-  if(!reduced){
-    var lastX = window.innerWidth * 0.55;
-    var lastY = window.innerHeight * 0.45;
-    var rafPending = false;
+  // ---------- Demo modal ----------
+  var demoOpenBtns = root.querySelectorAll('[data-open-demo]');
+  var demoOverlay = document.getElementById('beacon-demo-overlay');
+  var demoModal = document.getElementById('beacon-demo-modal');
+  var demoClose = document.getElementById('beacon-demo-close');
 
-    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-
-    function setVars(){
-      rafPending = false;
-      var b = root.getBoundingClientRect();
-      var originX = b.left + (b.width  * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusX'))/100));
-      var originY = b.top  + (b.height * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusY'))/100));
-      var dx = lastX - originX;
-      var dy = lastY - originY;
-      var ang = Math.atan2(dy, dx) * (180/Math.PI);
-      root.style.setProperty('--beamAngle', ang.toFixed(2) + 'deg');
-
-      var spotXPct = ((lastX - b.left) / b.width) * 100;
-      var spotYPct = ((lastY - b.top) / b.height) * 100;
-      root.style.setProperty('--spotX', clamp(spotXPct, 0, 100).toFixed(2) + '%');
-      root.style.setProperty('--spotY', clamp(spotYPct, 0, 100).toFixed(2) + '%');
-      root.style.setProperty('--spotOn', '1');
-    }
-
-    function schedule(){
-      if(rafPending) return;
-      rafPending = true;
-      requestAnimationFrame(setVars);
-    }
-
-    root.addEventListener('pointermove', function(e){
-      lastX = e.clientX;
-      lastY = e.clientY;
-      schedule();
+  demoOpenBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      demoOpenBtns.forEach(function(b){ b.setAttribute('aria-expanded','true'); });
+      openOverlay(demoOverlay, demoModal, btn);
     });
-    root.addEventListener('pointerleave', function(){ root.style.setProperty('--spotOn', '0'); });
-
-    function onScroll(){
-      var doc = document.documentElement;
-      var max = Math.max(1, (doc.scrollHeight - doc.clientHeight));
-      var t = (window.scrollY || doc.scrollTop || 0) / max;
-      var drift = (t * 360);
-      root.style.setProperty('--beamScrollAngle', drift.toFixed(2) + 'deg');
+  });
+  if(demoClose) demoClose.addEventListener('click', function(){
+    demoOpenBtns.forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+    closeOverlay(demoOverlay);
+  });
+  demoOverlay.addEventListener('click', function(e){
+    if(e.target === demoOverlay){
+      demoOpenBtns.forEach(function(b){ b.setAttribute('aria-expanded','false'); });
+      closeOverlay(demoOverlay);
     }
-    window.addEventListener('scroll', onScroll, { passive:true });
-    onScroll();
+  });
+  demoModal.addEventListener('click', function(e){ e.stopPropagation(); });
+
+  // ---------- Smooth scroll beam drift (RAF throttled to prevent jank/pixelation) ----------
+  if(reduced) return;
+
+  // cache beam focus % values to avoid repeated getComputedStyle calls
+  var cs = getComputedStyle(root);
+  var beamFX = parseFloat(cs.getPropertyValue('--beamFocusX')) / 100;
+  var beamFY = parseFloat(cs.getPropertyValue('--beamFocusY')) / 100;
+
+  var lastX = window.innerWidth * 0.55;
+  var lastY = window.innerHeight * 0.45;
+  var pending = false;
+
+  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+
+  function applyVars(){
+    pending = false;
+    var b = root.getBoundingClientRect();
+
+    var originX = b.left + (b.width  * beamFX);
+    var originY = b.top  + (b.height * beamFY);
+
+    var dx = lastX - originX;
+    var dy = lastY - originY;
+    var ang = Math.atan2(dy, dx) * (180/Math.PI);
+    root.style.setProperty('--beamAngle', ang.toFixed(2) + 'deg');
+
+    var spotXPct = ((lastX - b.left) / b.width) * 100;
+    var spotYPct = ((lastY - b.top) / b.height) * 100;
+    root.style.setProperty('--spotX', clamp(spotXPct, 0, 100).toFixed(2) + '%');
+    root.style.setProperty('--spotY', clamp(spotYPct, 0, 100).toFixed(2) + '%');
+
+    // Scroll drift — compute once per frame
+    var doc = document.documentElement;
+    var max = Math.max(1, (doc.scrollHeight - doc.clientHeight));
+    var t = (window.scrollY || doc.scrollTop || 0) / max;
+    root.style.setProperty('--beamScrollAngle', (t * 360).toFixed(2) + 'deg');
+  }
+
+  function schedule(){
+    if(pending) return;
+    pending = true;
+    requestAnimationFrame(applyVars);
+  }
+
+  root.addEventListener('pointermove', function(e){
+    lastX = e.clientX;
+    lastY = e.clientY;
+    root.style.setProperty('--spotOn', '1');
     schedule();
+  });
+  root.addEventListener('pointerleave', function(){ root.style.setProperty('--spotOn', '0'); });
 
-    var hoverables = root.querySelectorAll('.mk-card, .step, .panel-item, .hero-panel, .imgCard, .browser-demo');
-    hoverables.forEach(function(el){
-      el.addEventListener('mouseenter', function(){ root.style.setProperty('--spotOn', '1'); });
-      el.addEventListener('mouseleave', function(){ root.style.setProperty('--spotOn', '0.35'); });
-    });
-  }
+  window.addEventListener('scroll', schedule, { passive:true });
+  window.addEventListener('resize', function(){
+    // refresh cached focus values in case CSS changes across breakpoints
+    var cs2 = getComputedStyle(root);
+    beamFX = parseFloat(cs2.getPropertyValue('--beamFocusX')) / 100;
+    beamFY = parseFloat(cs2.getPropertyValue('--beamFocusY')) / 100;
+    schedule();
+  }, { passive:true });
 
-  /* =========================
-     DEMO TABS + AUTO ROTATE
-     ========================= */
-  function initDemo(demoRoot){
-    var tabs = demoRoot.querySelectorAll('[data-scene]');
-    var panels = demoRoot.querySelectorAll('[data-scene-panel]');
-    var urlEl = demoRoot.closest('.browser-demo') ? demoRoot.closest('.browser-demo').querySelector('[data-demo-url]') : null;
+  // initialize
+  root.style.setProperty('--spotOn', '0.35');
+  schedule();
 
-    var urls = {
-      search: 'beacon://search?q=family%20devotionals',
-      block:  'beacon://blocked',
-      nudge:  'beacon://nudge?mode=reset',
-      acct:   'beacon://accountability'
-    };
+  var hoverables = root.querySelectorAll('.mk-card, .step, .panel-item, .hero-panel, .imgCard');
+  hoverables.forEach(function(el){
+    el.addEventListener('mouseenter', function(){ root.style.setProperty('--spotOn', '1'); });
+    el.addEventListener('mouseleave', function(){ root.style.setProperty('--spotOn', '0.35'); });
+  });
 
-    function setActive(scene){
-      tabs.forEach(function(t){
-        t.setAttribute('aria-selected', t.getAttribute('data-scene') === scene ? 'true' : 'false');
-      });
-      panels.forEach(function(p){
-        var on = p.getAttribute('data-scene-panel') === scene;
-        p.classList.toggle('is-active', on);
-        p.setAttribute('aria-hidden', on ? 'false' : 'true');
-      });
-      if(urlEl && urls[scene]) urlEl.textContent = urls[scene];
-    }
-
-    tabs.forEach(function(t){
-      t.addEventListener('click', function(){
-        setActive(t.getAttribute('data-scene'));
-        demoRoot._stopAuto = true;
-      });
-    });
-
-    // initial
-    var initial = demoRoot.getAttribute('data-initial') || 'search';
-    setActive(initial);
-
-    // optional playful toggle state in acct scene (decorative)
-    var acct = demoRoot.querySelector('[data-acct]');
-    if(acct){
-      acct.addEventListener('click', function(){
-        acct.classList.toggle('is-on');
-      });
-    }
-
-    // auto-rotate
-    if(reduced) return;
-    var order = ['search','block','nudge','acct'];
-    var idx = Math.max(0, order.indexOf(initial));
-    setInterval(function(){
-      if(demoRoot._stopAuto) return;
-      idx = (idx + 1) % order.length;
-      setActive(order[idx]);
-    }, 3800);
-  }
-
-  var demos = root.querySelectorAll('[data-beacon-demo]');
-  demos.forEach(initDemo);
 })();
 </script>
 
