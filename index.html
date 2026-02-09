@@ -1163,7 +1163,7 @@
       <div class="hero-cta-row">
         <button type="button" class="hero-cta-pill" data-open aria-haspopup="dialog">Join Waitlist →</button>
         <a href="#beacon-features" class="hero-cta-secondary">What it does</a>
-        <a href="#beacon-how" class="hero-cta-secondary">How it works</a>
+        <a href href="#beacon-how" class="hero-cta-secondary">How it works</a>
       </div>
     </div>
 
@@ -1373,9 +1373,6 @@
   var emailErr = document.getElementById('beacon-email-err');
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* =========================
-     MODAL
-     ========================= */
   function focusables(){ return modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'); }
 
   function openModal(btn){
@@ -1428,7 +1425,6 @@
   }
 
   function submitPayload(payload){
-    // REPLACE with real endpoint (Webflow form / Zapier / your API)
     return Promise.resolve();
   }
 
@@ -1458,12 +1454,6 @@
     });
   });
 
-  /* =========================
-     SCROLL + CURSOR REACTIVE BEAM
-     - Cached layout/style: no getComputedStyle in hot path; refresh on resize only.
-     - Single getBoundingClientRect per frame (batch read then batch write).
-     - Perf monitor: if FPS drops ~45 for 1s, add .perf-safe to disable heavy effects.
-     ========================= */
   if(reduced) return;
 
   var lastX = window.innerWidth * 0.55;
@@ -1471,7 +1461,6 @@
   var lastScrollY = -1;
   var rafPending = false;
 
-  /* Cache beam focus % - only refresh on resize to avoid layout thrash */
   var beamFocusX = 64;
   var beamFocusY = 15;
   function refreshBeamFocusCache(){
@@ -1528,7 +1517,6 @@
   }, { passive: true });
   schedule();
 
-  /* Perf safe mode: if frame time > ~22ms (45fps) for 1s, add .perf-safe; remove after 2s good */
   var frameCount = 0;
   var slowFrameCount = 0;
   var lastFrameTime = performance.now();
@@ -1542,159 +1530,4 @@
   function perfTick(now){
     var delta = now - lastFrameTime;
     lastFrameTime = now;
-    if(delta > PERF_SLOW_THRESHOLD_MS){
-      slowFrameCount++;
-      goodFrameCount = 0;
-      if(!perfSafeActive && slowFrameCount >= PERF_SLOW_FRAMES_TO_TRIGGER){
-        perfSafeActive = true;
-        root.classList.add('perf-safe');
-        slowFrameCount = 0;
-      }
-    } else {
-      slowFrameCount = 0;
-      if(perfSafeActive){
-        if(delta < PERF_GOOD_THRESHOLD_MS) goodFrameCount++;
-        else goodFrameCount = 0;
-        if(goodFrameCount >= PERF_GOOD_FRAMES_TO_RECOVER){
-          perfSafeActive = false;
-          root.classList.remove('perf-safe');
-          goodFrameCount = 0;
-        }
-      }
-    }
-    requestAnimationFrame(perfTick);
-  }
-  requestAnimationFrame(perfTick);
-
-  var hoverables = root.querySelectorAll('.mk-card, .step, .panel-item, .hero-panel, .imgCard');
-  hoverables.forEach(function(el){
-    el.addEventListener('mouseenter', function(){ root.style.setProperty('--spotOn', '1'); });
-    el.addEventListener('mouseleave', function(){ root.style.setProperty('--spotOn', '0.35'); });
-  });
-})();
-
-(function(){
-  var demoOverlay = document.getElementById('beacon-demo-overlay');
-  var demoModal = document.getElementById('beacon-demo-modal');
-  var demoOpenBtn = document.getElementById('beacon-demo-open-btn');
-  var demoCloseBtn = document.getElementById('beacon-demo-close');
-  var demoWelcomeView = document.getElementById('demo-welcome-view');
-  var demoResultsView = document.getElementById('demo-results-view');
-  var demoSearchInput = document.getElementById('demo-search-input');
-  var demoSuggestions = document.getElementById('demo-suggestions');
-  var demoStartBtn = document.getElementById('demo-start-browsing');
-  var demoResultCards = document.getElementById('demo-result-cards');
-  var demoSeeWhy = document.getElementById('demo-see-why');
-  var demoWhyPanel = document.getElementById('demo-why-panel');
-  var demoResetBtn = document.getElementById('demo-reset');
-  if(!demoOverlay || !demoModal) return;
-  var DEMO_SUGGESTIONS = ['daily devotional','family safe recipes','Christian parenting resources','Bible study tools','wholesome family movies'];
-  var DEMO_RESULTS = [
-    { title: 'Family-friendly devotionals', url: 'example.org/devotionals' },
-    { title: 'Safe search tips for families', url: 'example.org/safe-search' },
-    { title: 'Faith-based parenting guides', url: 'example.org/parenting' },
-    { title: 'Clean entertainment reviews', url: 'example.org/entertainment' },
-    { title: 'Bible study resources', url: 'example.org/bible' },
-    { title: 'Church and community events', url: 'example.org/events' }
-  ];
-  function getDemoFocusables(){ return demoModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'); }
-  function trapFocus(e){
-    if(e.key !== 'Tab') return;
-    var els = getDemoFocusables();
-    if(!els.length) return;
-    var first = els[0], last = els[els.length - 1];
-    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
-    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
-  }
-  function openDemo(triggerBtn){
-    resetDemo();
-    demoOverlay.setAttribute('aria-hidden', 'false');
-    if(demoOpenBtn) demoOpenBtn.setAttribute('aria-expanded', 'true');
-    demoOverlay._lastFocus = triggerBtn || demoOpenBtn;
-    document.body.style.overflow = 'hidden';
-    var first = getDemoFocusables()[0];
-    if(first) first.focus();
-  }
-  function closeDemo(){
-    demoOverlay.setAttribute('aria-hidden', 'true');
-    if(demoOpenBtn) demoOpenBtn.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-    var last = demoOverlay._lastFocus;
-    if(last && last.focus) last.focus();
-  }
-  function escapeHtml(s){ var div = document.createElement('div'); div.textContent = s; return div.innerHTML; }
-  function renderResults(){
-    demoResultCards.innerHTML = '';
-    DEMO_RESULTS.forEach(function(r){
-      var li = document.createElement('li');
-      li.className = 'demo-result-card';
-      li.setAttribute('role', 'listitem');
-      li.innerHTML = '<span class="demo-safe-badge">Safe</span><div><div class="demo-result-title">' + escapeHtml(r.title) + '</div><div class="demo-result-url">' + escapeHtml(r.url) + '</div></div>';
-      demoResultCards.appendChild(li);
-    });
-  }
-  function resetDemo(){
-    demoWelcomeView.hidden = false;
-    demoResultsView.hidden = true;
-    if(demoSearchInput) demoSearchInput.value = '';
-    demoSuggestions.hidden = true;
-    demoSuggestions.innerHTML = '';
-    if(demoSearchInput) demoSearchInput.setAttribute('aria-expanded', 'false');
-    demoSeeWhy.setAttribute('aria-expanded', 'false');
-    demoWhyPanel.hidden = true;
-  }
-  demoCloseBtn.addEventListener('click', closeDemo);
-  demoOverlay.addEventListener('click', function(e){ if(e.target === demoOverlay) closeDemo(); });
-  demoOverlay.addEventListener('keydown', function(e){
-    if(e.key === 'Escape'){ closeDemo(); return; }
-    trapFocus(e);
-  });
-  demoModal.addEventListener('click', function(e){ e.stopPropagation(); });
-  demoOpenBtn.addEventListener('click', function(){ openDemo(demoOpenBtn); });
-  if(demoSearchInput){
-    demoSearchInput.addEventListener('input', function(){
-      var q = (demoSearchInput.value || '').trim().toLowerCase();
-      demoSuggestions.innerHTML = '';
-      demoSuggestions.hidden = true;
-      demoSearchInput.setAttribute('aria-expanded', 'false');
-      if(q.length === 0) return;
-      var matches = DEMO_SUGGESTIONS.filter(function(s){ return s.toLowerCase().indexOf(q) !== -1; }).slice(0, 5);
-      if(matches.length === 0) return;
-      matches.forEach(function(text){
-        var li = document.createElement('li');
-        li.className = 'demo-suggestion-item';
-        li.setAttribute('role', 'option');
-        li.textContent = text;
-        li.addEventListener('click', function(){
-          demoSearchInput.value = text;
-          demoSuggestions.hidden = true;
-          demoSearchInput.setAttribute('aria-expanded', 'false');
-          demoSearchInput.focus();
-        });
-        demoSuggestions.appendChild(li);
-      });
-      demoSuggestions.hidden = false;
-      demoSearchInput.setAttribute('aria-expanded', 'true');
-    });
-    demoSearchInput.addEventListener('blur', function(){
-      setTimeout(function(){ demoSuggestions.hidden = true; demoSearchInput.setAttribute('aria-expanded', 'false'); }, 150);
-    });
-  }
-  demoStartBtn.addEventListener('click', function(){
-    renderResults();
-    demoWelcomeView.hidden = true;
-    demoResultsView.hidden = false;
-    demoSeeWhy.setAttribute('aria-expanded', 'false');
-    demoWhyPanel.hidden = true;
-  });
-  demoSeeWhy.addEventListener('click', function(){
-    var open = demoWhyPanel.hidden;
-    demoWhyPanel.hidden = !open;
-    demoSeeWhy.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
-  demoResetBtn.addEventListener('click', resetDemo);
-})();
-</script>
-</section>
-</body>
-</html>
+    if(d
