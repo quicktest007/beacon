@@ -460,20 +460,112 @@
 }
 #beacon-hero .browser-demo .browser-frame{
   position: relative;
-  background: #fff;
+  background: #f0f2f5;
   min-height: 200px;
+  overflow: auto;
 }
-#beacon-hero .browser-demo .browser-frame iframe{
-  display: block;
-  width: 100%;
-  height: 280px;
-  border: none;
-}
-#beacon-hero .hero-center .browser-demo .browser-frame iframe{ height: 320px; }
+#beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 320px; }
 @media(min-width: 980px){
-  #beacon-hero .hero-center .browser-demo .browser-frame iframe{ height: 340px; min-height: 340px; }
+  #beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 340px; }
 }
-#beacon-hero .how .browser-demo .browser-frame iframe{ height: 280px; }
+#beacon-hero .how .browser-demo .browser-frame{ min-height: 280px; }
+
+/* Custom Beacon start-page demo (no iframe) */
+#beacon-hero .demo-page{
+  padding: 1.25rem 1rem 1.5rem;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(to bottom, #f8f9fc 0%, #eef0f5 100%);
+}
+#beacon-hero .hero-center .demo-page{ min-height: 300px; padding: 1.5rem 1.25rem 1.75rem; }
+#beacon-hero .how .demo-page{ min-height: 240px; padding: 1rem .9rem 1.25rem; }
+#beacon-hero .demo-page .demo-logo{
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #0E1628;
+  letter-spacing: -0.02em;
+  margin-bottom: .2rem;
+}
+#beacon-hero .demo-page .demo-tagline{
+  font-size: .7rem;
+  color: #5a6376;
+  margin-bottom: 1rem;
+  letter-spacing: .02em;
+}
+#beacon-hero .demo-page .demo-search-wrap{
+  width: 100%;
+  max-width: 220px;
+  margin: 0 auto;
+  position: relative;
+}
+#beacon-hero .demo-page .demo-search{
+  width: 100%;
+  padding: .5rem .75rem .5rem 2rem;
+  font-size: .75rem;
+  border: 1px solid #d0d4dc;
+  border-radius: 20px;
+  background: #fff;
+  color: #0E1628;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+#beacon-hero .demo-page .demo-search::placeholder{ color: #9ca3af; }
+#beacon-hero .demo-page .demo-search-icon{
+  position: absolute;
+  left: .7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: .75rem;
+  opacity: .7;
+}
+#beacon-hero .demo-page .demo-safesearch{
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin-top: .5rem;
+  padding: .25rem .5rem;
+  border-radius: 999px;
+  background: rgba(14,22,40,.08);
+  border: 1px solid rgba(14,22,40,.12);
+  font-size: .6rem;
+  font-weight: 800;
+  color: #0E1628;
+  letter-spacing: .02em;
+}
+#beacon-hero .demo-page .demo-safesearch span:first-child{ font-size: .65rem; }
+#beacon-hero .demo-page .demo-links{
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  justify-content: center;
+}
+#beacon-hero .demo-page .demo-links a{
+  padding: .35rem .6rem;
+  font-size: .65rem;
+  font-weight: 800;
+  color: #0E1628;
+  background: #fff;
+  border: 1px solid #e2e6ec;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+#beacon-hero .demo-page .demo-links a:hover{
+  border-color: rgba(255,183,3,.5);
+  box-shadow: 0 2px 8px rgba(255,183,3,.15);
+}
+#beacon-hero .demo-page .demo-footer{
+  margin-top: auto;
+  padding-top: 1rem;
+  font-size: .55rem;
+  color: #8b92a0;
+  font-weight: 700;
+  letter-spacing: .03em;
+}
 
 /* =========================
    MARKETING SECTION (below fold)
@@ -934,10 +1026,24 @@
         </div>
         <div class="browser-address-bar">
           <span class="addr-icon" aria-hidden="true">🔒</span>
-          <span class="addr-url">demo.html</span>
+          <span class="addr-url">beacon://start</span>
         </div>
         <div class="browser-frame">
-          <iframe src="demo.html" title="Beacon Browser showing demo.html" loading="lazy"></iframe>
+          <div class="demo-page" role="img" aria-label="Beacon start page demo">
+            <div class="demo-logo">Beacon</div>
+            <div class="demo-tagline">A calmer internet, rooted in faith</div>
+            <div class="demo-search-wrap">
+              <span class="demo-search-icon" aria-hidden="true">🔍</span>
+              <span class="demo-search">Search the web</span>
+            </div>
+            <div class="demo-safesearch"><span aria-hidden="true">🛡️</span> SafeSearch on</div>
+            <div class="demo-links">
+              <a href="#beacon-features">Daily verse</a>
+              <a href="#beacon-features">Family resources</a>
+              <a href="#beacon-features">Settings</a>
+            </div>
+            <div class="demo-footer">Protected by Beacon · Privacy-first</div>
+          </div>
         </div>
       </div>
       <aside class="hero-panel" aria-label="Beacon Browser highlights">
@@ -1031,10 +1137,24 @@
           </div>
           <div class="browser-address-bar">
             <span class="addr-icon" aria-hidden="true">🔒</span>
-            <span class="addr-url">demo.html</span>
+            <span class="addr-url">beacon://start</span>
           </div>
           <div class="browser-frame">
-            <iframe src="demo.html" title="Beacon Browser showing example.com" loading="lazy"></iframe>
+            <div class="demo-page" role="img" aria-label="Beacon start page demo">
+              <div class="demo-logo">Beacon</div>
+              <div class="demo-tagline">A calmer internet, rooted in faith</div>
+              <div class="demo-search-wrap">
+                <span class="demo-search-icon" aria-hidden="true">🔍</span>
+                <span class="demo-search">Search the web</span>
+              </div>
+              <div class="demo-safesearch"><span aria-hidden="true">🛡️</span> SafeSearch on</div>
+              <div class="demo-links">
+                <a href="#beacon-features">Daily verse</a>
+                <a href="#beacon-features">Family resources</a>
+                <a href="#beacon-features">Settings</a>
+              </div>
+              <div class="demo-footer">Protected by Beacon · Privacy-first</div>
+            </div>
           </div>
         </div>
         <div class="imgCard" style="background-image:url('https://cdn.prod.website-files.com/6967b271d84e0620304acc1f/6983b0ab7f60426d56c3dac4_pexels-jplenio-1118874.jpg');">
