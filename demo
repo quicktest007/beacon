@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Beacon Demo</title>
+
+<style>
+:root{
+  --navy:#0E1628;
+  --amber:#FFB703;
+  --ink:#0b1220;
+  --muted:rgba(12,18,34,.65);
+  --card:#ffffff;
+  --line:rgba(12,18,34,.12);
+  --shadow:0 18px 50px rgba(0,0,0,.18);
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#f4f6fb}
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+}
+
+/* Device frame */
+.device{
+  width:min(920px,100%);
+  aspect-ratio:16/10;
+  background:linear-gradient(180deg,#fff,#f2f4f8);
+  border-radius:26px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  border:1px solid var(--line);
+}
+
+/* Browser chrome */
+.chrome{
+  height:46px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:0 14px;
+  background:#f6f7fb;
+  border-bottom:1px solid var(--line);
+}
+.dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot.red{background:#ff5f57}
+.dot.yellow{background:#febc2e}
+.dot.green{background:#28c840}
+
+.addr{
+  flex:1;
+  height:30px;
+  border-radius:8px;
+  background:#fff;
+  border:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  padding:0 10px;
+  font-size:.82rem;
+  color:#444;
+}
+
+/* Page */
+.page{
+  padding:28px 32px;
+  height:calc(100% - 46px);
+  background:
+    radial-gradient(900px 500px at 10% 0%, rgba(255,183,3,.18), transparent 55%),
+    #ffffff;
+}
+
+/* Fake content */
+.hero{
+  max-width:720px;
+}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(255,183,3,.14);
+  color:#5a4200;
+  font-weight:700;
+  font-size:.8rem;
+}
+h1{
+  margin:14px 0 10px;
+  font-size:2.1rem;
+  letter-spacing:-.03em;
+  color:var(--ink);
+}
+p{
+  margin:0 0 22px;
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.card{
+  background:#fff;
+  border-radius:14px;
+  border:1px solid var(--line);
+  padding:16px;
+  box-shadow:0 12px 30px rgba(0,0,0,.06);
+}
+.card strong{
+  display:block;
+  margin-bottom:6px;
+}
+.safe{
+  position:absolute;
+  bottom:16px;
+  right:18px;
+  background:rgba(14,22,40,.9);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:14px;
+  font-size:.82rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.lock{
+  width:22px;
+  height:22px;
+  border-radius:6px;
+  background:rgba(255,183,3,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--amber);
+  font-weight:900;
+}
+</style>
+</head>
+
+<body>
+<div class="device">
+  <div class="chrome">
+    <div class="dots">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+    </div>
+    <div class="addr">🔒 https://beacon.safe</div>
+  </div>
+
+  <div class="page">
+    <div class="hero">
+      <span class="badge">🕊 Faith-Safe Browsing Enabled</span>
+      <h1>A calmer internet starts here.</h1>
+      <p>
+        Beacon quietly blocks explicit content, keeps search results clean,
+        and offers gentle guidance—without shame or surveillance.
+      </p>
+
+      <div class="cards">
+        <div class="card">
+          <strong>SafeSearch Locked</strong>
+          Cleaner results across Google, Bing, and YouTube.
+        </div>
+        <div class="card">
+          <strong>Content Blocking</strong>
+          Stops explicit pages before they load.
+        </div>
+        <div class="card">
+          <strong>Gentle Nudges</strong>
+          Calm reminders when boundaries matter.
+        </div>
+      </div>
+    </div>
+
+    <div class="safe">
+      <span class="lock">🔒</span>
+      Protection active
+    </div>
+  </div>
+</div>
+</body>
+</html>
