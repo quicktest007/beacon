@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Beacon Browser — Faith-forward, family-safe browsing with strict SafeSearch, blocking, gentle nudges, and optional accountability. A calmer internet, rooted in faith.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Beacon Browser — Faith-forward, family-safe browsing with strict SafeSearch, blocking, gentle nudges, and optional accountability. A calmer internet, rooted in faith." />
   <title>Beacon Browser — A Calmer Internet, Rooted in Faith</title>
-  <link rel="preconnect" href="https://cdn.prod.website-files.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.prod.website-files.com" crossorigin />
   <style>
     html, body { margin: 0; padding: 0; min-height: 100%; }
     body { min-height: 100vh; }
   </style>
 </head>
+
 <body>
 <section id="beacon-hero">
 <style>
@@ -29,7 +30,6 @@
   /* Beam tuning */
   --beamOpacity: .30;
   --beamSoft: .18;
-  --beamSpeed: 14s;
 
   /* Lighthouse origin (lantern) */
   --beamFocusX: 64%;
@@ -57,7 +57,7 @@
 #beacon-hero .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* =========================
-   HERO BACKGROUND: photo + cinematic overlays + beacon beams
+   HERO BACKGROUND
    ========================= */
 #beacon-hero .hero-bg{
   position:absolute; inset:0;
@@ -70,19 +70,14 @@
   background-image: var(--heroImg);
   background-size: 85%;
   background-position: center center;
-
   filter: saturate(1.05) contrast(1.05) brightness(0.92);
 }
-
-/* darken edges + center glow to keep text readable */
 #beacon-hero .hero-vignette{
   position:absolute; inset:0;
   background:
     radial-gradient(ellipse 70% 55% at 50% 35%, rgba(14,22,40,.08) 0%, rgba(14,22,40,.58) 55%, rgba(14,22,40,.86) 100%),
     linear-gradient(to bottom, rgba(14,22,40,.55) 0%, rgba(14,22,40,.70) 45%, rgba(14,22,40,.92) 100%);
 }
-
-/* subtle tech grid */
 #beacon-hero .hero-grid{
   position:absolute; inset:-10%;
   opacity:.10;
@@ -92,16 +87,12 @@
   background-size: 64px 64px;
   mask-image: radial-gradient(circle at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
 }
-
-/* grain */
 #beacon-hero .hero-noise{
   position:absolute; inset:0;
   opacity:.12;
   mix-blend-mode: overlay;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
 }
-
-/* Cursor "spotlight" (subtle, highlights hovered areas) */
 #beacon-hero .cursor-spot{
   position:absolute; inset:0;
   background:
@@ -113,11 +104,6 @@
   mix-blend-mode: screen;
   filter: blur(0.2px);
 }
-
-/* BIG beam (cursor + scroll reactive)
-   - origin anchored at lighthouse
-   - angle aims toward cursor, with scroll adding slow drift
-*/
 #beacon-hero .hero-beam{
   position:absolute;
   left: var(--beamFocusX);
@@ -127,7 +113,6 @@
   margin-left: -120vmax;
   margin-top: -120vmax;
   opacity: var(--beamOpacity);
-
   background: conic-gradient(
     from calc(var(--beamAngle) + var(--beamScrollAngle)) at 50% 50%,
     transparent 0deg,
@@ -140,8 +125,6 @@
   mix-blend-mode: screen;
   will-change: transform, opacity;
 }
-
-/* secondary soft beam for "volume" */
 #beacon-hero .hero-beam-soft{
   position:absolute;
   left: calc(var(--beamFocusX) + 1.5%);
@@ -151,7 +134,6 @@
   margin-left: -130vmax;
   margin-top: -130vmax;
   opacity: var(--beamSoft);
-
   background: conic-gradient(
     from calc(var(--beamAngle) + var(--beamScrollAngle) + 18deg) at 50% 50%,
     transparent 0deg,
@@ -164,8 +146,6 @@
   mix-blend-mode: screen;
   will-change: transform, opacity;
 }
-
-/* subtle "light haze" to tie beams to scene */
 #beacon-hero .hero-haze{
   position:absolute; inset:0;
   background:
@@ -177,8 +157,6 @@
   opacity:.9;
   mix-blend-mode: screen;
 }
-
-/* When reduced motion: freeze "reactive" feel */
 @media (prefers-reduced-motion: reduce){
   #beacon-hero .cursor-spot{ display:none; }
   #beacon-hero .hero-beam,
@@ -219,7 +197,7 @@
 #beacon-hero .hero-cta-pill:focus-visible{outline:2px solid var(--white);outline-offset:3px}
 
 /* =========================
-   HERO CONTENT (better architecture)
+   HERO CONTENT
    ========================= */
 #beacon-hero .hero-center{
   flex:1;
@@ -240,14 +218,10 @@
 @media(min-width: 980px){
   #beacon-hero .hero-wrap{ grid-template-columns: 1.15fr .85fr; align-items:center; }
 }
-
-#beacon-hero .hero-copy{
-  text-align:left;
-}
+#beacon-hero .hero-copy{ text-align:left; }
 @media(max-width: 979px){
   #beacon-hero .hero-copy{ text-align:center; }
 }
-
 #beacon-hero .hero-headline{
   margin:0;
   font-size: clamp(2.6rem,6.6vw,5.4rem);
@@ -267,7 +241,6 @@
   #beacon-hero .hero-subcopy{ margin-left:auto; margin-right:auto; }
 }
 #beacon-hero .hero-subcopy strong{ color: var(--white); font-weight: 900; }
-
 #beacon-hero .hero-stance{
   margin: .95rem 0 0;
   display:inline-block;
@@ -282,7 +255,6 @@
   -webkit-backdrop-filter: blur(10px);
 }
 #beacon-hero .hero-stance em{ font-style:normal; color: rgba(255,183,3,.95); }
-
 #beacon-hero .hero-cta-row{
   margin-top: 1.2rem;
   display:flex;
@@ -387,13 +359,13 @@
 }
 
 /* =========================
-   BROWSER DEMO (hero + how section)
+   BROWSER DEMO (NEW)
    ========================= */
 #beacon-hero .hero-right{
-  display: flex;
-  flex-direction: column;
+  display:flex;
+  flex-direction:column;
   gap: clamp(1rem, 2vw, 1.25rem);
-  min-width: 0;
+  min-width:0;
 }
 #beacon-hero .browser-demo{
   background: rgba(14,22,40,.75);
@@ -407,37 +379,30 @@
 #beacon-hero .browser-demo .browser-titlebar{
   height: 38px;
   padding: 0 14px;
-  display: flex;
-  align-items: center;
+  display:flex;
+  align-items:center;
   gap: 10px;
   background: rgba(0,0,0,.35);
   border-bottom: 1px solid rgba(255,255,255,.08);
 }
-#beacon-hero .browser-demo .browser-dots{
-  display: flex;
-  gap: 6px;
-}
-#beacon-hero .browser-demo .browser-dots span{
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-#beacon-hero .browser-demo .browser-dots .dot-red{ background: #ff5f57; }
-#beacon-hero .browser-demo .browser-dots .dot-yellow{ background: #febc2e; }
-#beacon-hero .browser-demo .browser-dots .dot-green{ background: #28c840; }
+#beacon-hero .browser-demo .browser-dots{ display:flex; gap:6px; }
+#beacon-hero .browser-demo .browser-dots span{ width:12px; height:12px; border-radius:50%; }
+#beacon-hero .browser-demo .browser-dots .dot-red{ background:#ff5f57; }
+#beacon-hero .browser-demo .browser-dots .dot-yellow{ background:#febc2e; }
+#beacon-hero .browser-demo .browser-dots .dot-green{ background:#28c840; }
 #beacon-hero .browser-demo .browser-title{
-  flex: 1;
-  text-align: center;
-  font-size: .8rem;
-  font-weight: 700;
-  color: rgba(255,255,255,.7);
-  letter-spacing: -0.01em;
+  flex:1;
+  text-align:center;
+  font-size:.8rem;
+  font-weight:700;
+  color: rgba(255,255,255,.72);
+  letter-spacing:-0.01em;
 }
 #beacon-hero .browser-demo .browser-address-bar{
   height: 44px;
   padding: 0 12px;
-  display: flex;
-  align-items: center;
+  display:flex;
+  align-items:center;
   gap: 10px;
   background: rgba(0,0,0,.25);
   border-bottom: 1px solid rgba(255,255,255,.06);
@@ -445,11 +410,11 @@
 #beacon-hero .browser-demo .browser-address-bar .addr-icon{
   color: var(--amber);
   font-size: 1rem;
-  flex-shrink: 0;
+  flex-shrink:0;
 }
 #beacon-hero .browser-demo .browser-address-bar .addr-url{
-  flex: 1;
-  min-width: 0;
+  flex:1;
+  min-width:0;
   padding: 8px 12px;
   border-radius: 8px;
   background: rgba(255,255,255,.06);
@@ -457,118 +422,502 @@
   font-size: .8rem;
   color: rgba(255,255,255,.88);
   font-family: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #beacon-hero .browser-demo .browser-frame{
-  position: relative;
-  background: #f0f2f5;
-  min-height: 200px;
-  overflow: auto;
+  position:relative;
+  background: #f2f4f8;
+  overflow:hidden;
+  min-height: 280px;
 }
-#beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 320px; }
-@media(min-width: 980px){
-  #beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 340px; }
-}
-#beacon-hero .how .browser-demo .browser-frame{ min-height: 280px; }
+#beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 340px; }
+#beacon-hero .how .browser-demo .browser-frame{ min-height: 300px; }
 
-/* Custom Beacon start-page demo (no iframe) */
-#beacon-hero .demo-page{
-  padding: 1.25rem 1rem 1.5rem;
-  min-height: 260px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: linear-gradient(to bottom, #f8f9fc 0%, #eef0f5 100%);
+/* The “cool” fake UI */
+#beacon-hero .beacon-ui{
+  position:relative;
+  height:100%;
+  min-height: inherit;
+  display:flex;
+  flex-direction:column;
+  padding: 12px;
+  background:
+    radial-gradient(ellipse 90% 70% at 20% 0%, rgba(255,183,3,.10) 0%, transparent 60%),
+    linear-gradient(to bottom, #f8f9fc 0%, #eef2f7 100%);
 }
-#beacon-hero .hero-center .demo-page{ min-height: 300px; padding: 1.5rem 1.25rem 1.75rem; }
-#beacon-hero .how .demo-page{ min-height: 240px; padding: 1rem .9rem 1.25rem; }
-#beacon-hero .demo-page .demo-logo{
-  font-size: 1.1rem;
+
+/* top mini-toolbar inside page */
+#beacon-hero .ui-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 12px;
+  background: rgba(14,22,40,.05);
+  border: 1px solid rgba(14,22,40,.10);
+}
+#beacon-hero .ui-brand{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width:0;
+}
+#beacon-hero .ui-mark{
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,183,3,.22);
+  border: 1px solid rgba(255,183,3,.38);
+  box-shadow: 0 10px 24px rgba(255,183,3,.14);
+  color:#0E1628;
+  font-weight: 950;
+  letter-spacing:-0.03em;
+}
+#beacon-hero .ui-title{
+  min-width:0;
+  line-height:1.1;
+}
+#beacon-hero .ui-title strong{
+  display:block;
+  color:#0E1628;
+  font-weight: 950;
+  font-size: .88rem;
+  letter-spacing:-0.02em;
+}
+#beacon-hero .ui-title span{
+  display:block;
+  color:#5a6376;
+  font-weight: 750;
+  font-size: .68rem;
+  letter-spacing:.02em;
+}
+#beacon-hero .ui-badges{
+  display:flex;
+  gap: 8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+#beacon-hero .ui-badge{
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background:#fff;
+  border: 1px solid rgba(14,22,40,.12);
+  color:#0E1628;
+  font-size:.68rem;
   font-weight: 900;
-  color: #0E1628;
-  letter-spacing: -0.02em;
-  margin-bottom: .2rem;
-}
-#beacon-hero .demo-page .demo-tagline{
-  font-size: .7rem;
-  color: #5a6376;
-  margin-bottom: 1rem;
-  letter-spacing: .02em;
-}
-#beacon-hero .demo-page .demo-search-wrap{
-  width: 100%;
-  max-width: 220px;
-  margin: 0 auto;
-  position: relative;
-}
-#beacon-hero .demo-page .demo-search{
-  width: 100%;
-  padding: .5rem .75rem .5rem 2rem;
-  font-size: .75rem;
-  border: 1px solid #d0d4dc;
-  border-radius: 20px;
-  background: #fff;
-  color: #0E1628;
+  letter-spacing:.02em;
   box-shadow: 0 1px 3px rgba(0,0,0,.06);
 }
-#beacon-hero .demo-page .demo-search::placeholder{ color: #9ca3af; }
-#beacon-hero .demo-page .demo-search-icon{
-  position: absolute;
-  left: .7rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: .75rem;
-  opacity: .7;
+#beacon-hero .ui-badge .led{
+  width:8px;height:8px;border-radius:999px;
+  background: rgba(255,183,3,.95);
+  box-shadow: 0 0 0 4px rgba(255,183,3,.16);
 }
-#beacon-hero .demo-page .demo-safesearch{
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  margin-top: .5rem;
-  padding: .25rem .5rem;
-  border-radius: 999px;
-  background: rgba(14,22,40,.08);
-  border: 1px solid rgba(14,22,40,.12);
-  font-size: .6rem;
-  font-weight: 800;
-  color: #0E1628;
-  letter-spacing: .02em;
+
+/* tab row */
+#beacon-hero .ui-tabs{
+  margin-top: 10px;
+  display:flex;
+  gap: 8px;
+  flex-wrap:wrap;
 }
-#beacon-hero .demo-page .demo-safesearch span:first-child{ font-size: .65rem; }
-#beacon-hero .demo-page .demo-links{
-  margin-top: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .6rem;
-  justify-content: center;
-}
-#beacon-hero .demo-page .demo-links a{
-  padding: .35rem .6rem;
-  font-size: .65rem;
-  font-weight: 800;
-  color: #0E1628;
-  background: #fff;
-  border: 1px solid #e2e6ec;
+#beacon-hero .ui-tab{
+  appearance:none;
+  border:0;
+  cursor:pointer;
+  padding: 8px 10px;
   border-radius: 12px;
-  text-decoration: none;
-  transition: border-color .15s, box-shadow .15s;
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(14,22,40,.12);
+  color:#0E1628;
+  font-weight: 900;
+  font-size: .72rem;
+  letter-spacing: .01em;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
 }
-#beacon-hero .demo-page .demo-links a:hover{
-  border-color: rgba(255,183,3,.5);
-  box-shadow: 0 2px 8px rgba(255,183,3,.15);
+#beacon-hero .ui-tab:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(0,0,0,.10);
+  border-color: rgba(255,183,3,.40);
 }
-#beacon-hero .demo-page .demo-footer{
+#beacon-hero .ui-tab[aria-selected="true"]{
+  background: rgba(14,22,40,.92);
+  color:#fff;
+  border-color: rgba(255,255,255,.12);
+  box-shadow: 0 16px 30px rgba(14,22,40,.22);
+}
+#beacon-hero .ui-tab .mini{
+  opacity:.9;
+  margin-right:6px;
+}
+
+/* scene viewport */
+#beacon-hero .ui-stage{
+  position:relative;
+  margin-top: 10px;
+  flex:1;
+  min-height: 190px;
+  border-radius: 16px;
+  overflow:hidden;
+  background: #fff;
+  border: 1px solid rgba(14,22,40,.12);
+  box-shadow: 0 18px 46px rgba(0,0,0,.12);
+}
+#beacon-hero .scene{
+  position:absolute;
+  inset:0;
+  padding: 14px;
+  opacity:0;
+  transform: translateY(6px);
+  transition: opacity .35s ease, transform .35s ease;
+  pointer-events:none;
+}
+#beacon-hero .scene.is-active{
+  opacity:1;
+  transform: translateY(0);
+  pointer-events:auto;
+}
+
+/* Scene: Search */
+#beacon-hero .search-head{
+  display:flex; align-items:center; gap:10px;
+}
+#beacon-hero .search-input{
+  flex:1;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(14,22,40,.14);
+  background: rgba(14,22,40,.03);
+  font-weight: 850;
+  color:#0E1628;
+  font-size: .82rem;
+}
+#beacon-hero .search-pill{
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(255,183,3,.18);
+  border: 1px solid rgba(255,183,3,.32);
+  font-weight: 950;
+  color:#0E1628;
+  font-size: .70rem;
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+}
+#beacon-hero .results{
+  margin-top: 12px;
+  display:grid;
+  gap: 10px;
+}
+#beacon-hero .result{
+  border-radius: 14px;
+  border: 1px solid rgba(14,22,40,.10);
+  background: rgba(14,22,40,.02);
+  padding: 10px 12px;
+}
+#beacon-hero .result .url{
+  font-size: .65rem;
+  font-weight: 900;
+  color: rgba(14,22,40,.62);
+}
+#beacon-hero .result .title{
+  margin-top: 4px;
+  font-size: .84rem;
+  font-weight: 950;
+  color:#0E1628;
+  letter-spacing:-0.01em;
+}
+#beacon-hero .result .desc{
+  margin-top: 4px;
+  font-size: .72rem;
+  color:#3f4758;
+  line-height:1.35;
+}
+#beacon-hero .result.muted{
+  position:relative;
+  overflow:hidden;
+}
+#beacon-hero .result.muted::after{
+  content:"Filtered";
+  position:absolute;
+  top:10px;
+  right:10px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(14,22,40,.82);
+  color:#fff;
+  font-weight: 950;
+  font-size: .62rem;
+}
+#beacon-hero .result.muted .title,
+#beacon-hero .result.muted .desc{
+  filter: blur(2.5px);
+  opacity:.55;
+}
+
+/* Scene: Block */
+#beacon-hero .block-card{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255,183,3,.10) 0%, transparent 55%),
+    linear-gradient(to bottom, rgba(14,22,40,.04), rgba(14,22,40,.00));
+}
+#beacon-hero .block-inner{
+  width:min(420px, 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(14,22,40,.12);
+  background: #fff;
+  box-shadow: 0 20px 50px rgba(0,0,0,.12);
+  padding: 16px 14px;
+}
+#beacon-hero .shield{
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  display:grid;
+  place-items:center;
+  margin: 0 auto 10px;
+  background: rgba(255,183,3,.18);
+  border: 1px solid rgba(255,183,3,.34);
+  color:#0E1628;
+  font-size: 1.1rem;
+}
+#beacon-hero .block-title{
+  margin:0;
+  font-weight: 980;
+  letter-spacing:-0.02em;
+  color:#0E1628;
+  font-size: 1.05rem;
+}
+#beacon-hero .block-sub{
+  margin: 8px 0 0;
+  color:#4b5466;
+  font-size: .78rem;
+  line-height:1.45;
+}
+#beacon-hero .block-actions{
+  margin-top: 12px;
+  display:flex;
+  gap: 10px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+#beacon-hero .mini-btn{
+  border: 0;
+  cursor:pointer;
+  padding: 9px 12px;
+  border-radius: 12px;
+  font-weight: 950;
+  font-size: .72rem;
+  letter-spacing:.01em;
+}
+#beacon-hero .mini-btn.primary{
+  background: rgba(14,22,40,.92);
+  color:#fff;
+}
+#beacon-hero .mini-btn.ghost{
+  background: rgba(14,22,40,.06);
+  color:#0E1628;
+  border: 1px solid rgba(14,22,40,.12);
+}
+
+/* Scene: Nudge */
+#beacon-hero .nudge-wrap{
+  height:100%;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+#beacon-hero .nudge-banner{
+  border-radius: 16px;
+  border: 1px solid rgba(255,183,3,.34);
+  background: rgba(255,183,3,.14);
+  padding: 12px 12px;
+}
+#beacon-hero .nudge-banner strong{
+  display:block;
+  color:#0E1628;
+  font-weight: 980;
+  letter-spacing:-0.02em;
+  margin-bottom: 4px;
+}
+#beacon-hero .nudge-banner span{
+  display:block;
+  color:#3f4758;
+  font-size: .78rem;
+  line-height:1.4;
+}
+#beacon-hero .nudge-grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+#beacon-hero .tile{
+  border-radius: 16px;
+  border: 1px solid rgba(14,22,40,.10);
+  background: rgba(14,22,40,.03);
+  padding: 12px;
+}
+#beacon-hero .tile .k{
+  display:flex; align-items:center; gap:8px;
+  font-weight: 950;
+  color:#0E1628;
+  font-size: .78rem;
+}
+#beacon-hero .tile .k i{
+  width: 28px; height: 28px;
+  border-radius: 10px;
+  display:grid; place-items:center;
+  background: rgba(14,22,40,.08);
+  border: 1px solid rgba(14,22,40,.10);
+  font-style: normal;
+}
+#beacon-hero .tile .v{
+  margin-top: 6px;
+  color:#4b5466;
+  font-size: .72rem;
+  line-height:1.4;
+}
+
+/* Scene: Accountability */
+#beacon-hero .acct{
+  height:100%;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+#beacon-hero .acct-card{
+  border-radius: 16px;
+  border: 1px solid rgba(14,22,40,.10);
+  background: rgba(14,22,40,.03);
+  padding: 12px;
+}
+#beacon-hero .acct-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+}
+#beacon-hero .acct-top strong{
+  color:#0E1628;
+  font-weight: 980;
+  letter-spacing:-0.02em;
+}
+#beacon-hero .toggle{
+  position:relative;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(14,22,40,.16);
+  border: 1px solid rgba(14,22,40,.18);
+}
+#beacon-hero .toggle::after{
+  content:"";
+  position:absolute;
+  top: 50%;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background:#fff;
+  transform: translateY(-50%);
+  box-shadow: 0 6px 14px rgba(0,0,0,.14);
+  transition: left .25s ease, background .25s ease;
+}
+#beacon-hero .acct.is-on .toggle{
+  background: rgba(255,183,3,.42);
+  border-color: rgba(255,183,3,.55);
+}
+#beacon-hero .acct.is-on .toggle::after{ left: 20px; }
+#beacon-hero .acct-desc{
+  margin-top: 6px;
+  color:#4b5466;
+  font-size: .76rem;
+  line-height:1.45;
+}
+#beacon-hero .people{
+  display:flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap:wrap;
+}
+#beacon-hero .person{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(14,22,40,.10);
+  background:#fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+#beacon-hero .avatar{
+  width: 30px;
+  height: 30px;
+  border-radius: 12px;
+  display:grid;
+  place-items:center;
+  background: rgba(255,183,3,.16);
+  border: 1px solid rgba(255,183,3,.28);
+  color:#0E1628;
+  font-weight: 980;
+  font-size: .78rem;
+}
+#beacon-hero .pmeta strong{
+  display:block;
+  color:#0E1628;
+  font-weight: 980;
+  font-size: .78rem;
+  letter-spacing:-0.01em;
+}
+#beacon-hero .pmeta span{
+  display:block;
+  color:#6b7384;
+  font-weight: 800;
+  font-size: .68rem;
+}
+#beacon-hero .footnote{
   margin-top: auto;
-  padding-top: 1rem;
-  font-size: .55rem;
-  color: #8b92a0;
-  font-weight: 700;
-  letter-spacing: .03em;
+  padding-top: 10px;
+  color:#7a8293;
+  font-size: .66rem;
+  font-weight: 850;
+  letter-spacing:.02em;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  flex-wrap:wrap;
+}
+#beacon-hero .footnote .lock{
+  display:inline-flex;
+  align-items:center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(14,22,40,.06);
+  border: 1px solid rgba(14,22,40,.10);
+  color:#0E1628;
+  font-size: .66rem;
+  font-weight: 950;
 }
 
 /* =========================
-   MARKETING SECTION (below fold)
+   MARKETING
    ========================= */
 #beacon-hero .marketing{
   position:relative;
@@ -604,8 +953,6 @@
   font-size: clamp(1rem,1.6vw,1.1rem);
   line-height:1.65;
 }
-
-/* cards */
 #beacon-hero .mk-grid{
   margin-top: clamp(1.5rem,3vw,2.2rem);
   display:grid;
@@ -652,7 +999,7 @@
 }
 
 /* =========================
-   HOW IT WORKS (NEW, LONGER PAGE)
+   HOW IT WORKS
    ========================= */
 #beacon-hero .how{
   position:relative;
@@ -686,7 +1033,6 @@
   line-height:1.7;
   max-width: 70ch;
 }
-
 #beacon-hero .how-grid{
   margin-top: clamp(1.5rem,3.2vw,2.25rem);
   display:grid;
@@ -700,11 +1046,7 @@
     align-items: stretch;
   }
 }
-
-#beacon-hero .how-steps{
-  display:grid;
-  gap: 1rem;
-}
+#beacon-hero .how-steps{ display:grid; gap: 1rem; }
 #beacon-hero .step{
   background: rgba(255,255,255,.05);
   border: 1px solid rgba(255,255,255,.10);
@@ -746,10 +1088,7 @@
   gap: 1rem;
 }
 @media(min-width: 980px){
-  #beacon-hero .how-media{
-    grid-template-columns: 1fr;
-    grid-auto-rows: 1fr;
-  }
+  #beacon-hero .how-media{ grid-template-columns: 1fr; grid-auto-rows: 1fr; }
 }
 #beacon-hero .imgCard{
   position:relative;
@@ -795,7 +1134,7 @@
 }
 
 /* =========================
-   WAITLIST FOOTER (footer image)
+   WAITLIST FOOTER
    ========================= */
 #beacon-hero .waitlist-footer{
   position: relative;
@@ -837,9 +1176,7 @@
   font-size: clamp(1rem, 1.5vw, 1.1rem);
   line-height: 1.6;
 }
-#beacon-hero .waitlist-footer .hero-cta-pill{
-  margin: 0;
-}
+#beacon-hero .waitlist-footer .hero-cta-pill{ margin: 0; }
 
 /* =========================
    MODAL
@@ -927,7 +1264,6 @@
 }
 #beacon-hero input.error{border-color:#ff8a8a}
 #beacon-hero .err{font-size:.8rem;color:#ffb0b0;min-height:1em;margin-top:.35rem}
-
 #beacon-hero .submit{
   width:100%;
   margin-top: 1rem;
@@ -960,7 +1296,6 @@
   border: 1px solid rgba(255,183,3,.16);
   font-weight: 900;
 }
-
 /* big success ring */
 #beacon-hero .flash-ring{
   position:fixed;
@@ -984,11 +1319,9 @@
   <div class="hero-vignette"></div>
   <div class="hero-grid"></div>
   <div class="hero-noise"></div>
-
   <div class="hero-beam"></div>
   <div class="hero-beam-soft"></div>
   <div class="hero-haze"></div>
-
   <div class="cursor-spot"></div>
 </div>
 
@@ -1017,6 +1350,7 @@
     </div>
 
     <div class="hero-right">
+      <!-- HERO DEMO -->
       <div class="browser-demo" aria-label="Beacon Browser demo">
         <div class="browser-titlebar">
           <div class="browser-dots" aria-hidden="true">
@@ -1026,53 +1360,171 @@
         </div>
         <div class="browser-address-bar">
           <span class="addr-icon" aria-hidden="true">🔒</span>
-          <span class="addr-url">beacon://start</span>
+          <span class="addr-url" data-demo-url>beacon://search?q=family%20devotionals</span>
         </div>
-        <div class="browser-frame">
-          <div class="demo-page" role="img" aria-label="Beacon start page demo">
-            <div class="demo-logo">Beacon</div>
-            <div class="demo-tagline">A calmer internet, rooted in faith</div>
-            <div class="demo-search-wrap">
-              <span class="demo-search-icon" aria-hidden="true">🔍</span>
-              <span class="demo-search">Search the web</span>
-            </div>
-            <div class="demo-safesearch"><span aria-hidden="true">🛡️</span> SafeSearch on</div>
-            <div class="demo-links">
-              <a href="#beacon-features">Daily verse</a>
-              <a href="#beacon-features">Family resources</a>
-              <a href="#beacon-features">Settings</a>
-            </div>
-            <div class="demo-footer">Protected by Beacon · Privacy-first</div>
-          </div>
-        </div>
-      </div>
-      <aside class="hero-panel" aria-label="Beacon Browser highlights">
-      <h2 class="panel-title">Built for calm, consistent guardrails</h2>
-      <ul class="panel-list">
-        <li class="panel-item">
-          <div class="panel-icon" aria-hidden="true">🔎</div>
-          <div><strong>Strict SafeSearch</strong><span>Cleaner results by default—less chaos, fewer surprises.</span></div>
-        </li>
-        <li class="panel-item">
-          <div class="panel-icon" aria-hidden="true">🛡️</div>
-          <div><strong>Blocking that works</strong><span>Helps keep explicit content out before it loads.</span></div>
-        </li>
-        <li class="panel-item">
-          <div class="panel-icon" aria-hidden="true">🕊️</div>
-          <div><strong>Gentle nudges</strong><span>Respectful guidance in the moment—without stigma.</span></div>
-        </li>
-        <li class="panel-item">
-          <div class="panel-icon" aria-hidden="true">🤝</div>
-          <div><strong>Optional accountability</strong><span>Invite trusted support on your terms. Private by default.</span></div>
-        </li>
-      </ul>
 
-      <div class="panel-chips" aria-label="Platform and privacy">
-        <span class="chip"><span class="dot" aria-hidden="true"></span>Cross-device</span>
-        <span class="chip"><span class="dot" aria-hidden="true"></span>Privacy-first</span>
-        <span class="chip"><span class="dot" aria-hidden="true"></span>Subscription-ready</span>
+        <div class="browser-frame">
+          <div class="beacon-ui" data-beacon-demo>
+            <div class="ui-top">
+              <div class="ui-brand">
+                <div class="ui-mark">B</div>
+                <div class="ui-title">
+                  <strong>Beacon Start</strong>
+                  <span>Calm defaults • Clear choices</span>
+                </div>
+              </div>
+              <div class="ui-badges" aria-label="Safety and privacy badges">
+                <div class="ui-badge"><span class="led"></span>SafeSearch</div>
+                <div class="ui-badge">Privacy-first</div>
+              </div>
+            </div>
+
+            <div class="ui-tabs" role="tablist" aria-label="Demo scenes">
+              <button class="ui-tab" type="button" role="tab" aria-selected="true" data-scene="search"><span class="mini">🔎</span>Search</button>
+              <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="block"><span class="mini">🛡️</span>Block</button>
+              <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="nudge"><span class="mini">🕊️</span>Nudge</button>
+              <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="acct"><span class="mini">🤝</span>Accountability</button>
+            </div>
+
+            <div class="ui-stage" aria-label="Demo content">
+              <!-- Search scene -->
+              <div class="scene is-active" data-scene-panel="search" role="tabpanel">
+                <div class="search-head">
+                  <div class="search-input" aria-label="Search query (decorative)">family devotionals for teens</div>
+                  <div class="search-pill" aria-label="SafeSearch status"><span aria-hidden="true">🛡️</span> On</div>
+                </div>
+
+                <div class="results" role="list" aria-label="Search results">
+                  <div class="result" role="listitem">
+                    <div class="url">beacon://results • trusted</div>
+                    <div class="title">15 short family devotionals for busy weeknights</div>
+                    <div class="desc">Simple, grace-filled prompts you can read in under 5 minutes.</div>
+                  </div>
+                  <div class="result" role="listitem">
+                    <div class="url">example.org • community</div>
+                    <div class="title">Teen discussion starters (faith-forward)</div>
+                    <div class="desc">Questions that invite honesty without pressure.</div>
+                  </div>
+                  <div class="result muted" role="listitem" aria-label="Filtered result (decorative)">
+                    <div class="url">somewhere.com</div>
+                    <div class="title">[Filtered]</div>
+                    <div class="desc">This result is hidden by SafeSearch.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Block scene -->
+              <div class="scene" data-scene-panel="block" role="tabpanel" aria-hidden="true">
+                <div class="block-card">
+                  <div class="block-inner">
+                    <div class="shield" aria-hidden="true">🛡️</div>
+                    <h3 class="block-title">This page is blocked</h3>
+                    <p class="block-sub">
+                      Beacon prevented explicit content from loading. Take a breath — you’re in control.
+                    </p>
+                    <div class="block-actions" aria-label="Actions (decorative)">
+                      <button class="mini-btn primary" type="button">Go back</button>
+                      <button class="mini-btn ghost" type="button">Open Settings</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Nudge scene -->
+              <div class="scene" data-scene-panel="nudge" role="tabpanel" aria-hidden="true">
+                <div class="nudge-wrap">
+                  <div class="nudge-banner">
+                    <strong>Gentle nudge</strong>
+                    <span>You’ve been scrolling for a bit. Want a short reset?</span>
+                  </div>
+                  <div class="nudge-grid" aria-label="Nudge options (decorative)">
+                    <div class="tile">
+                      <div class="k"><i aria-hidden="true">⏳</i> 60-second pause</div>
+                      <div class="v">Breathe, refocus, and choose what’s next.</div>
+                    </div>
+                    <div class="tile">
+                      <div class="k"><i aria-hidden="true">📖</i> Daily verse</div>
+                      <div class="v">A quiet reminder you can return to anytime.</div>
+                    </div>
+                    <div class="tile">
+                      <div class="k"><i aria-hidden="true">🧭</i> Intent check</div>
+                      <div class="v">“What am I here for?” — quick clarity.</div>
+                    </div>
+                    <div class="tile">
+                      <div class="k"><i aria-hidden="true">🔕</i> Reduce noise</div>
+                      <div class="v">Dim clickbait + temptation loops automatically.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Accountability scene -->
+              <div class="scene" data-scene-panel="acct" role="tabpanel" aria-hidden="true">
+                <div class="acct is-on" data-acct>
+                  <div class="acct-card">
+                    <div class="acct-top">
+                      <strong>Optional accountability</strong>
+                      <div class="toggle" aria-hidden="true"></div>
+                    </div>
+                    <div class="acct-desc">
+                      Invite trusted support on your terms. Private by default — no creepy tracking.
+                    </div>
+
+                    <div class="people" aria-label="Trusted contacts (decorative)">
+                      <div class="person">
+                        <div class="avatar">J</div>
+                        <div class="pmeta"><strong>Jordan</strong><span>Accountability partner</span></div>
+                      </div>
+                      <div class="person">
+                        <div class="avatar">M</div>
+                        <div class="pmeta"><strong>Maria</strong><span>Family admin</span></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="footnote">
+                    <span class="lock"><span aria-hidden="true">🔒</span> Encrypted summaries</span>
+                    <span>Nothing shared without your choice</span>
+                  </div>
+                </div>
+              </div>
+            </div><!-- /ui-stage -->
+
+            <div class="footnote" style="margin-top:10px;">
+              <span class="lock"><span aria-hidden="true">✨</span> Click tabs to preview features</span>
+              <span>Demo — not a live browser</span>
+            </div>
+          </div><!-- /beacon-ui -->
+        </div><!-- /browser-frame -->
       </div>
-    </aside>
+
+      <aside class="hero-panel" aria-label="Beacon Browser highlights">
+        <h2 class="panel-title">Built for calm, consistent guardrails</h2>
+        <ul class="panel-list">
+          <li class="panel-item">
+            <div class="panel-icon" aria-hidden="true">🔎</div>
+            <div><strong>Strict SafeSearch</strong><span>Cleaner results by default—less chaos, fewer surprises.</span></div>
+          </li>
+          <li class="panel-item">
+            <div class="panel-icon" aria-hidden="true">🛡️</div>
+            <div><strong>Blocking that works</strong><span>Helps keep explicit content out before it loads.</span></div>
+          </li>
+          <li class="panel-item">
+            <div class="panel-icon" aria-hidden="true">🕊️</div>
+            <div><strong>Gentle nudges</strong><span>Respectful guidance in the moment—without stigma.</span></div>
+          </li>
+          <li class="panel-item">
+            <div class="panel-icon" aria-hidden="true">🤝</div>
+            <div><strong>Optional accountability</strong><span>Invite trusted support on your terms. Private by default.</span></div>
+          </li>
+        </ul>
+
+        <div class="panel-chips" aria-label="Platform and privacy">
+          <span class="chip"><span class="dot" aria-hidden="true"></span>Cross-device</span>
+          <span class="chip"><span class="dot" aria-hidden="true"></span>Privacy-first</span>
+          <span class="chip"><span class="dot" aria-hidden="true"></span>Subscription-ready</span>
+        </div>
+      </aside>
     </div>
   </div>
 </div>
@@ -1128,6 +1580,7 @@
       </div>
 
       <div class="how-media" aria-label="How it works images">
+        <!-- HOW SECTION DEMO (same component, different initial scene) -->
         <div class="browser-demo" aria-label="Beacon Browser demo">
           <div class="browser-titlebar">
             <div class="browser-dots" aria-hidden="true">
@@ -1137,32 +1590,119 @@
           </div>
           <div class="browser-address-bar">
             <span class="addr-icon" aria-hidden="true">🔒</span>
-            <span class="addr-url">beacon://start</span>
+            <span class="addr-url" data-demo-url>beacon://blocked</span>
           </div>
+
           <div class="browser-frame">
-            <div class="demo-page" role="img" aria-label="Beacon start page demo">
-              <div class="demo-logo">Beacon</div>
-              <div class="demo-tagline">A calmer internet, rooted in faith</div>
-              <div class="demo-search-wrap">
-                <span class="demo-search-icon" aria-hidden="true">🔍</span>
-                <span class="demo-search">Search the web</span>
+            <div class="beacon-ui" data-beacon-demo data-initial="block">
+              <div class="ui-top">
+                <div class="ui-brand">
+                  <div class="ui-mark">B</div>
+                  <div class="ui-title">
+                    <strong>Beacon Protect</strong>
+                    <span>Prevents explicit content before it loads</span>
+                  </div>
+                </div>
+                <div class="ui-badges">
+                  <div class="ui-badge"><span class="led"></span>Protection</div>
+                  <div class="ui-badge">Grace-first</div>
+                </div>
               </div>
-              <div class="demo-safesearch"><span aria-hidden="true">🛡️</span> SafeSearch on</div>
-              <div class="demo-links">
-                <a href="#beacon-features">Daily verse</a>
-                <a href="#beacon-features">Family resources</a>
-                <a href="#beacon-features">Settings</a>
+
+              <div class="ui-tabs" role="tablist" aria-label="Demo scenes">
+                <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="search"><span class="mini">🔎</span>Search</button>
+                <button class="ui-tab" type="button" role="tab" aria-selected="true" data-scene="block"><span class="mini">🛡️</span>Block</button>
+                <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="nudge"><span class="mini">🕊️</span>Nudge</button>
+                <button class="ui-tab" type="button" role="tab" aria-selected="false" data-scene="acct"><span class="mini">🤝</span>Accountability</button>
               </div>
-              <div class="demo-footer">Protected by Beacon · Privacy-first</div>
+
+              <div class="ui-stage">
+                <div class="scene" data-scene-panel="search" role="tabpanel" aria-hidden="true">
+                  <div class="search-head">
+                    <div class="search-input">kids bible stories</div>
+                    <div class="search-pill"><span aria-hidden="true">🛡️</span> On</div>
+                  </div>
+                  <div class="results">
+                    <div class="result">
+                      <div class="url">beacon://results • trusted</div>
+                      <div class="title">Short Bible stories for kids (ages 6–10)</div>
+                      <div class="desc">Simple lessons with gentle discussion prompts.</div>
+                    </div>
+                    <div class="result muted">
+                      <div class="url">somewhere.com</div>
+                      <div class="title">[Filtered]</div>
+                      <div class="desc">This result is hidden by SafeSearch.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="scene is-active" data-scene-panel="block" role="tabpanel">
+                  <div class="block-card">
+                    <div class="block-inner">
+                      <div class="shield" aria-hidden="true">🛡️</div>
+                      <h3 class="block-title">Blocked — you’re protected</h3>
+                      <p class="block-sub">
+                        Beacon stopped this page automatically. You can adjust rules anytime in Settings.
+                      </p>
+                      <div class="block-actions">
+                        <button class="mini-btn primary" type="button">Back to safety</button>
+                        <button class="mini-btn ghost" type="button">View rules</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="scene" data-scene-panel="nudge" role="tabpanel" aria-hidden="true">
+                  <div class="nudge-wrap">
+                    <div class="nudge-banner">
+                      <strong>Quick reset</strong>
+                      <span>Want to refocus? Try a 60-second pause or a verse.</span>
+                    </div>
+                    <div class="nudge-grid">
+                      <div class="tile"><div class="k"><i>⏳</i> 60-second pause</div><div class="v">A small reset that actually helps.</div></div>
+                      <div class="tile"><div class="k"><i>📖</i> Daily verse</div><div class="v">A calm anchor in the moment.</div></div>
+                      <div class="tile"><div class="k"><i>🧭</i> Intent check</div><div class="v">A fast “why am I here?” prompt.</div></div>
+                      <div class="tile"><div class="k"><i>🔕</i> Reduce noise</div><div class="v">Less clickbait, fewer rabbit holes.</div></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="scene" data-scene-panel="acct" role="tabpanel" aria-hidden="true">
+                  <div class="acct is-on" data-acct>
+                    <div class="acct-card">
+                      <div class="acct-top">
+                        <strong>Accountability (optional)</strong>
+                        <div class="toggle" aria-hidden="true"></div>
+                      </div>
+                      <div class="acct-desc">Share only what you choose — designed for trust, not surveillance.</div>
+                      <div class="people">
+                        <div class="person"><div class="avatar">T</div><div class="pmeta"><strong>Taylor</strong><span>Trusted friend</span></div></div>
+                        <div class="person"><div class="avatar">A</div><div class="pmeta"><strong>Alex</strong><span>Spouse</span></div></div>
+                      </div>
+                    </div>
+                    <div class="footnote">
+                      <span class="lock"><span aria-hidden="true">🔒</span> Encrypted summaries</span>
+                      <span>Always your choice</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="footnote" style="margin-top:10px;">
+                <span class="lock"><span aria-hidden="true">✨</span> Same browser — different moments</span>
+                <span>Demo — not live</span>
+              </div>
             </div>
           </div>
         </div>
+
         <div class="imgCard" style="background-image:url('https://cdn.prod.website-files.com/6967b271d84e0620304acc1f/6983b0ab7f60426d56c3dac4_pexels-jplenio-1118874.jpg');">
           <div class="cap">
             <strong>Calm, consistent defaults</strong>
             <span>More peace in everyday browsing — not a constant battle.</span>
           </div>
         </div>
+
         <div class="imgCard" style="background-image:url('https://cdn.prod.website-files.com/6967b271d84e0620304acc1f/6983b238b84e6b5746b7c41d_pexels-gabby-k-5997313.jpg'); min-height: 280px;">
           <div class="cap">
             <strong>Built for families</strong>
@@ -1192,12 +1732,12 @@
     <form id="beacon-form" novalidate>
       <div class="field">
         <label for="beacon-name">Name</label>
-        <input id="beacon-name" name="name" type="text" placeholder="Your name" autocomplete="name" required aria-describedby="beacon-name-err" aria-invalid="false">
+        <input id="beacon-name" name="name" type="text" placeholder="Your name" autocomplete="name" required aria-describedby="beacon-name-err" aria-invalid="false" />
         <div class="err" id="beacon-name-err" role="alert"></div>
       </div>
       <div class="field">
         <label for="beacon-email">Email</label>
-        <input id="beacon-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required aria-describedby="beacon-email-err" aria-invalid="false">
+        <input id="beacon-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required aria-describedby="beacon-email-err" aria-invalid="false" />
         <div class="err" id="beacon-email-err" role="alert"></div>
       </div>
       <button class="submit" id="beacon-submit" type="submit">Join waitlist</button>
@@ -1311,82 +1851,124 @@
 
   /* =========================
      SCROLL + CURSOR REACTIVE BEAM
-     - beam originates at lighthouse lantern (beamFocusX/Y)
-     - angle aims toward cursor
-     - scroll adds slow "drift" to feel alive even when idle
-     - cursor spotlight gently highlights hovered areas
      ========================= */
-  if(reduced) return;
+  if(!reduced){
+    var lastX = window.innerWidth * 0.55;
+    var lastY = window.innerHeight * 0.45;
+    var rafPending = false;
 
-  var lastX = window.innerWidth * 0.55;
-  var lastY = window.innerHeight * 0.45;
-  var rafPending = false;
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
-  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+    function setVars(){
+      rafPending = false;
+      var b = root.getBoundingClientRect();
+      var originX = b.left + (b.width  * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusX'))/100));
+      var originY = b.top  + (b.height * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusY'))/100));
+      var dx = lastX - originX;
+      var dy = lastY - originY;
+      var ang = Math.atan2(dy, dx) * (180/Math.PI);
+      root.style.setProperty('--beamAngle', ang.toFixed(2) + 'deg');
 
-  function setVars(){
-    rafPending = false;
+      var spotXPct = ((lastX - b.left) / b.width) * 100;
+      var spotYPct = ((lastY - b.top) / b.height) * 100;
+      root.style.setProperty('--spotX', clamp(spotXPct, 0, 100).toFixed(2) + '%');
+      root.style.setProperty('--spotY', clamp(spotYPct, 0, 100).toFixed(2) + '%');
+      root.style.setProperty('--spotOn', '1');
+    }
 
-    // Lighthouse origin (in viewport px)
-    var b = root.getBoundingClientRect();
-    var originX = b.left + (b.width  * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusX'))/100));
-    var originY = b.top  + (b.height * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusY'))/100));
+    function schedule(){
+      if(rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(setVars);
+    }
 
-    // Aim vector (origin -> cursor)
-    var dx = lastX - originX;
-    var dy = lastY - originY;
-    var ang = Math.atan2(dy, dx) * (180/Math.PI); // degrees
-    // Conic gradient angles: 0deg points right, so this matches well.
-    root.style.setProperty('--beamAngle', ang.toFixed(2) + 'deg');
+    root.addEventListener('pointermove', function(e){
+      lastX = e.clientX;
+      lastY = e.clientY;
+      schedule();
+    });
+    root.addEventListener('pointerleave', function(){ root.style.setProperty('--spotOn', '0'); });
 
-    // Spotlight position relative to component
-    var spotXPct = ((lastX - b.left) / b.width) * 100;
-    var spotYPct = ((lastY - b.top) / b.height) * 100;
-    root.style.setProperty('--spotX', clamp(spotXPct, 0, 100).toFixed(2) + '%');
-    root.style.setProperty('--spotY', clamp(spotYPct, 0, 100).toFixed(2) + '%');
-    root.style.setProperty('--spotOn', '1');
-  }
-
-  function schedule(){
-    if(rafPending) return;
-    rafPending = true;
-    requestAnimationFrame(setVars);
-  }
-
-  // Mouse / pointer tracking
-  root.addEventListener('pointermove', function(e){
-    lastX = e.clientX;
-    lastY = e.clientY;
+    function onScroll(){
+      var doc = document.documentElement;
+      var max = Math.max(1, (doc.scrollHeight - doc.clientHeight));
+      var t = (window.scrollY || doc.scrollTop || 0) / max;
+      var drift = (t * 360);
+      root.style.setProperty('--beamScrollAngle', drift.toFixed(2) + 'deg');
+    }
+    window.addEventListener('scroll', onScroll, { passive:true });
+    onScroll();
     schedule();
-  });
 
-  root.addEventListener('pointerleave', function(){
-    // Fade spotlight when leaving
-    root.style.setProperty('--spotOn', '0');
-  });
-
-  // Scroll drift: slow sweep as you scroll through page
-  function onScroll(){
-    var doc = document.documentElement;
-    var max = Math.max(1, (doc.scrollHeight - doc.clientHeight));
-    var t = (window.scrollY || doc.scrollTop || 0) / max; // 0..1
-    var drift = (t * 360);
-    root.style.setProperty('--beamScrollAngle', drift.toFixed(2) + 'deg');
+    var hoverables = root.querySelectorAll('.mk-card, .step, .panel-item, .hero-panel, .imgCard, .browser-demo');
+    hoverables.forEach(function(el){
+      el.addEventListener('mouseenter', function(){ root.style.setProperty('--spotOn', '1'); });
+      el.addEventListener('mouseleave', function(){ root.style.setProperty('--spotOn', '0.35'); });
+    });
   }
-  window.addEventListener('scroll', onScroll, { passive:true });
-  onScroll();
 
-  // Initialize spotlight to center-ish
-  schedule();
+  /* =========================
+     DEMO TABS + AUTO ROTATE
+     ========================= */
+  function initDemo(demoRoot){
+    var tabs = demoRoot.querySelectorAll('[data-scene]');
+    var panels = demoRoot.querySelectorAll('[data-scene-panel]');
+    var urlEl = demoRoot.closest('.browser-demo') ? demoRoot.closest('.browser-demo').querySelector('[data-demo-url]') : null;
 
-  // Make spotlight softly pulse when hovering cards (feels intentional)
-  var hoverables = root.querySelectorAll('.mk-card, .step, .panel-item, .hero-panel, .imgCard, .browser-demo');
-  hoverables.forEach(function(el){
-    el.addEventListener('mouseenter', function(){ root.style.setProperty('--spotOn', '1'); });
-    el.addEventListener('mouseleave', function(){ root.style.setProperty('--spotOn', '0.35'); });
-  });
+    var urls = {
+      search: 'beacon://search?q=family%20devotionals',
+      block:  'beacon://blocked',
+      nudge:  'beacon://nudge?mode=reset',
+      acct:   'beacon://accountability'
+    };
+
+    function setActive(scene){
+      tabs.forEach(function(t){
+        t.setAttribute('aria-selected', t.getAttribute('data-scene') === scene ? 'true' : 'false');
+      });
+      panels.forEach(function(p){
+        var on = p.getAttribute('data-scene-panel') === scene;
+        p.classList.toggle('is-active', on);
+        p.setAttribute('aria-hidden', on ? 'false' : 'true');
+      });
+      if(urlEl && urls[scene]) urlEl.textContent = urls[scene];
+    }
+
+    tabs.forEach(function(t){
+      t.addEventListener('click', function(){
+        setActive(t.getAttribute('data-scene'));
+        demoRoot._stopAuto = true;
+      });
+    });
+
+    // initial
+    var initial = demoRoot.getAttribute('data-initial') || 'search';
+    setActive(initial);
+
+    // optional playful toggle state in acct scene (decorative)
+    var acct = demoRoot.querySelector('[data-acct]');
+    if(acct){
+      acct.addEventListener('click', function(){
+        acct.classList.toggle('is-on');
+      });
+    }
+
+    // auto-rotate
+    if(reduced) return;
+    var order = ['search','block','nudge','acct'];
+    var idx = Math.max(0, order.indexOf(initial));
+    setInterval(function(){
+      if(demoRoot._stopAuto) return;
+      idx = (idx + 1) % order.length;
+      setActive(order[idx]);
+    }, 3800);
+  }
+
+  var demos = root.querySelectorAll('[data-beacon-demo]');
+  demos.forEach(initDemo);
 })();
 </script>
+
 </section>
 </body>
 </html>
