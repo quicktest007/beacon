@@ -7,8 +7,8 @@
   <title>Beacon Browser — A Calmer Internet, Rooted in Faith</title>
   <link rel="preconnect" href="https://cdn.prod.website-files.com" crossorigin>
   <style>
-    html, body { margin: 0; padding: 0; min-height: 100%; }
-    body { min-height: 100vh; }
+    html { margin: 0; padding: 0; min-height: 100%; scroll-behavior: smooth; }
+    body { margin: 0; padding: 0; min-height: 100vh; background: #0E1628; }
   </style>
 </head>
 <body>
@@ -64,13 +64,14 @@
   z-index:0;
   pointer-events:none;
   isolation:isolate;
+  contain: paint;
 }
 #beacon-hero .hero-photo{
   position:absolute; inset:0;
   background-image: var(--heroImg);
-  background-size: 85%;
+  background-size: cover;
   background-position: center center;
-
+  background-repeat: no-repeat;
   filter: saturate(1.05) contrast(1.05) brightness(0.92);
 }
 
@@ -127,18 +128,19 @@
   margin-left: -120vmax;
   margin-top: -120vmax;
   opacity: var(--beamOpacity);
-
+  /* Fixed gradient + transform = GPU compositing, no repaint on scroll */
   background: conic-gradient(
-    from calc(var(--beamAngle) + var(--beamScrollAngle)) at 50% 50%,
+    from 0deg at 50% 50%,
     transparent 0deg,
     rgba(255,183,3,0.00) 40deg,
     rgba(255,183,3,0.78) 78deg,
     rgba(255,183,3,0.22) 120deg,
     transparent 165deg
   );
+  transform: rotate(calc(var(--beamAngle) + var(--beamScrollAngle)));
   filter: blur(.2px);
   mix-blend-mode: screen;
-  will-change: transform, opacity;
+  will-change: transform;
 }
 
 /* secondary soft beam for "volume" */
@@ -151,18 +153,18 @@
   margin-left: -130vmax;
   margin-top: -130vmax;
   opacity: var(--beamSoft);
-
   background: conic-gradient(
-    from calc(var(--beamAngle) + var(--beamScrollAngle) + 18deg) at 50% 50%,
+    from 18deg at 50% 50%,
     transparent 0deg,
     rgba(255,183,3,0.00) 35deg,
     rgba(255,183,3,0.35) 85deg,
     rgba(255,183,3,0.09) 130deg,
     transparent 175deg
   );
+  transform: rotate(calc(var(--beamAngle) + var(--beamScrollAngle)));
   filter: blur(2px);
   mix-blend-mode: screen;
-  will-change: transform, opacity;
+  will-change: transform;
 }
 
 /* subtle "light haze" to tie beams to scene */
@@ -460,20 +462,112 @@
 }
 #beacon-hero .browser-demo .browser-frame{
   position: relative;
-  background: #fff;
+  background: #f0f2f5;
   min-height: 200px;
+  overflow: auto;
 }
-#beacon-hero .browser-demo .browser-frame iframe{
-  display: block;
-  width: 100%;
-  height: 280px;
-  border: none;
-}
-#beacon-hero .hero-center .browser-demo .browser-frame iframe{ height: 320px; }
+#beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 320px; }
 @media(min-width: 980px){
-  #beacon-hero .hero-center .browser-demo .browser-frame iframe{ height: 340px; min-height: 340px; }
+  #beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 340px; }
 }
-#beacon-hero .how .browser-demo .browser-frame iframe{ height: 280px; }
+#beacon-hero .how .browser-demo .browser-frame{ min-height: 280px; }
+
+/* Custom Beacon start-page demo (no iframe) */
+#beacon-hero .demo-page{
+  padding: 1.25rem 1rem 1.5rem;
+  min-height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(to bottom, #f8f9fc 0%, #eef0f5 100%);
+}
+#beacon-hero .hero-center .demo-page{ min-height: 300px; padding: 1.5rem 1.25rem 1.75rem; }
+#beacon-hero .how .demo-page{ min-height: 240px; padding: 1rem .9rem 1.25rem; }
+#beacon-hero .demo-page .demo-logo{
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #0E1628;
+  letter-spacing: -0.02em;
+  margin-bottom: .2rem;
+}
+#beacon-hero .demo-page .demo-tagline{
+  font-size: .7rem;
+  color: #5a6376;
+  margin-bottom: 1rem;
+  letter-spacing: .02em;
+}
+#beacon-hero .demo-page .demo-search-wrap{
+  width: 100%;
+  max-width: 220px;
+  margin: 0 auto;
+  position: relative;
+}
+#beacon-hero .demo-page .demo-search{
+  width: 100%;
+  padding: .5rem .75rem .5rem 2rem;
+  font-size: .75rem;
+  border: 1px solid #d0d4dc;
+  border-radius: 20px;
+  background: #fff;
+  color: #0E1628;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+#beacon-hero .demo-page .demo-search::placeholder{ color: #9ca3af; }
+#beacon-hero .demo-page .demo-search-icon{
+  position: absolute;
+  left: .7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: .75rem;
+  opacity: .7;
+}
+#beacon-hero .demo-page .demo-safesearch{
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin-top: .5rem;
+  padding: .25rem .5rem;
+  border-radius: 999px;
+  background: rgba(14,22,40,.08);
+  border: 1px solid rgba(14,22,40,.12);
+  font-size: .6rem;
+  font-weight: 800;
+  color: #0E1628;
+  letter-spacing: .02em;
+}
+#beacon-hero .demo-page .demo-safesearch span:first-child{ font-size: .65rem; }
+#beacon-hero .demo-page .demo-links{
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  justify-content: center;
+}
+#beacon-hero .demo-page .demo-links a{
+  padding: .35rem .6rem;
+  font-size: .65rem;
+  font-weight: 800;
+  color: #0E1628;
+  background: #fff;
+  border: 1px solid #e2e6ec;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+#beacon-hero .demo-page .demo-links a:hover{
+  border-color: rgba(255,183,3,.5);
+  box-shadow: 0 2px 8px rgba(255,183,3,.15);
+}
+#beacon-hero .demo-page .demo-footer{
+  margin-top: auto;
+  padding-top: 1rem;
+  font-size: .55rem;
+  color: #8b92a0;
+  font-weight: 700;
+  letter-spacing: .03em;
+}
 
 /* =========================
    MARKETING SECTION (below fold)
@@ -483,6 +577,8 @@
   z-index:1;
   padding: clamp(2.5rem,6vw,4rem) clamp(1.25rem,5vw,3rem) clamp(2.5rem,6vw,4rem);
   background: linear-gradient(to bottom, rgba(14,22,40,.20), rgba(14,22,40,.92) 26%, rgba(14,22,40,1) 100%);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
 }
 #beacon-hero .mk-inner{ max-width: 1120px; margin: 0 auto; }
 #beacon-hero .kicker{
@@ -570,6 +666,8 @@
     radial-gradient(ellipse 70% 55% at 50% 0%, rgba(255,183,3,.08) 0%, transparent 55%),
     linear-gradient(to bottom, rgba(14,22,40,1) 0%, rgba(12,18,34,1) 100%);
   overflow:hidden;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
 }
 #beacon-hero .how-inner{ max-width:1120px; margin:0 auto; }
 #beacon-hero .how-top{
@@ -666,8 +764,11 @@
   border: 1px solid rgba(255,255,255,.10);
   box-shadow: 0 28px 80px rgba(0,0,0,.35);
   min-height: 240px;
+  aspect-ratio: 16/10;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  background-color: rgba(14,22,40,.6);
 }
 #beacon-hero .imgCard::after{
   content:"";
@@ -713,10 +814,13 @@
   align-items: center;
   justify-content: center;
   padding: clamp(2.5rem, 6vw, 4rem) clamp(1.25rem, 5vw, 2rem);
-  background-image: url("./footerimage.jpg");
+  background-image: url("footerimage.jpg");
   background-size: cover;
   background-position: center -10px;
   background-repeat: no-repeat;
+  background-color: #0E1628;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 320px;
 }
 #beacon-hero .waitlist-footer::before{
   content: "";
@@ -934,10 +1038,24 @@
         </div>
         <div class="browser-address-bar">
           <span class="addr-icon" aria-hidden="true">🔒</span>
-          <span class="addr-url">https://example.com</span>
+          <span class="addr-url">beacon://start</span>
         </div>
         <div class="browser-frame">
-          <iframe src="https://example.com" title="Beacon Browser showing example.com" loading="lazy"></iframe>
+          <div class="demo-page" role="img" aria-label="Beacon start page demo">
+            <div class="demo-logo">Beacon</div>
+            <div class="demo-tagline">A calmer internet, rooted in faith</div>
+            <div class="demo-search-wrap">
+              <span class="demo-search-icon" aria-hidden="true">🔍</span>
+              <span class="demo-search">Search the web</span>
+            </div>
+            <div class="demo-safesearch"><span aria-hidden="true">🛡️</span> SafeSearch on</div>
+            <div class="demo-links">
+              <a href="#beacon-features">Daily verse</a>
+              <a href="#beacon-features">Family resources</a>
+              <a href="#beacon-features">Settings</a>
+            </div>
+            <div class="demo-footer">Protected by Beacon · Privacy-first</div>
+          </div>
         </div>
       </div>
       <aside class="hero-panel" aria-label="Beacon Browser highlights">
@@ -1031,10 +1149,24 @@
           </div>
           <div class="browser-address-bar">
             <span class="addr-icon" aria-hidden="true">🔒</span>
-            <span class="addr-url">https://example.com</span>
+            <span class="addr-url">beacon://start</span>
           </div>
           <div class="browser-frame">
-            <iframe src="https://example.com" title="Beacon Browser showing example.com" loading="lazy"></iframe>
+            <div class="demo-page" role="img" aria-label="Beacon start page demo">
+              <div class="demo-logo">Beacon</div>
+              <div class="demo-tagline">A calmer internet, rooted in faith</div>
+              <div class="demo-search-wrap">
+                <span class="demo-search-icon" aria-hidden="true">🔍</span>
+                <span class="demo-search">Search the web</span>
+              </div>
+              <div class="demo-safesearch"><span aria-hidden="true">🛡️</span> SafeSearch on</div>
+              <div class="demo-links">
+                <a href="#beacon-features">Daily verse</a>
+                <a href="#beacon-features">Family resources</a>
+                <a href="#beacon-features">Settings</a>
+              </div>
+              <div class="demo-footer">Protected by Beacon · Privacy-first</div>
+            </div>
           </div>
         </div>
         <div class="imgCard" style="background-image:url('https://cdn.prod.website-files.com/6967b271d84e0620304acc1f/6983b0ab7f60426d56c3dac4_pexels-jplenio-1118874.jpg');">
@@ -1206,25 +1338,22 @@
 
   function setVars(){
     rafPending = false;
-
-    // Lighthouse origin (in viewport px)
     var b = root.getBoundingClientRect();
     var originX = b.left + (b.width  * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusX'))/100));
     var originY = b.top  + (b.height * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusY'))/100));
-
-    // Aim vector (origin -> cursor)
     var dx = lastX - originX;
     var dy = lastY - originY;
-    var ang = Math.atan2(dy, dx) * (180/Math.PI); // degrees
-    // Conic gradient angles: 0deg points right, so this matches well.
+    var ang = Math.atan2(dy, dx) * (180/Math.PI);
     root.style.setProperty('--beamAngle', ang.toFixed(2) + 'deg');
-
-    // Spotlight position relative to component
     var spotXPct = ((lastX - b.left) / b.width) * 100;
     var spotYPct = ((lastY - b.top) / b.height) * 100;
     root.style.setProperty('--spotX', clamp(spotXPct, 0, 100).toFixed(2) + '%');
     root.style.setProperty('--spotY', clamp(spotYPct, 0, 100).toFixed(2) + '%');
     root.style.setProperty('--spotOn', '1');
+    var doc = document.documentElement;
+    var max = Math.max(1, (doc.scrollHeight - doc.clientHeight));
+    var t = (window.scrollY || doc.scrollTop || 0) / max;
+    root.style.setProperty('--beamScrollAngle', (t * 360).toFixed(2) + 'deg');
   }
 
   function schedule(){
@@ -1233,7 +1362,6 @@
     requestAnimationFrame(setVars);
   }
 
-  // Mouse / pointer tracking
   root.addEventListener('pointermove', function(e){
     lastX = e.clientX;
     lastY = e.clientY;
@@ -1241,22 +1369,10 @@
   });
 
   root.addEventListener('pointerleave', function(){
-    // Fade spotlight when leaving
     root.style.setProperty('--spotOn', '0');
   });
 
-  // Scroll drift: slow sweep as you scroll through page
-  function onScroll(){
-    var doc = document.documentElement;
-    var max = Math.max(1, (doc.scrollHeight - doc.clientHeight));
-    var t = (window.scrollY || doc.scrollTop || 0) / max; // 0..1
-    var drift = (t * 360);
-    root.style.setProperty('--beamScrollAngle', drift.toFixed(2) + 'deg');
-  }
-  window.addEventListener('scroll', onScroll, { passive:true });
-  onScroll();
-
-  // Initialize spotlight to center-ish
+  window.addEventListener('scroll', schedule, { passive: true });
   schedule();
 
   // Make spotlight softly pulse when hovering cards (feels intentional)
