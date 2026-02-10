@@ -1309,6 +1309,15 @@
 }
 #beacon-hero .demo-results-view .demo-results-heading{ margin: 0 0 1rem; font-size: 1.2rem; font-weight: 900; color: rgba(255,255,255,.95); }
 #beacon-hero .demo-result-cards{ display: flex; flex-direction: column; gap: .6rem; list-style: none; padding: 0; margin: 0 0 1rem; }
+#beacon-hero .demo-results-empty{
+  padding: 2rem 1rem;
+  text-align: center;
+  color: rgba(255,255,255,.85);
+  font-size: .95rem;
+}
+#beacon-hero .demo-results-empty p{ margin: 0 0 .5rem; }
+#beacon-hero .demo-results-empty strong{ color: var(--amber); }
+#beacon-hero .demo-results-empty-hint{ font-size: .85rem; color: rgba(255,255,255,.6); margin-top: .5rem !important; }
 #beacon-hero .demo-result-card{
   padding: .6rem .85rem;
   background: rgba(255,255,255,.06);
@@ -1657,7 +1666,7 @@
           </div>
         </div>
         <div class="demo-results-view" id="demo-results-view" hidden>
-          <h3 class="demo-results-heading">Protected Results</h3>
+          <h3 class="demo-results-heading" id="demo-results-heading">Protected Results</h3>
           <div class="demo-result-cards" id="demo-result-cards" role="list"></div>
           <div class="demo-blocked-notice">
             <span class="demo-blocked-text">Blocked content filtered</span>
@@ -1902,6 +1911,7 @@
   var demoSuggestions = document.getElementById('demo-suggestions');
   var demoStartBtn = document.getElementById('demo-start-browsing');
   var demoResultCards = document.getElementById('demo-result-cards');
+  var demoResultsHeading = document.getElementById('demo-results-heading');
   var demoSeeWhy = document.getElementById('demo-see-why');
   var demoWhyPanel = document.getElementById('demo-why-panel');
   var demoResetBtn = document.getElementById('demo-reset');
@@ -1911,15 +1921,44 @@
 
   function setDemoUrl(url){ if(demoAddrUrl) demoAddrUrl.textContent = url; }
   function setDemoTabTitle(title){ if(demoTabTitle) demoTabTitle.textContent = title; }
-  var DEMO_SUGGESTIONS = ['daily devotional','family safe recipes','Christian parenting resources','Bible study tools','wholesome family movies'];
-  var DEMO_RESULTS = [
-    { title: 'Family-friendly devotionals', url: 'example.org/devotionals' },
-    { title: 'Safe search tips for families', url: 'example.org/safe-search' },
-    { title: 'Faith-based parenting guides', url: 'example.org/parenting' },
-    { title: 'Clean entertainment reviews', url: 'example.org/entertainment' },
-    { title: 'Bible study resources', url: 'example.org/bible' },
-    { title: 'Church and community events', url: 'example.org/events' }
+  var DEMO_SUGGESTIONS = [
+    'daily devotional','family safe recipes','Christian parenting resources','Bible study tools','wholesome family movies',
+    'morning prayer','Sunday school curriculum','Christian marriage advice','safe kids games','faith-based podcasts'
   ];
+  /* Searchable index: each item has title, url, and keywords used for matching */
+  var DEMO_INDEX = [
+    { title: 'Family-friendly devotionals for every day', url: 'example.org/daily-devotionals', keywords: 'daily devotional devotionals faith morning prayer' },
+    { title: 'Safe search tips for families', url: 'example.org/safe-search', keywords: 'safe search families tips parenting' },
+    { title: 'Christian parenting resources and guides', url: 'example.org/parenting', keywords: 'Christian parenting resources family children' },
+    { title: 'Clean entertainment and movie reviews', url: 'example.org/entertainment', keywords: 'wholesome family movies clean entertainment reviews' },
+    { title: 'Bible study tools and reading plans', url: 'example.org/bible', keywords: 'Bible study tools scripture reading' },
+    { title: 'Church and community events near you', url: 'example.org/events', keywords: 'church community events local' },
+    { title: 'Morning prayer and daily reflections', url: 'example.org/morning-prayer', keywords: 'morning prayer daily devotional reflection' },
+    { title: 'Sunday school curriculum and lessons', url: 'example.org/sunday-school', keywords: 'Sunday school curriculum lessons kids children' },
+    { title: 'Faith-based marriage and relationship advice', url: 'example.org/marriage', keywords: 'Christian marriage advice relationship faith' },
+    { title: 'Safe, fun games for kids', url: 'example.org/kids-games', keywords: 'safe kids games family fun' },
+    { title: 'Top faith-based podcasts', url: 'example.org/podcasts', keywords: 'faith-based podcasts Christian listen' },
+    { title: 'Family-safe recipe collection', url: 'example.org/recipes', keywords: 'family safe recipes cooking food' },
+    { title: 'Gentle nudges and screen-time help', url: 'example.org/nudges', keywords: 'nudges screen time gentle accountability' },
+    { title: 'Beacon Browser settings and SafeSearch', url: 'example.org/beacon-settings', keywords: 'Beacon SafeSearch settings blocking' }
+  ];
+  function searchDemoIndex(query){
+    var q = (query || '').trim().toLowerCase();
+    if(!q) return DEMO_INDEX.slice(0, 8);
+    var terms = q.split(/\s+/).filter(Boolean);
+    return DEMO_INDEX.map(function(item){
+      var text = (item.title + ' ' + item.keywords).toLowerCase();
+      var score = 0;
+      terms.forEach(function(term){
+        if(text.indexOf(term) !== -1) score += 1;
+        if(item.title.toLowerCase().indexOf(term) !== -1) score += 2;
+      });
+      return { item: item, score: score };
+    }).filter(function(x){ return x.score > 0; })
+      .sort(function(a, b){ return b.score - a.score; })
+      .slice(0, 8)
+      .map(function(x){ return x.item; });
+  }
   function getDemoFocusables(){ return demoModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'); }
   function trapFocus(e){
     if(e.key !== 'Tab') return;
@@ -1956,9 +1995,18 @@
     if(last && last.focus) last.focus();
   }
   function escapeHtml(s){ var div = document.createElement('div'); div.textContent = s; return div.innerHTML; }
-  function renderResults(){
+  function renderResults(query){
     demoResultCards.innerHTML = '';
-    DEMO_RESULTS.forEach(function(r){
+    var results = searchDemoIndex(query);
+    if(results.length === 0){
+      var empty = document.createElement('div');
+      empty.className = 'demo-results-empty';
+      empty.setAttribute('role', 'status');
+      empty.innerHTML = '<p>No results for <strong>' + escapeHtml((query || '').trim() || 'your search') + '</strong>.</p><p class="demo-results-empty-hint">Try different keywords or check SafeSearch settings.</p>';
+      demoResultCards.appendChild(empty);
+      return;
+    }
+    results.forEach(function(r){
       var li = document.createElement('li');
       li.className = 'demo-result-card';
       li.setAttribute('role', 'listitem');
@@ -1975,6 +2023,7 @@
     if(demoSearchInput) demoSearchInput.setAttribute('aria-expanded', 'false');
     demoSeeWhy.setAttribute('aria-expanded', 'false');
     demoWhyPanel.hidden = true;
+    if(demoResultsHeading) demoResultsHeading.textContent = 'Protected Results';
     setDemoUrl('beacon://welcome');
     setDemoTabTitle('Welcome');
   }
@@ -2019,11 +2068,11 @@
     });
   }
   demoStartBtn.addEventListener('click', function(){
-    var q = (demoSearchInput && demoSearchInput.value) ? demoSearchInput.value.trim() : 'safe search';
-    var urlQuery = q.replace(/\s+/g, '+');
-    setDemoUrl('beacon://search?q=' + encodeURIComponent(q));
+    var q = (demoSearchInput && demoSearchInput.value) ? demoSearchInput.value.trim() : '';
+    setDemoUrl('beacon://search?q=' + encodeURIComponent(q || ''));
     setDemoTabTitle(q.length > 20 ? q.slice(0, 17) + '…' : q || 'Search');
-    renderResults();
+    if(demoResultsHeading) demoResultsHeading.textContent = q ? 'Protected Results for “‘ + q + '"' : 'Protected Results';
+    renderResults(q);
     demoWelcomeView.hidden = true;
     demoResultsView.hidden = false;
     demoSeeWhy.setAttribute('aria-expanded', 'false');
