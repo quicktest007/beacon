@@ -9,6 +9,9 @@
   <style>
     html { margin: 0; padding: 0; min-height: 100%; scroll-behavior: smooth; }
     body { margin: 0; padding: 0; min-height: 100vh; background: #0E1628; }
+    /* Ensure modals show when open regardless of stacking/scope */
+    .overlay[aria-hidden="false"] { display: flex !important; }
+    .demo-overlay[aria-hidden="false"] { display: flex !important; }
   </style>
 </head>
 <body>
@@ -31,13 +34,13 @@
   --beamSoft: .18;
   --beamSpeed: 14s;
 
-  /* Lighthouse origin (lantern) */
-  --beamFocusX: 64%;
-  --beamFocusY: 15%;
+  /* Lighthouse origin (lantern) - up and to the right so light reads as from lighthouse */
+  --beamFocusX: 72%;
+  --beamFocusY: 10%;
 
-  /* Updated by JS */
-  --beamAngle: 20deg;        /* beam points toward cursor */
-  --beamScrollAngle: 0deg;   /* slow sweep with scroll */
+  /* Updated by JS; offset so default beam direction is up-and-right from lighthouse */
+  --beamAngle: 8deg;        /* beam points toward cursor; base offset up-right */
+  --beamScrollAngle: 0deg;  /* slow sweep with scroll */
   --spotX: 50%;
   --spotY: 40%;
   --spotOn: 0;               /* 0..1 */
@@ -48,7 +51,7 @@
   background: var(--navy);
   color: var(--white);
   position:relative;
-  overflow:hidden;
+  /* overflow:hidden removed so fixed modals (Join Waitlist, Demo) are not clipped */
   display:flex;
   flex-direction:column;
 }
@@ -64,7 +67,8 @@
   z-index:0;
   pointer-events:none;
   isolation:isolate;
-  contain: paint;
+  overflow:hidden;
+  /* no contain:paint - it can cause stacking/clipping bugs and "vanishing" in Safari */
 }
 #beacon-hero .hero-photo{
   position:absolute; inset:0;
@@ -73,6 +77,8 @@
   background-position: center center;
   background-repeat: no-repeat;
   filter: saturate(1.05) contrast(1.05) brightness(0.92);
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* darken edges + center glow to keep text readable */
@@ -94,90 +100,96 @@
   mask-image: radial-gradient(circle at 50% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
 }
 
-/* grain */
+/* grain - no mix-blend to avoid compositing bugs */
 #beacon-hero .hero-noise{
   position:absolute; inset:0;
-  opacity:.12;
-  mix-blend-mode: overlay;
+  opacity:.06;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  pointer-events: none;
 }
 
-/* Cursor "spotlight" (subtle, highlights hovered areas) */
+/* Cursor "spotlight" - smooth falloff, no filter/blend to avoid Safari compositing bugs */
 #beacon-hero .cursor-spot{
   position:absolute; inset:0;
   background:
-    radial-gradient(circle at var(--spotX) var(--spotY),
-      rgba(255,183,3,.16) 0%,
-      rgba(255,183,3,.08) 18%,
-      transparent 45%);
-  opacity: calc(var(--spotOn) * .9);
-  mix-blend-mode: screen;
-  filter: blur(0.2px);
+    radial-gradient(ellipse 90% 80% at var(--spotX) var(--spotY),
+      rgba(255,183,3,.10) 0%,
+      rgba(255,183,3,.06) 12%,
+      rgba(255,183,3,.03) 25%,
+      transparent 50%);
+  opacity: calc(var(--spotOn) * .85);
+  pointer-events: none;
 }
 
 /* BIG beam (cursor + scroll reactive)
    - origin anchored at lighthouse
    - angle aims toward cursor, with scroll adding slow drift
 */
+/* Beam: smooth conic gradient so edges (especially left) are soft; origin at lighthouse */
 #beacon-hero .hero-beam{
   position:absolute;
   left: var(--beamFocusX);
   top:  var(--beamFocusY);
-  width: 240vmax;
-  height: 240vmax;
-  margin-left: -120vmax;
-  margin-top: -120vmax;
+  width: 120vmax;
+  height: 120vmax;
+  margin-left: -60vmax;
+  margin-top: -60vmax;
   opacity: var(--beamOpacity);
-  /* Fixed gradient + transform = GPU compositing, no repaint on scroll */
   background: conic-gradient(
     from 0deg at 50% 50%,
     transparent 0deg,
-    rgba(255,183,3,0.00) 40deg,
-    rgba(255,183,3,0.78) 78deg,
-    rgba(255,183,3,0.22) 120deg,
-    transparent 165deg
+    rgba(255,183,3,0) 25deg,
+    rgba(255,183,3,.08) 45deg,
+    rgba(255,183,3,.35) 65deg,
+    rgba(255,183,3,.72) 85deg,
+    rgba(255,183,3,.28) 110deg,
+    rgba(255,183,3,.06) 140deg,
+    transparent 170deg
   );
   transform: rotate(calc(var(--beamAngle) + var(--beamScrollAngle)));
-  filter: blur(.2px);
-  mix-blend-mode: screen;
+  transform-origin: 50% 50%;
   will-change: transform;
+  pointer-events: none;
 }
 
-/* secondary soft beam for "volume" */
+/* secondary soft beam - smoother falloff for blended look */
 #beacon-hero .hero-beam-soft{
   position:absolute;
   left: calc(var(--beamFocusX) + 1.5%);
   top:  calc(var(--beamFocusY) + 0.8%);
-  width: 260vmax;
-  height: 260vmax;
-  margin-left: -130vmax;
-  margin-top: -130vmax;
+  width: 130vmax;
+  height: 130vmax;
+  margin-left: -65vmax;
+  margin-top: -65vmax;
   opacity: var(--beamSoft);
   background: conic-gradient(
     from 18deg at 50% 50%,
     transparent 0deg,
-    rgba(255,183,3,0.00) 35deg,
-    rgba(255,183,3,0.35) 85deg,
-    rgba(255,183,3,0.09) 130deg,
-    transparent 175deg
+    rgba(255,183,3,0) 30deg,
+    rgba(255,183,3,.04) 55deg,
+    rgba(255,183,3,.22) 80deg,
+    rgba(255,183,3,.12) 115deg,
+    rgba(255,183,3,.02) 150deg,
+    transparent 180deg
   );
   transform: rotate(calc(var(--beamAngle) + var(--beamScrollAngle)));
-  filter: blur(2px);
-  mix-blend-mode: screen;
+  transform-origin: 50% 50%;
   will-change: transform;
+  pointer-events: none;
 }
 
-/* subtle "light haze" to tie beams to scene */
+/* Haze: smooth glow from lighthouse position (no mix-blend to avoid Safari issues) */
 #beacon-hero .hero-haze{
   position:absolute; inset:0;
   background:
-    radial-gradient(circle at var(--beamFocusX) var(--beamFocusY),
-      rgba(255,220,130,.34) 0%,
-      rgba(255,183,3,.14) 14%,
-      transparent 42%),
-    radial-gradient(ellipse 60% 45% at 55% 42%, rgba(255,183,3,.10) 0%, transparent 60%);
-  opacity:.9;
-  mix-blend-mode: screen;
+    radial-gradient(ellipse 80% 60% at var(--beamFocusX) var(--beamFocusY),
+      rgba(255,220,130,.18) 0%,
+      rgba(255,183,3,.07) 20%,
+      rgba(255,183,3,.02) 40%,
+      transparent 55%),
+    radial-gradient(ellipse 60% 45% at 55% 42%, rgba(255,183,3,.05) 0%, transparent 60%);
+  opacity: .85;
+  pointer-events: none;
 }
 
 /* When reduced motion: freeze "reactive" feel */
@@ -185,6 +197,20 @@
   #beacon-hero .cursor-spot{ display:none; }
   #beacon-hero .hero-beam,
   #beacon-hero .hero-beam-soft{ opacity:.14; }
+}
+
+/* Perf safe mode: disable heavy effects that cause vanishing/choppy scroll (Safari, low-end GPUs) */
+#beacon-hero.perf-safe .hero-beam,
+#beacon-hero.perf-safe .hero-beam-soft,
+#beacon-hero.perf-safe .cursor-spot,
+#beacon-hero.perf-safe .hero-noise{ display: none !important; }
+#beacon-hero.perf-safe .hero-haze{ opacity: .5; }
+#beacon-hero.perf-safe .hero-stance,
+#beacon-hero.perf-safe .hero-cta-secondary,
+#beacon-hero.perf-safe .hero-panel{
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(14,22,40,.72);
 }
 
 /* =========================
@@ -219,6 +245,35 @@
   filter: brightness(1.03);
 }
 #beacon-hero .hero-cta-pill:focus-visible{outline:2px solid var(--white);outline-offset:3px}
+#beacon-hero .hero-bar-ctas{
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+#beacon-hero .hero-cta-demo{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .6rem 1.05rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(14,22,40,.45);
+  color: var(--white);
+  cursor: pointer;
+  font-weight: 850;
+  letter-spacing: -0.01em;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+#beacon-hero .hero-cta-demo:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.35);
+  box-shadow: 0 14px 42px rgba(0,0,0,.28);
+}
+#beacon-hero .hero-cta-demo:focus-visible{ outline: 2px solid var(--white); outline-offset: 3px; }
 
 /* =========================
    HERO CONTENT (better architecture)
@@ -230,7 +285,9 @@
   justify-content:center;
   padding: clamp(2.25rem,8vw,5.25rem) clamp(1.25rem,5vw,3rem);
   position:relative;
-  z-index:1;
+  z-index: 1;
+  isolation: isolate;
+  transform: translateZ(0);
 }
 #beacon-hero .hero-wrap{
   width:100%;
@@ -275,7 +332,7 @@
   display:inline-block;
   padding: .75rem .9rem;
   border-radius: 16px;
-  background: rgba(14,22,40,.55);
+  background: rgba(14,22,40,.65);
   border: 1px solid rgba(255,255,255,.12);
   color: rgba(255,255,255,.90);
   font-weight: 850;
@@ -318,7 +375,7 @@
 
 /* Right-side "glass" value panel */
 #beacon-hero .hero-panel{
-  background: rgba(14,22,40,.58);
+  background: rgba(14,22,40,.68);
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 22px;
   padding: clamp(1.1rem,2.2vw,1.4rem);
@@ -397,178 +454,6 @@
   gap: clamp(1rem, 2vw, 1.25rem);
   min-width: 0;
 }
-#beacon-hero .browser-demo{
-  background: rgba(14,22,40,.75);
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.15);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-#beacon-hero .browser-demo .browser-titlebar{
-  height: 38px;
-  padding: 0 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(0,0,0,.35);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
-#beacon-hero .browser-demo .browser-dots{
-  display: flex;
-  gap: 6px;
-}
-#beacon-hero .browser-demo .browser-dots span{
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-#beacon-hero .browser-demo .browser-dots .dot-red{ background: #ff5f57; }
-#beacon-hero .browser-demo .browser-dots .dot-yellow{ background: #febc2e; }
-#beacon-hero .browser-demo .browser-dots .dot-green{ background: #28c840; }
-#beacon-hero .browser-demo .browser-title{
-  flex: 1;
-  text-align: center;
-  font-size: .8rem;
-  font-weight: 700;
-  color: rgba(255,255,255,.7);
-  letter-spacing: -0.01em;
-}
-#beacon-hero .browser-demo .browser-address-bar{
-  height: 44px;
-  padding: 0 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(0,0,0,.25);
-  border-bottom: 1px solid rgba(255,255,255,.06);
-}
-#beacon-hero .browser-demo .browser-address-bar .addr-icon{
-  color: var(--amber);
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-#beacon-hero .browser-demo .browser-address-bar .addr-url{
-  flex: 1;
-  min-width: 0;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  font-size: .8rem;
-  color: rgba(255,255,255,.88);
-  font-family: inherit;
-}
-#beacon-hero .browser-demo .browser-frame{
-  position: relative;
-  background: #f0f2f5;
-  min-height: 200px;
-  overflow: auto;
-}
-#beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 320px; }
-@media(min-width: 980px){
-  #beacon-hero .hero-center .browser-demo .browser-frame{ min-height: 340px; }
-}
-#beacon-hero .how .browser-demo .browser-frame{ min-height: 280px; }
-
-/* Custom Beacon start-page demo (no iframe) */
-#beacon-hero .demo-page{
-  padding: 1.25rem 1rem 1.5rem;
-  min-height: 260px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: linear-gradient(to bottom, #f8f9fc 0%, #eef0f5 100%);
-}
-#beacon-hero .hero-center .demo-page{ min-height: 300px; padding: 1.5rem 1.25rem 1.75rem; }
-#beacon-hero .how .demo-page{ min-height: 240px; padding: 1rem .9rem 1.25rem; }
-#beacon-hero .demo-page .demo-logo{
-  font-size: 1.1rem;
-  font-weight: 900;
-  color: #0E1628;
-  letter-spacing: -0.02em;
-  margin-bottom: .2rem;
-}
-#beacon-hero .demo-page .demo-tagline{
-  font-size: .7rem;
-  color: #5a6376;
-  margin-bottom: 1rem;
-  letter-spacing: .02em;
-}
-#beacon-hero .demo-page .demo-search-wrap{
-  width: 100%;
-  max-width: 220px;
-  margin: 0 auto;
-  position: relative;
-}
-#beacon-hero .demo-page .demo-search{
-  width: 100%;
-  padding: .5rem .75rem .5rem 2rem;
-  font-size: .75rem;
-  border: 1px solid #d0d4dc;
-  border-radius: 20px;
-  background: #fff;
-  color: #0E1628;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
-}
-#beacon-hero .demo-page .demo-search::placeholder{ color: #9ca3af; }
-#beacon-hero .demo-page .demo-search-icon{
-  position: absolute;
-  left: .7rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: .75rem;
-  opacity: .7;
-}
-#beacon-hero .demo-page .demo-safesearch{
-  display: inline-flex;
-  align-items: center;
-  gap: .35rem;
-  margin-top: .5rem;
-  padding: .25rem .5rem;
-  border-radius: 999px;
-  background: rgba(14,22,40,.08);
-  border: 1px solid rgba(14,22,40,.12);
-  font-size: .6rem;
-  font-weight: 800;
-  color: #0E1628;
-  letter-spacing: .02em;
-}
-#beacon-hero .demo-page .demo-safesearch span:first-child{ font-size: .65rem; }
-#beacon-hero .demo-page .demo-links{
-  margin-top: 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: .6rem;
-  justify-content: center;
-}
-#beacon-hero .demo-page .demo-links a{
-  padding: .35rem .6rem;
-  font-size: .65rem;
-  font-weight: 800;
-  color: #0E1628;
-  background: #fff;
-  border: 1px solid #e2e6ec;
-  border-radius: 12px;
-  text-decoration: none;
-  transition: border-color .15s, box-shadow .15s;
-}
-#beacon-hero .demo-page .demo-links a:hover{
-  border-color: rgba(255,183,3,.5);
-  box-shadow: 0 2px 8px rgba(255,183,3,.15);
-}
-#beacon-hero .demo-page .demo-footer{
-  margin-top: auto;
-  padding-top: 1rem;
-  font-size: .55rem;
-  color: #8b92a0;
-  font-weight: 700;
-  letter-spacing: .03em;
-}
-
 /* =========================
    MARKETING SECTION (below fold)
    ========================= */
@@ -989,6 +874,546 @@
 @media(prefers-reduced-motion:reduce){
   #beacon-hero .flash-ring{animation:none;opacity:0}
 }
+
+/* Demo modal (Beacon Browser simulation) - z-index above waitlist */
+#beacon-hero .demo-overlay{
+  position: fixed; inset: 0;
+  background: rgba(14,22,40,.98);
+  z-index: 110;
+  display: none;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  box-sizing: border-box;
+}
+#beacon-hero .demo-overlay[aria-hidden="false"]{ display: flex; }
+#beacon-hero .demo-modal{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  background: rgba(14,22,40,.98);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  flex-direction: column;
+}
+#beacon-hero .demo-modal-close{
+  position: absolute;
+  top: .75rem; right: .75rem;
+  width: 2rem; height: 2rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  line-height: 1;
+  color: rgba(255,255,255,.9);
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color .2s, background .2s;
+  z-index: 2;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#beacon-hero .demo-modal-close:hover{
+  color: var(--white);
+  background: rgba(255,255,255,.18);
+}
+#beacon-hero .demo-modal-close:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+#beacon-hero .demo-browser{ display: flex; flex-direction: column; min-height: 0; }
+
+/* Tab bar */
+#beacon-hero .demo-tab-bar{
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  padding: .5rem .75rem 0;
+  background: rgba(0,0,0,.2);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  flex-shrink: 0;
+}
+#beacon-hero .demo-tab{
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem .85rem .5rem .65rem;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  font-size: .8rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.75);
+  max-width: 180px;
+  min-width: 0;
+}
+#beacon-hero .demo-tab-active{
+  background: rgba(14,22,40,.95);
+  color: var(--white);
+  border-color: rgba(255,255,255,.14);
+  margin-bottom: -1px;
+  padding-bottom: calc(.5rem + 1px);
+  box-shadow: 0 -1px 0 rgba(255,255,255,.06);
+}
+#beacon-hero .demo-tab-favicon{ font-size: .9rem; flex-shrink: 0; }
+#beacon-hero .demo-tab-title{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#beacon-hero .demo-tab-new{
+  width: 2rem;
+  height: 2rem;
+  margin-left: .25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,.5);
+  border-radius: 6px;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+/* Toolbar: nav + address + actions */
+#beacon-hero .demo-toolbar{
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .5rem .75rem;
+  background: rgba(0,0,0,.22);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  flex-shrink: 0;
+}
+#beacon-hero .demo-nav-buttons{
+  display: flex;
+  align-items: center;
+  gap: .15rem;
+}
+#beacon-hero .demo-nav-btn{
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  color: rgba(255,255,255,.7);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color .15s, background .15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#beacon-hero .demo-nav-btn:hover:not(:disabled){ color: var(--white); background: rgba(255,255,255,.1); }
+#beacon-hero .demo-nav-btn:disabled{ color: rgba(255,255,255,.35); cursor: default; }
+#beacon-hero .demo-nav-btn:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+#beacon-hero .demo-address-wrap{
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .45rem .75rem;
+  background: rgba(255,255,255,.06);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.1);
+}
+#beacon-hero .demo-addr-icon{ font-size: .8rem; flex-shrink: 0; }
+#beacon-hero .demo-addr-url{
+  font-size: .8rem;
+  color: rgba(255,255,255,.75);
+  font-family: ui-monospace, "SF Mono", Monaco, monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#beacon-hero .demo-toolbar-actions{ display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
+#beacon-hero .demo-chip{
+  font-size: .65rem;
+  padding: .25rem .5rem;
+  border-radius: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+#beacon-hero .demo-chip-safe{
+  background: rgba(76,175,80,.2);
+  color: rgba(180,255,180,.95);
+  border: 1px solid rgba(76,175,80,.35);
+}
+#beacon-hero .demo-chip-time{
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.65);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+/* Bookmarks bar */
+#beacon-hero .demo-bookmarks{
+  display: flex;
+  align-items: center;
+  gap: .1rem;
+  padding: .35rem .75rem;
+  background: rgba(0,0,0,.15);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+#beacon-hero .demo-bookmark{
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .4rem .6rem;
+  font-size: .75rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.8);
+  text-decoration: none;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+#beacon-hero .demo-bookmark:hover{ background: rgba(255,255,255,.08); color: var(--white); }
+#beacon-hero .demo-bookmark-icon{ font-size: .85rem; opacity: .9; }
+#beacon-hero .demo-content{
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  min-height: 280px;
+  position: relative;
+}
+
+/* Chrome-style new tab: brand blue (navy) background */
+#beacon-hero .demo-welcome-view{
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--navy);
+  color: var(--white);
+  position: relative;
+}
+#beacon-hero .demo-welcome-utils{
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: .8125rem;
+  color: rgba(255,255,255,.85);
+}
+#beacon-hero .demo-util-link{
+  cursor: default;
+  padding: .2rem 0;
+}
+#beacon-hero .demo-util-link:hover{ color: var(--white); text-decoration: underline; }
+#beacon-hero .demo-util-icon{
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: rgba(255,255,255,.8);
+  cursor: default;
+}
+#beacon-hero .demo-util-avatar{
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--amber), rgba(255,220,130,.9));
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .6rem;
+  color: var(--navy);
+  cursor: default;
+}
+#beacon-hero .demo-welcome-center{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem 4rem;
+}
+#beacon-hero .demo-welcome-logo{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin-bottom: 1.75rem;
+}
+#beacon-hero .demo-logo-icon{ font-size: 2.75rem; }
+#beacon-hero .demo-logo-text{
+  font-size: 4rem;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  color: var(--white);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+#beacon-hero .demo-search-pill{
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 584px;
+  min-height: 44px;
+  padding: 0 1rem 0 1.25rem;
+  margin-bottom: 1.5rem;
+  background: rgba(255,255,255,.95);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.25);
+  transition: box-shadow .2s, border-color .2s;
+}
+#beacon-hero .demo-search-pill:hover{ box-shadow: 0 2px 16px rgba(0,0,0,.35); }
+#beacon-hero .demo-search-pill:focus-within{ box-shadow: 0 2px 16px rgba(0,0,0,.35), 0 0 0 2px rgba(255,183,3,.5); border-color: var(--amber); }
+#beacon-hero .demo-search-glass{ font-size: 1.1rem; color: #5f6368; flex-shrink: 0; margin-right: .5rem; }
+#beacon-hero .demo-search-input{
+  flex: 1;
+  min-width: 0;
+  padding: .5rem .25rem;
+  font-size: 1rem;
+  background: transparent;
+  border: none;
+  color: #202124;
+  font-family: inherit;
+}
+#beacon-hero .demo-search-input::placeholder{ color: #9aa0a6; }
+#beacon-hero .demo-search-input:focus{ outline: none; }
+#beacon-hero .demo-search-mic,
+#beacon-hero .demo-search-camera{
+  font-size: 1rem;
+  color: #1a73e8;
+  padding: 0 .35rem;
+  cursor: default;
+  flex-shrink: 0;
+}
+#beacon-hero .demo-search-wrap .demo-suggestions{
+  position: absolute;
+  left: 0; right: 0;
+  top: calc(100% + .5rem);
+  margin: 0;
+  padding: .5rem 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(32,33,36,.25);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 10;
+}
+#beacon-hero .demo-search-wrap .demo-suggestions[hidden]{ display: none !important; }
+#beacon-hero .demo-suggestion-item{
+  padding: .6rem 1.25rem;
+  cursor: pointer;
+  color: #202124;
+  font-size: .9375rem;
+  transition: background .1s;
+}
+#beacon-hero .demo-suggestion-item:hover,
+#beacon-hero .demo-suggestion-item:focus{ background: #f1f3f4; outline: none; }
+#beacon-hero .demo-cta-sr-only{
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+#beacon-hero .demo-shortcuts{
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  max-width: 480px;
+}
+#beacon-hero .demo-shortcut{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+  width: 5rem;
+  cursor: default;
+}
+#beacon-hero .demo-shortcut-circle{
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: background .15s;
+}
+#beacon-hero .demo-shortcut:hover .demo-shortcut-circle{ background: rgba(255,255,255,.28); }
+#beacon-hero .demo-shortcut-label{
+  font-size: .75rem;
+  color: rgba(255,255,255,.88);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#beacon-hero .demo-welcome-footer{
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+}
+#beacon-hero .demo-customize{
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem .85rem;
+  font-size: .8125rem;
+  color: var(--navy);
+  background: var(--amber);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 700;
+  transition: background .15s, color .15s, box-shadow .15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#beacon-hero .demo-customize:hover{ background: rgba(255,220,130,1); box-shadow: 0 2px 12px rgba(255,183,3,.4); }
+#beacon-hero .demo-customize-icon{ font-size: .9rem; opacity: .9; }
+#beacon-hero .demo-cta-primary{
+  display: inline-block;
+  padding: .7rem 1.4rem;
+  background: var(--amber);
+  color: var(--navy);
+  border: none;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 1rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform .2s ease, box-shadow .2s ease;
+  margin-bottom: 1.25rem;
+}
+#beacon-hero .demo-cta-primary:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(255,183,3,.3);
+}
+#beacon-hero .demo-cta-primary:focus-visible{ outline: 2px solid var(--white); outline-offset: 3px; }
+#beacon-hero .demo-results-view{
+  padding: 1.5rem 1.25rem;
+  min-height: 100%;
+  background: rgba(14,22,40,.97);
+  color: var(--white);
+}
+#beacon-hero .demo-results-view .demo-results-heading{ margin: 0 0 1rem; font-size: 1.2rem; font-weight: 900; color: rgba(255,255,255,.95); }
+#beacon-hero .demo-result-cards{ display: flex; flex-direction: column; gap: .6rem; list-style: none; padding: 0; margin: 0 0 1rem; }
+#beacon-hero .demo-results-empty{
+  padding: 2rem 1rem;
+  text-align: center;
+  color: rgba(255,255,255,.85);
+  font-size: .95rem;
+}
+#beacon-hero .demo-results-empty p{ margin: 0 0 .5rem; }
+#beacon-hero .demo-results-empty strong{ color: var(--amber); }
+#beacon-hero .demo-results-empty-hint{ font-size: .85rem; color: rgba(255,255,255,.6); margin-top: .5rem !important; }
+#beacon-hero .demo-result-card{
+  padding: .6rem .85rem;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+#beacon-hero .demo-result-card .demo-safe-badge{
+  flex-shrink: 0;
+  font-size: .7rem;
+  font-weight: 800;
+  padding: .2rem .45rem;
+  border-radius: 6px;
+  background: rgba(76,175,80,.25);
+  color: rgba(180,255,180,.95);
+  border: 1px solid rgba(76,175,80,.4);
+}
+#beacon-hero .demo-result-card .demo-result-title{ margin: 0; font-size: .9rem; font-weight: 800; color: rgba(255,255,255,.92); }
+#beacon-hero .demo-result-card .demo-result-url{ margin: 0; font-size: .75rem; color: rgba(255,255,255,.55); }
+#beacon-hero .demo-blocked-notice{
+  padding: .75rem;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+#beacon-hero .demo-blocked-text{ color: rgba(255,255,255,.75); font-size: .85rem; margin-right: .5rem; }
+#beacon-hero .demo-see-why{
+  background: none;
+  border: none;
+  color: var(--amber);
+  font-weight: 800;
+  font-size: .85rem;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0 .25rem;
+  text-decoration: underline;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#beacon-hero .demo-see-why:hover{ color: rgba(255,220,130,1); }
+#beacon-hero .demo-see-why:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+#beacon-hero .demo-why-panel{
+  margin-top: .75rem;
+  padding: .6rem;
+  background: rgba(0,0,0,.2);
+  border-radius: 8px;
+  font-size: .85rem;
+  color: rgba(255,255,255,.8);
+  line-height: 1.5;
+}
+#beacon-hero .demo-why-panel[hidden]{ display: none !important; }
+#beacon-hero .demo-reset{
+  display: inline-block;
+  padding: .5rem 1rem;
+  background: transparent;
+  color: rgba(255,255,255,.7);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 8px;
+  font-size: .85rem;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .2s, color .2s;
+}
+#beacon-hero .demo-reset:hover{ background: rgba(255,255,255,.1); color: var(--white); }
+#beacon-hero .demo-reset:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+@media (max-width: 480px){
+  #beacon-hero .demo-toolbar{ flex-wrap: wrap; }
+  #beacon-hero .demo-toolbar-actions{ width: 100%; justify-content: flex-end; }
+  #beacon-hero .demo-tab-title{ max-width: 100px; }
+  #beacon-hero .demo-bookmarks{ gap: 0; padding: .3rem .5rem; }
+  #beacon-hero .demo-bookmark{ padding: .35rem .5rem; font-size: .7rem; }
+  #beacon-hero .demo-shortcuts{ gap: 1.25rem; }
+  #beacon-hero .demo-logo-text{ font-size: 2.75rem; }
+  #beacon-hero .demo-welcome-utils{ top: .75rem; right: .75rem; font-size: .75rem; gap: .75rem; }
+  #beacon-hero .demo-welcome-footer{ bottom: 1rem; right: 1rem; }
+  #beacon-hero .demo-customize{ padding: .4rem .65rem; font-size: .75rem; }
+}
+@media (prefers-reduced-motion: reduce){
+  #beacon-hero .demo-cta-primary:hover,
+  #beacon-hero .demo-modal-close:hover,
+  #beacon-hero .demo-suggestion-item{ transition: none; }
+}
 </style>
 
 <div class="hero-bg" aria-hidden="true">
@@ -1006,7 +1431,10 @@
 
 <header class="hero-bar">
   <span class="hero-brand">Beacon Browser</span>
-  <button type="button" class="hero-cta-pill" data-open aria-haspopup="dialog" aria-expanded="false">Join Waitlist →</button>
+  <div class="hero-bar-ctas">
+    <button type="button" class="hero-cta-demo" id="beacon-demo-open-btn" data-demo-open aria-haspopup="dialog" aria-expanded="false">View Demo</button>
+    <button type="button" class="hero-cta-pill" data-open aria-haspopup="dialog" aria-expanded="false">Join Waitlist →</button>
+  </div>
 </header>
 
 <div class="hero-center">
@@ -1029,35 +1457,6 @@
     </div>
 
     <div class="hero-right">
-      <div class="browser-demo" aria-label="Beacon Browser demo">
-        <div class="browser-titlebar">
-          <div class="browser-dots" aria-hidden="true">
-            <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
-          </div>
-          <span class="browser-title">Beacon</span>
-        </div>
-        <div class="browser-address-bar">
-          <span class="addr-icon" aria-hidden="true">🔒</span>
-          <span class="addr-url">beacon://start</span>
-        </div>
-        <div class="browser-frame">
-          <div class="demo-page" role="img" aria-label="Beacon start page demo">
-            <div class="demo-logo">Beacon</div>
-            <div class="demo-tagline">A calmer internet, rooted in faith</div>
-            <div class="demo-search-wrap">
-              <span class="demo-search-icon" aria-hidden="true">🔍</span>
-              <span class="demo-search">Search the web</span>
-            </div>
-            <div class="demo-safesearch"><span aria-hidden="true">🛡️</span> SafeSearch on</div>
-            <div class="demo-links">
-              <a href="#beacon-features">Daily verse</a>
-              <a href="#beacon-features">Family resources</a>
-              <a href="#beacon-features">Settings</a>
-            </div>
-            <div class="demo-footer">Protected by Beacon · Privacy-first</div>
-          </div>
-        </div>
-      </div>
       <aside class="hero-panel" aria-label="Beacon Browser highlights">
       <h2 class="panel-title">Built for calm, consistent guardrails</h2>
       <ul class="panel-list">
@@ -1140,35 +1539,6 @@
       </div>
 
       <div class="how-media" aria-label="How it works images">
-        <div class="browser-demo" aria-label="Beacon Browser demo">
-          <div class="browser-titlebar">
-            <div class="browser-dots" aria-hidden="true">
-              <span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span>
-            </div>
-            <span class="browser-title">Beacon</span>
-          </div>
-          <div class="browser-address-bar">
-            <span class="addr-icon" aria-hidden="true">🔒</span>
-            <span class="addr-url">beacon://start</span>
-          </div>
-          <div class="browser-frame">
-            <div class="demo-page" role="img" aria-label="Beacon start page demo">
-              <div class="demo-logo">Beacon</div>
-              <div class="demo-tagline">A calmer internet, rooted in faith</div>
-              <div class="demo-search-wrap">
-                <span class="demo-search-icon" aria-hidden="true">🔍</span>
-                <span class="demo-search">Search the web</span>
-              </div>
-              <div class="demo-safesearch"><span aria-hidden="true">🛡️</span> SafeSearch on</div>
-              <div class="demo-links">
-                <a href="#beacon-features">Daily verse</a>
-                <a href="#beacon-features">Family resources</a>
-                <a href="#beacon-features">Settings</a>
-              </div>
-              <div class="demo-footer">Protected by Beacon · Privacy-first</div>
-            </div>
-          </div>
-        </div>
         <div class="imgCard" style="background-image:url('https://cdn.prod.website-files.com/6967b271d84e0620304acc1f/6983b0ab7f60426d56c3dac4_pexels-jplenio-1118874.jpg');">
           <div class="cap">
             <strong>Calm, consistent defaults</strong>
@@ -1218,7 +1588,112 @@
   </div>
 </div>
 
+<!-- Demo modal -->
+<div class="demo-overlay" id="beacon-demo-overlay" role="dialog" aria-modal="true" aria-labelledby="demo-modal-title" aria-describedby="demo-modal-desc" aria-hidden="true">
+  <div class="demo-modal" id="beacon-demo-modal">
+    <button type="button" class="demo-modal-close" id="beacon-demo-close" data-demo-close aria-label="Close demo">×</button>
+    <h2 id="demo-modal-title" class="sr-only">Beacon Browser demo</h2>
+    <p id="demo-modal-desc" class="sr-only">Interactive simulation of Beacon Browser welcome and search experience.</p>
+    <div class="demo-browser">
+      <!-- Tab bar -->
+      <div class="demo-tab-bar">
+        <div class="demo-tab demo-tab-active" aria-selected="true">
+          <span class="demo-tab-favicon" aria-hidden="true">🕯️</span>
+          <span class="demo-tab-title" id="demo-tab-title">Welcome</span>
+        </div>
+        <div class="demo-tab-new" aria-label="New tab" title="New tab">+</div>
+      </div>
+      <!-- Toolbar: nav + address + actions -->
+      <div class="demo-toolbar">
+        <div class="demo-nav-buttons">
+          <button type="button" class="demo-nav-btn" aria-label="Back" disabled><span aria-hidden="true">←</span></button>
+          <button type="button" class="demo-nav-btn" aria-label="Forward" disabled><span aria-hidden="true">→</span></button>
+          <button type="button" class="demo-nav-btn" aria-label="Reload"><span aria-hidden="true">↻</span></button>
+        </div>
+        <div class="demo-address-wrap">
+          <span class="demo-addr-icon" aria-hidden="true">🔒</span>
+          <span class="demo-addr-url" id="demo-addr-url">beacon://welcome</span>
+        </div>
+        <div class="demo-toolbar-actions">
+          <span class="demo-chip demo-chip-safe">SafeSearch On</span>
+          <span class="demo-chip demo-chip-time" id="demo-time">8:48 AM</span>
+        </div>
+      </div>
+      <!-- Bookmarks bar -->
+      <div class="demo-bookmarks">
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">🏠</span> Home</a>
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">🔍</span> Safe Search</a>
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">🛡️</span> Blocking</a>
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">🕊️</span> Nudges</a>
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">✓</span> Accountability</a>
+      </div>
+      <!-- Content -->
+      <div class="demo-content">
+        <div class="demo-welcome-view" id="demo-welcome-view">
+          <div class="demo-welcome-utils">
+            <span class="demo-util-link">Settings</span>
+            <span class="demo-util-link">Sign in</span>
+            <span class="demo-util-icon" aria-hidden="true" title="Beacon apps">⊞</span>
+            <span class="demo-util-avatar" aria-hidden="true" title="Profile">●</span>
+          </div>
+          <div class="demo-welcome-center">
+            <div class="demo-welcome-logo">
+              <span class="demo-logo-icon" aria-hidden="true">🕯️</span>
+              <span class="demo-logo-text">Beacon</span>
+            </div>
+            <div class="demo-search-wrap demo-search-pill">
+              <span class="demo-search-glass" aria-hidden="true">🔍</span>
+              <input type="text" class="demo-search-input" id="demo-search-input" placeholder="Search the web safely or type a URL" autocomplete="off" aria-label="Search the web safely" aria-autocomplete="list" aria-controls="demo-suggestions" aria-expanded="false">
+              <span class="demo-search-mic" aria-hidden="true" title="Voice search">🎤</span>
+              <span class="demo-search-camera" aria-hidden="true" title="Search by image">📷</span>
+              <ul class="demo-suggestions" id="demo-suggestions" role="listbox" aria-label="Search suggestions" hidden></ul>
+            </div>
+            <button type="button" class="demo-cta-primary demo-cta-sr-only" id="demo-start-browsing">Start Browsing Safely</button>
+            <div class="demo-shortcuts" role="list">
+              <div class="demo-shortcut" role="listitem">
+                <div class="demo-shortcut-circle"><span aria-hidden="true">🔍</span></div>
+                <span class="demo-shortcut-label">Safe Search</span>
+              </div>
+              <div class="demo-shortcut" role="listitem">
+                <div class="demo-shortcut-circle"><span aria-hidden="true">👤</span></div>
+                <span class="demo-shortcut-label">Sign in</span>
+              </div>
+              <div class="demo-shortcut" role="listitem">
+                <div class="demo-shortcut-circle"><span aria-hidden="true">🛡️</span></div>
+                <span class="demo-shortcut-label">Blocking</span>
+              </div>
+              <div class="demo-shortcut" role="listitem">
+                <div class="demo-shortcut-circle"><span aria-hidden="true">+</span></div>
+                <span class="demo-shortcut-label">Add shortcut</span>
+              </div>
+            </div>
+          </div>
+          <div class="demo-welcome-footer">
+            <button type="button" class="demo-customize" tabindex="-1">
+              <span class="demo-customize-icon" aria-hidden="true">✎</span>
+              Customize Beacon
+            </button>
+          </div>
+        </div>
+        <div class="demo-results-view" id="demo-results-view" hidden>
+          <h3 class="demo-results-heading" id="demo-results-heading">Protected Results</h3>
+          <div class="demo-result-cards" id="demo-result-cards" role="list"></div>
+          <div class="demo-blocked-notice">
+            <span class="demo-blocked-text">Blocked content filtered</span>
+            <button type="button" class="demo-see-why" id="demo-see-why" aria-expanded="false" aria-controls="demo-why-panel">See why?</button>
+            <div class="demo-why-panel" id="demo-why-panel" role="region" aria-label="Why content was filtered" hidden>
+              <p>Beacon filters explicit or mature content so your results stay family-friendly. You can adjust sensitivity in Settings.</p>
+            </div>
+          </div>
+          <button type="button" class="demo-reset" id="demo-reset" data-demo-reset>Reset Demo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
+function initModalsAndBeam(){
 (function(){
   var root = document.getElementById('beacon-hero');
   if(!root) return;
@@ -1235,6 +1710,8 @@
   var nameErr = document.getElementById('beacon-name-err');
   var emailErr = document.getElementById('beacon-email-err');
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if(!overlay || !modal){ return; }
 
   /* =========================
      MODAL
@@ -1323,36 +1800,52 @@
 
   /* =========================
      SCROLL + CURSOR REACTIVE BEAM
-     - beam originates at lighthouse lantern (beamFocusX/Y)
-     - angle aims toward cursor
-     - scroll adds slow "drift" to feel alive even when idle
-     - cursor spotlight gently highlights hovered areas
+     - Cached layout/style: no getComputedStyle in hot path; refresh on resize only.
+     - Single getBoundingClientRect per frame (batch read then batch write).
+     - Perf monitor: if FPS drops ~45 for 1s, add .perf-safe to disable heavy effects.
      ========================= */
   if(reduced) return;
 
   var lastX = window.innerWidth * 0.55;
   var lastY = window.innerHeight * 0.45;
+  var lastScrollY = -1;
   var rafPending = false;
+
+  /* Cache beam focus % - only refresh on resize to avoid layout thrash */
+  var beamFocusX = 72;
+  var beamFocusY = 10;
+  function refreshBeamFocusCache(){
+    var cs = getComputedStyle(root);
+    beamFocusX = parseFloat(cs.getPropertyValue('--beamFocusX')) || 72;
+    beamFocusY = parseFloat(cs.getPropertyValue('--beamFocusY')) || 10;
+  }
+  refreshBeamFocusCache();
+  window.addEventListener('resize', refreshBeamFocusCache, { passive: true });
+
+  /* Offset so beam reads as coming from lighthouse (up and right a few degrees) */
+  var BEAM_ANGLE_OFFSET_DEG = -12;
 
   function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
   function setVars(){
     rafPending = false;
     var b = root.getBoundingClientRect();
-    var originX = b.left + (b.width  * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusX'))/100));
-    var originY = b.top  + (b.height * (parseFloat(getComputedStyle(root).getPropertyValue('--beamFocusY'))/100));
+    var originX = b.left + (b.width * beamFocusX / 100);
+    var originY = b.top + (b.height * beamFocusY / 100);
     var dx = lastX - originX;
     var dy = lastY - originY;
-    var ang = Math.atan2(dy, dx) * (180/Math.PI);
+    var ang = Math.atan2(dy, dx) * (180/Math.PI) + BEAM_ANGLE_OFFSET_DEG;
     root.style.setProperty('--beamAngle', ang.toFixed(2) + 'deg');
     var spotXPct = ((lastX - b.left) / b.width) * 100;
     var spotYPct = ((lastY - b.top) / b.height) * 100;
     root.style.setProperty('--spotX', clamp(spotXPct, 0, 100).toFixed(2) + '%');
     root.style.setProperty('--spotY', clamp(spotYPct, 0, 100).toFixed(2) + '%');
     root.style.setProperty('--spotOn', '1');
+    var scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+    lastScrollY = scrollY;
     var doc = document.documentElement;
     var max = Math.max(1, (doc.scrollHeight - doc.clientHeight));
-    var t = (window.scrollY || doc.scrollTop || 0) / max;
+    var t = max > 0 ? scrollY / max : 0;
     root.style.setProperty('--beamScrollAngle', (t * 360).toFixed(2) + 'deg');
   }
 
@@ -1372,16 +1865,250 @@
     root.style.setProperty('--spotOn', '0');
   });
 
-  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('scroll', function(){
+    var scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+    if(scrollY !== lastScrollY) schedule();
+  }, { passive: true });
   schedule();
 
-  // Make spotlight softly pulse when hovering cards (feels intentional)
-  var hoverables = root.querySelectorAll('.mk-card, .step, .panel-item, .hero-panel, .imgCard, .browser-demo');
+  /* Perf safe mode: if frame time > ~22ms (45fps) for 1s, add .perf-safe; remove after 2s good */
+  var frameCount = 0;
+  var slowFrameCount = 0;
+  var lastFrameTime = performance.now();
+  var perfSafeActive = false;
+  var goodFrameCount = 0;
+  var PERF_SLOW_THRESHOLD_MS = 22;
+  var PERF_SLOW_FRAMES_TO_TRIGGER = 45;
+  var PERF_GOOD_FRAMES_TO_RECOVER = 120;
+  var PERF_GOOD_THRESHOLD_MS = 18;
+
+  function perfTick(now){
+    var delta = now - lastFrameTime;
+    lastFrameTime = now;
+    if(delta > PERF_SLOW_THRESHOLD_MS){
+      slowFrameCount++;
+      goodFrameCount = 0;
+      if(!perfSafeActive && slowFrameCount >= PERF_SLOW_FRAMES_TO_TRIGGER){
+        perfSafeActive = true;
+        root.classList.add('perf-safe');
+        slowFrameCount = 0;
+      }
+    } else {
+      slowFrameCount = 0;
+      if(perfSafeActive){
+        if(delta < PERF_GOOD_THRESHOLD_MS) goodFrameCount++;
+        else goodFrameCount = 0;
+        if(goodFrameCount >= PERF_GOOD_FRAMES_TO_RECOVER){
+          perfSafeActive = false;
+          root.classList.remove('perf-safe');
+          goodFrameCount = 0;
+        }
+      }
+    }
+    requestAnimationFrame(perfTick);
+  }
+  requestAnimationFrame(perfTick);
+
+  var hoverables = root.querySelectorAll('.mk-card, .step, .panel-item, .hero-panel, .imgCard');
   hoverables.forEach(function(el){
     el.addEventListener('mouseenter', function(){ root.style.setProperty('--spotOn', '1'); });
     el.addEventListener('mouseleave', function(){ root.style.setProperty('--spotOn', '0.35'); });
   });
 })();
+
+(function(){
+  var demoOverlay = document.getElementById('beacon-demo-overlay');
+  var demoModal = document.getElementById('beacon-demo-modal');
+  var demoOpenBtn = document.getElementById('beacon-demo-open-btn');
+  var demoCloseBtn = document.getElementById('beacon-demo-close');
+  var demoWelcomeView = document.getElementById('demo-welcome-view');
+  var demoResultsView = document.getElementById('demo-results-view');
+  var demoSearchInput = document.getElementById('demo-search-input');
+  var demoSuggestions = document.getElementById('demo-suggestions');
+  var demoStartBtn = document.getElementById('demo-start-browsing');
+  var demoResultCards = document.getElementById('demo-result-cards');
+  var demoResultsHeading = document.getElementById('demo-results-heading');
+  var demoSeeWhy = document.getElementById('demo-see-why');
+  var demoWhyPanel = document.getElementById('demo-why-panel');
+  var demoResetBtn = document.getElementById('demo-reset');
+  var demoAddrUrl = document.getElementById('demo-addr-url');
+  var demoTabTitle = document.getElementById('demo-tab-title');
+  if(!demoOverlay || !demoModal) return;
+
+  function setDemoUrl(url){ if(demoAddrUrl) demoAddrUrl.textContent = url; }
+  function setDemoTabTitle(title){ if(demoTabTitle) demoTabTitle.textContent = title; }
+  var DEMO_SUGGESTIONS = [
+    'daily devotional','family safe recipes','Christian parenting resources','Bible study tools','wholesome family movies',
+    'morning prayer','Sunday school curriculum','Christian marriage advice','safe kids games','faith-based podcasts'
+  ];
+  /* Searchable index: each item has title, url, and keywords used for matching */
+  var DEMO_INDEX = [
+    { title: 'Family-friendly devotionals for every day', url: 'example.org/daily-devotionals', keywords: 'daily devotional devotionals faith morning prayer' },
+    { title: 'Safe search tips for families', url: 'example.org/safe-search', keywords: 'safe search families tips parenting' },
+    { title: 'Christian parenting resources and guides', url: 'example.org/parenting', keywords: 'Christian parenting resources family children' },
+    { title: 'Clean entertainment and movie reviews', url: 'example.org/entertainment', keywords: 'wholesome family movies clean entertainment reviews' },
+    { title: 'Bible study tools and reading plans', url: 'example.org/bible', keywords: 'Bible study tools scripture reading' },
+    { title: 'Church and community events near you', url: 'example.org/events', keywords: 'church community events local' },
+    { title: 'Morning prayer and daily reflections', url: 'example.org/morning-prayer', keywords: 'morning prayer daily devotional reflection' },
+    { title: 'Sunday school curriculum and lessons', url: 'example.org/sunday-school', keywords: 'Sunday school curriculum lessons kids children' },
+    { title: 'Faith-based marriage and relationship advice', url: 'example.org/marriage', keywords: 'Christian marriage advice relationship faith' },
+    { title: 'Safe, fun games for kids', url: 'example.org/kids-games', keywords: 'safe kids games family fun' },
+    { title: 'Top faith-based podcasts', url: 'example.org/podcasts', keywords: 'faith-based podcasts Christian listen' },
+    { title: 'Family-safe recipe collection', url: 'example.org/recipes', keywords: 'family safe recipes cooking food' },
+    { title: 'Gentle nudges and screen-time help', url: 'example.org/nudges', keywords: 'nudges screen time gentle accountability' },
+    { title: 'Beacon Browser settings and SafeSearch', url: 'example.org/beacon-settings', keywords: 'Beacon SafeSearch settings blocking' }
+  ];
+  function searchDemoIndex(query){
+    var q = (query || '').trim().toLowerCase();
+    if(!q) return DEMO_INDEX.slice(0, 8);
+    var terms = q.split(/\s+/).filter(Boolean);
+    return DEMO_INDEX.map(function(item){
+      var text = (item.title + ' ' + item.keywords).toLowerCase();
+      var score = 0;
+      terms.forEach(function(term){
+        if(text.indexOf(term) !== -1) score += 1;
+        if(item.title.toLowerCase().indexOf(term) !== -1) score += 2;
+      });
+      return { item: item, score: score };
+    }).filter(function(x){ return x.score > 0; })
+      .sort(function(a, b){ return b.score - a.score; })
+      .slice(0, 8)
+      .map(function(x){ return x.item; });
+  }
+  function getDemoFocusables(){ return demoModal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'); }
+  function trapFocus(e){
+    if(e.key !== 'Tab') return;
+    var els = getDemoFocusables();
+    if(!els.length) return;
+    var first = els[0], last = els[els.length - 1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  }
+  var demoTimeEl = document.getElementById('demo-time');
+  var demoTimeInterval = null;
+  function updateDemoTime(){
+    if(!demoTimeEl) return;
+    var d = new Date();
+    demoTimeEl.textContent = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
+  function openDemo(triggerBtn){
+    resetDemo();
+    demoOverlay.setAttribute('aria-hidden', 'false');
+    if(demoOpenBtn) demoOpenBtn.setAttribute('aria-expanded', 'true');
+    demoOverlay._lastFocus = triggerBtn || demoOpenBtn;
+    document.body.style.overflow = 'hidden';
+    updateDemoTime();
+    demoTimeInterval = setInterval(updateDemoTime, 60000);
+    var first = getDemoFocusables()[0];
+    if(first) first.focus();
+  }
+  function closeDemo(){
+    demoOverlay.setAttribute('aria-hidden', 'true');
+    if(demoOpenBtn) demoOpenBtn.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    if(demoTimeInterval){ clearInterval(demoTimeInterval); demoTimeInterval = null; }
+    var last = demoOverlay._lastFocus;
+    if(last && last.focus) last.focus();
+  }
+  function escapeHtml(s){ var div = document.createElement('div'); div.textContent = s; return div.innerHTML; }
+  function renderResults(query){
+    demoResultCards.innerHTML = '';
+    var results = searchDemoIndex(query);
+    if(results.length === 0){
+      var empty = document.createElement('div');
+      empty.className = 'demo-results-empty';
+      empty.setAttribute('role', 'status');
+      empty.innerHTML = '<p>No results for <strong>' + escapeHtml((query || '').trim() || 'your search') + '</strong>.</p><p class="demo-results-empty-hint">Try different keywords or check SafeSearch settings.</p>';
+      demoResultCards.appendChild(empty);
+      return;
+    }
+    results.forEach(function(r){
+      var li = document.createElement('li');
+      li.className = 'demo-result-card';
+      li.setAttribute('role', 'listitem');
+      li.innerHTML = '<span class="demo-safe-badge">Safe</span><div><div class="demo-result-title">' + escapeHtml(r.title) + '</div><div class="demo-result-url">' + escapeHtml(r.url) + '</div></div>';
+      demoResultCards.appendChild(li);
+    });
+  }
+  function resetDemo(){
+    demoWelcomeView.hidden = false;
+    demoResultsView.hidden = true;
+    if(demoSearchInput) demoSearchInput.value = '';
+    demoSuggestions.hidden = true;
+    demoSuggestions.innerHTML = '';
+    if(demoSearchInput) demoSearchInput.setAttribute('aria-expanded', 'false');
+    demoSeeWhy.setAttribute('aria-expanded', 'false');
+    demoWhyPanel.hidden = true;
+    if(demoResultsHeading) demoResultsHeading.textContent = 'Protected Results';
+    setDemoUrl('beacon://welcome');
+    setDemoTabTitle('Welcome');
+  }
+  demoCloseBtn.addEventListener('click', closeDemo);
+  demoOverlay.addEventListener('click', function(e){ if(e.target === demoOverlay) closeDemo(); });
+  demoOverlay.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ closeDemo(); return; }
+    trapFocus(e);
+  });
+  demoModal.addEventListener('click', function(e){ e.stopPropagation(); });
+  if(demoOpenBtn) demoOpenBtn.addEventListener('click', function(){ openDemo(demoOpenBtn); });
+  if(demoSearchInput){
+    demoSearchInput.addEventListener('input', function(){
+      var q = (demoSearchInput.value || '').trim().toLowerCase();
+      demoSuggestions.innerHTML = '';
+      demoSuggestions.hidden = true;
+      demoSearchInput.setAttribute('aria-expanded', 'false');
+      if(q.length === 0) return;
+      var matches = DEMO_SUGGESTIONS.filter(function(s){ return s.toLowerCase().indexOf(q) !== -1; }).slice(0, 5);
+      if(matches.length === 0) return;
+      matches.forEach(function(text){
+        var li = document.createElement('li');
+        li.className = 'demo-suggestion-item';
+        li.setAttribute('role', 'option');
+        li.textContent = text;
+        li.addEventListener('click', function(){
+          demoSearchInput.value = text;
+          demoSuggestions.hidden = true;
+          demoSearchInput.setAttribute('aria-expanded', 'false');
+          demoSearchInput.focus();
+        });
+        demoSuggestions.appendChild(li);
+      });
+      demoSuggestions.hidden = false;
+      demoSearchInput.setAttribute('aria-expanded', 'true');
+    });
+    demoSearchInput.addEventListener('blur', function(){
+      setTimeout(function(){ demoSuggestions.hidden = true; demoSearchInput.setAttribute('aria-expanded', 'false'); }, 150);
+    });
+    demoSearchInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); demoStartBtn.click(); }
+    });
+  }
+  demoStartBtn.addEventListener('click', function(){
+    var q = (demoSearchInput && demoSearchInput.value) ? demoSearchInput.value.trim() : '';
+    setDemoUrl('beacon://search?q=' + encodeURIComponent(q || ''));
+    setDemoTabTitle(q.length > 20 ? q.slice(0, 17) + '\u2026' : q || 'Search');
+    if(demoResultsHeading) demoResultsHeading.textContent = q ? ("Protected Results for \u201C" + q + "\u201D") : 'Protected Results';
+    renderResults(q);
+    demoWelcomeView.hidden = true;
+    demoResultsView.hidden = false;
+    demoSeeWhy.setAttribute('aria-expanded', 'false');
+    demoWhyPanel.hidden = true;
+  });
+  demoSeeWhy.addEventListener('click', function(){
+    var open = demoWhyPanel.hidden;
+    demoWhyPanel.hidden = !open;
+    demoSeeWhy.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  demoResetBtn.addEventListener('click', resetDemo);
+  var demoReloadBtn = demoModal.querySelector('.demo-nav-btn[aria-label="Reload"]');
+  if(demoReloadBtn) demoReloadBtn.addEventListener('click', function(){ resetDemo(); });
+})();
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initModalsAndBeam);
+} else {
+  initModalsAndBeam();
+}
 </script>
 </section>
 </body>
