@@ -917,41 +917,158 @@
 }
 #beacon-hero .demo-modal-close:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
 #beacon-hero .demo-browser{ display: flex; flex-direction: column; min-height: 0; }
+
+/* Tab bar */
+#beacon-hero .demo-tab-bar{
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
+  padding: .5rem .75rem 0;
+  background: rgba(0,0,0,.2);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  flex-shrink: 0;
+}
+#beacon-hero .demo-tab{
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem .85rem .5rem .65rem;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  font-size: .8rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.75);
+  max-width: 180px;
+  min-width: 0;
+}
+#beacon-hero .demo-tab-active{
+  background: rgba(14,22,40,.95);
+  color: var(--white);
+  border-color: rgba(255,255,255,.14);
+  margin-bottom: -1px;
+  padding-bottom: calc(.5rem + 1px);
+  box-shadow: 0 -1px 0 rgba(255,255,255,.06);
+}
+#beacon-hero .demo-tab-favicon{ font-size: .9rem; flex-shrink: 0; }
+#beacon-hero .demo-tab-title{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#beacon-hero .demo-tab-new{
+  width: 2rem;
+  height: 2rem;
+  margin-left: .25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,.5);
+  border-radius: 6px;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+/* Toolbar: nav + address + actions */
 #beacon-hero .demo-toolbar{
   display: flex;
   align-items: center;
-  gap: .5rem;
-  padding: .6rem .75rem;
-  background: rgba(0,0,0,.25);
-  border-bottom: 1px solid rgba(255,255,255,.1);
+  gap: .6rem;
+  padding: .5rem .75rem;
+  background: rgba(0,0,0,.22);
+  border-bottom: 1px solid rgba(255,255,255,.08);
   flex-shrink: 0;
 }
-#beacon-hero .demo-toolbar-left{ display: flex; align-items: center; gap: .4rem; }
-#beacon-hero .demo-beacon-icon{ font-size: 1.1rem; }
-#beacon-hero .demo-beacon-label{ font-weight: 800; font-size: .9rem; letter-spacing: -0.02em; }
-#beacon-hero .demo-address-bar{
+#beacon-hero .demo-nav-buttons{
+  display: flex;
+  align-items: center;
+  gap: .15rem;
+}
+#beacon-hero .demo-nav-btn{
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  color: rgba(255,255,255,.7);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color .15s, background .15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#beacon-hero .demo-nav-btn:hover:not(:disabled){ color: var(--white); background: rgba(255,255,255,.1); }
+#beacon-hero .demo-nav-btn:disabled{ color: rgba(255,255,255,.35); cursor: default; }
+#beacon-hero .demo-nav-btn:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+#beacon-hero .demo-address-wrap{
   flex: 1;
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: .4rem;
-  padding: .4rem .6rem;
+  gap: .5rem;
+  padding: .45rem .75rem;
   background: rgba(255,255,255,.06);
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid rgba(255,255,255,.1);
 }
-#beacon-hero .demo-addr-icon{ font-size: .85rem; }
-#beacon-hero .demo-addr-url{ font-size: .8rem; color: rgba(255,255,255,.7); font-family: ui-monospace, monospace; }
-#beacon-hero .demo-chips{ display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
+#beacon-hero .demo-addr-icon{ font-size: .8rem; flex-shrink: 0; }
+#beacon-hero .demo-addr-url{
+  font-size: .8rem;
+  color: rgba(255,255,255,.75);
+  font-family: ui-monospace, "SF Mono", Monaco, monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#beacon-hero .demo-toolbar-actions{ display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
 #beacon-hero .demo-chip{
-  font-size: .7rem;
+  font-size: .65rem;
   padding: .25rem .5rem;
   border-radius: 6px;
-  background: rgba(255,183,3,.15);
-  color: rgba(255,220,130,.95);
-  border: 1px solid rgba(255,183,3,.25);
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .02em;
 }
+#beacon-hero .demo-chip-safe{
+  background: rgba(76,175,80,.2);
+  color: rgba(180,255,180,.95);
+  border: 1px solid rgba(76,175,80,.35);
+}
+#beacon-hero .demo-chip-time{
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.65);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+/* Bookmarks bar */
+#beacon-hero .demo-bookmarks{
+  display: flex;
+  align-items: center;
+  gap: .1rem;
+  padding: .35rem .75rem;
+  background: rgba(0,0,0,.15);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+#beacon-hero .demo-bookmark{
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .4rem .6rem;
+  font-size: .75rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.8);
+  text-decoration: none;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+#beacon-hero .demo-bookmark:hover{ background: rgba(255,255,255,.08); color: var(--white); }
+#beacon-hero .demo-bookmark-icon{ font-size: .85rem; opacity: .9; }
 #beacon-hero .demo-content{
   flex: 1;
   overflow-y: auto;
@@ -1118,7 +1235,10 @@
 #beacon-hero .demo-reset:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
 @media (max-width: 480px){
   #beacon-hero .demo-toolbar{ flex-wrap: wrap; }
-  #beacon-hero .demo-chips{ width: 100%; justify-content: flex-end; }
+  #beacon-hero .demo-toolbar-actions{ width: 100%; justify-content: flex-end; }
+  #beacon-hero .demo-tab-title{ max-width: 100px; }
+  #beacon-hero .demo-bookmarks{ gap: 0; padding: .3rem .5rem; }
+  #beacon-hero .demo-bookmark{ padding: .35rem .5rem; font-size: .7rem; }
   #beacon-hero .demo-tiles{ grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce){
@@ -1307,21 +1427,39 @@
     <h2 id="demo-modal-title" class="sr-only">Beacon Browser demo</h2>
     <p id="demo-modal-desc" class="sr-only">Interactive simulation of Beacon Browser welcome and search experience.</p>
     <div class="demo-browser">
+      <!-- Tab bar -->
+      <div class="demo-tab-bar">
+        <div class="demo-tab demo-tab-active" aria-selected="true">
+          <span class="demo-tab-favicon" aria-hidden="true">🕯️</span>
+          <span class="demo-tab-title" id="demo-tab-title">Welcome</span>
+        </div>
+        <div class="demo-tab-new" aria-label="New tab" title="New tab">+</div>
+      </div>
+      <!-- Toolbar: nav + address + actions -->
       <div class="demo-toolbar">
-        <div class="demo-toolbar-left">
-          <span class="demo-beacon-icon" aria-hidden="true">🏠</span>
-          <span class="demo-beacon-label">Beacon</span>
+        <div class="demo-nav-buttons">
+          <button type="button" class="demo-nav-btn" aria-label="Back" disabled><span aria-hidden="true">←</span></button>
+          <button type="button" class="demo-nav-btn" aria-label="Forward" disabled><span aria-hidden="true">→</span></button>
+          <button type="button" class="demo-nav-btn" aria-label="Reload"><span aria-hidden="true">↻</span></button>
         </div>
-        <div class="demo-address-bar">
+        <div class="demo-address-wrap">
           <span class="demo-addr-icon" aria-hidden="true">🔒</span>
-          <span class="demo-addr-url">beacon://welcome</span>
+          <span class="demo-addr-url" id="demo-addr-url">beacon://welcome</span>
         </div>
-        <div class="demo-chips">
-          <span class="demo-chip">Safe Page</span>
-          <span class="demo-chip">SafeSearch On</span>
-          <span class="demo-chip">8:48 AM</span>
+        <div class="demo-toolbar-actions">
+          <span class="demo-chip demo-chip-safe">SafeSearch On</span>
+          <span class="demo-chip demo-chip-time" id="demo-time">8:48 AM</span>
         </div>
       </div>
+      <!-- Bookmarks bar -->
+      <div class="demo-bookmarks">
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">🏠</span> Home</a>
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">🔍</span> Safe Search</a>
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">🛡️</span> Blocking</a>
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">🕊️</span> Nudges</a>
+        <a href="#" class="demo-bookmark" tabindex="-1"><span class="demo-bookmark-icon" aria-hidden="true">✓</span> Accountability</a>
+      </div>
+      <!-- Content -->
       <div class="demo-content">
         <div class="demo-welcome-view" id="demo-welcome-view">
           <div class="demo-welcome-badge" aria-hidden="true">🕯️</div>
@@ -1588,7 +1726,12 @@
   var demoSeeWhy = document.getElementById('demo-see-why');
   var demoWhyPanel = document.getElementById('demo-why-panel');
   var demoResetBtn = document.getElementById('demo-reset');
+  var demoAddrUrl = document.getElementById('demo-addr-url');
+  var demoTabTitle = document.getElementById('demo-tab-title');
   if(!demoOverlay || !demoModal) return;
+
+  function setDemoUrl(url){ if(demoAddrUrl) demoAddrUrl.textContent = url; }
+  function setDemoTabTitle(title){ if(demoTabTitle) demoTabTitle.textContent = title; }
   var DEMO_SUGGESTIONS = ['daily devotional','family safe recipes','Christian parenting resources','Bible study tools','wholesome family movies'];
   var DEMO_RESULTS = [
     { title: 'Family-friendly devotionals', url: 'example.org/devotionals' },
@@ -1607,12 +1750,21 @@
     if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
     else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
   }
+  var demoTimeEl = document.getElementById('demo-time');
+  var demoTimeInterval = null;
+  function updateDemoTime(){
+    if(!demoTimeEl) return;
+    var d = new Date();
+    demoTimeEl.textContent = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  }
   function openDemo(triggerBtn){
     resetDemo();
     demoOverlay.setAttribute('aria-hidden', 'false');
     if(demoOpenBtn) demoOpenBtn.setAttribute('aria-expanded', 'true');
     demoOverlay._lastFocus = triggerBtn || demoOpenBtn;
     document.body.style.overflow = 'hidden';
+    updateDemoTime();
+    demoTimeInterval = setInterval(updateDemoTime, 60000);
     var first = getDemoFocusables()[0];
     if(first) first.focus();
   }
@@ -1620,6 +1772,7 @@
     demoOverlay.setAttribute('aria-hidden', 'true');
     if(demoOpenBtn) demoOpenBtn.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
+    if(demoTimeInterval){ clearInterval(demoTimeInterval); demoTimeInterval = null; }
     var last = demoOverlay._lastFocus;
     if(last && last.focus) last.focus();
   }
@@ -1643,6 +1796,8 @@
     if(demoSearchInput) demoSearchInput.setAttribute('aria-expanded', 'false');
     demoSeeWhy.setAttribute('aria-expanded', 'false');
     demoWhyPanel.hidden = true;
+    setDemoUrl('beacon://welcome');
+    setDemoTabTitle('Welcome');
   }
   demoCloseBtn.addEventListener('click', closeDemo);
   demoOverlay.addEventListener('click', function(e){ if(e.target === demoOverlay) closeDemo(); });
@@ -1682,6 +1837,10 @@
     });
   }
   demoStartBtn.addEventListener('click', function(){
+    var q = (demoSearchInput && demoSearchInput.value) ? demoSearchInput.value.trim() : 'safe search';
+    var urlQuery = q.replace(/\s+/g, '+');
+    setDemoUrl('beacon://search?q=' + encodeURIComponent(q));
+    setDemoTabTitle(q.length > 20 ? q.slice(0, 17) + '…' : q || 'Search');
     renderResults();
     demoWelcomeView.hidden = true;
     demoResultsView.hidden = false;
@@ -1694,6 +1853,8 @@
     demoSeeWhy.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
   demoResetBtn.addEventListener('click', resetDemo);
+  var demoReloadBtn = demoModal.querySelector('.demo-nav-btn[aria-label="Reload"]');
+  if(demoReloadBtn) demoReloadBtn.addEventListener('click', function(){ resetDemo(); });
 })();
 </script>
 </section>
