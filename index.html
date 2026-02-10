@@ -31,13 +31,13 @@
   --beamSoft: .18;
   --beamSpeed: 14s;
 
-  /* Lighthouse origin (lantern) */
-  --beamFocusX: 64%;
-  --beamFocusY: 15%;
+  /* Lighthouse origin (lantern) - up and to the right so light reads as from lighthouse */
+  --beamFocusX: 72%;
+  --beamFocusY: 10%;
 
-  /* Updated by JS */
-  --beamAngle: 20deg;        /* beam points toward cursor */
-  --beamScrollAngle: 0deg;   /* slow sweep with scroll */
+  /* Updated by JS; offset so default beam direction is up-and-right from lighthouse */
+  --beamAngle: 8deg;        /* beam points toward cursor; base offset up-right */
+  --beamScrollAngle: 0deg;  /* slow sweep with scroll */
   --spotX: 50%;
   --spotY: 40%;
   --spotOn: 0;               /* 0..1 */
@@ -105,14 +105,15 @@
   pointer-events: none;
 }
 
-/* Cursor "spotlight" - no filter/blend in default to avoid Safari compositing bugs */
+/* Cursor "spotlight" - smooth falloff, no filter/blend to avoid Safari compositing bugs */
 #beacon-hero .cursor-spot{
   position:absolute; inset:0;
   background:
-    radial-gradient(circle at var(--spotX) var(--spotY),
-      rgba(255,183,3,.12) 0%,
-      rgba(255,183,3,.05) 18%,
-      transparent 45%);
+    radial-gradient(ellipse 90% 80% at var(--spotX) var(--spotY),
+      rgba(255,183,3,.10) 0%,
+      rgba(255,183,3,.06) 12%,
+      rgba(255,183,3,.03) 25%,
+      transparent 50%);
   opacity: calc(var(--spotOn) * .85);
   pointer-events: none;
 }
@@ -121,7 +122,7 @@
    - origin anchored at lighthouse
    - angle aims toward cursor, with scroll adding slow drift
 */
-/* Beam: smaller layer (120vmax) + no filter/blend = stable compositing; full size in perf-safe off */
+/* Beam: smooth conic gradient so edges (especially left) are soft; origin at lighthouse */
 #beacon-hero .hero-beam{
   position:absolute;
   left: var(--beamFocusX);
@@ -134,10 +135,13 @@
   background: conic-gradient(
     from 0deg at 50% 50%,
     transparent 0deg,
-    rgba(255,183,3,0.00) 40deg,
-    rgba(255,183,3,0.78) 78deg,
-    rgba(255,183,3,0.22) 120deg,
-    transparent 165deg
+    rgba(255,183,3,0) 25deg,
+    rgba(255,183,3,.08) 45deg,
+    rgba(255,183,3,.35) 65deg,
+    rgba(255,183,3,.72) 85deg,
+    rgba(255,183,3,.28) 110deg,
+    rgba(255,183,3,.06) 140deg,
+    transparent 170deg
   );
   transform: rotate(calc(var(--beamAngle) + var(--beamScrollAngle)));
   transform-origin: 50% 50%;
@@ -145,7 +149,7 @@
   pointer-events: none;
 }
 
-/* secondary soft beam for "volume" */
+/* secondary soft beam - smoother falloff for blended look */
 #beacon-hero .hero-beam-soft{
   position:absolute;
   left: calc(var(--beamFocusX) + 1.5%);
@@ -158,10 +162,12 @@
   background: conic-gradient(
     from 18deg at 50% 50%,
     transparent 0deg,
-    rgba(255,183,3,0.00) 35deg,
-    rgba(255,183,3,0.35) 85deg,
-    rgba(255,183,3,0.09) 130deg,
-    transparent 175deg
+    rgba(255,183,3,0) 30deg,
+    rgba(255,183,3,.04) 55deg,
+    rgba(255,183,3,.22) 80deg,
+    rgba(255,183,3,.12) 115deg,
+    rgba(255,183,3,.02) 150deg,
+    transparent 180deg
   );
   transform: rotate(calc(var(--beamAngle) + var(--beamScrollAngle)));
   transform-origin: 50% 50%;
@@ -169,15 +175,16 @@
   pointer-events: none;
 }
 
-/* Haze: opacity only (no mix-blend) to avoid Safari compositing/vanishing */
+/* Haze: smooth glow from lighthouse position (no mix-blend to avoid Safari issues) */
 #beacon-hero .hero-haze{
   position:absolute; inset:0;
   background:
-    radial-gradient(circle at var(--beamFocusX) var(--beamFocusY),
-      rgba(255,220,130,.2) 0%,
-      rgba(255,183,3,.08) 14%,
-      transparent 42%),
-    radial-gradient(ellipse 60% 45% at 55% 42%, rgba(255,183,3,.06) 0%, transparent 60%);
+    radial-gradient(ellipse 80% 60% at var(--beamFocusX) var(--beamFocusY),
+      rgba(255,220,130,.18) 0%,
+      rgba(255,183,3,.07) 20%,
+      rgba(255,183,3,.02) 40%,
+      transparent 55%),
+    radial-gradient(ellipse 60% 45% at 55% 42%, rgba(255,183,3,.05) 0%, transparent 60%);
   opacity: .85;
   pointer-events: none;
 }
@@ -1799,15 +1806,18 @@
   var rafPending = false;
 
   /* Cache beam focus % - only refresh on resize to avoid layout thrash */
-  var beamFocusX = 64;
-  var beamFocusY = 15;
+  var beamFocusX = 72;
+  var beamFocusY = 10;
   function refreshBeamFocusCache(){
     var cs = getComputedStyle(root);
-    beamFocusX = parseFloat(cs.getPropertyValue('--beamFocusX')) || 64;
-    beamFocusY = parseFloat(cs.getPropertyValue('--beamFocusY')) || 15;
+    beamFocusX = parseFloat(cs.getPropertyValue('--beamFocusX')) || 72;
+    beamFocusY = parseFloat(cs.getPropertyValue('--beamFocusY')) || 10;
   }
   refreshBeamFocusCache();
   window.addEventListener('resize', refreshBeamFocusCache, { passive: true });
+
+  /* Offset so beam reads as coming from lighthouse (up and right a few degrees) */
+  var BEAM_ANGLE_OFFSET_DEG = -12;
 
   function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
@@ -1818,7 +1828,7 @@
     var originY = b.top + (b.height * beamFocusY / 100);
     var dx = lastX - originX;
     var dy = lastY - originY;
-    var ang = Math.atan2(dy, dx) * (180/Math.PI);
+    var ang = Math.atan2(dy, dx) * (180/Math.PI) + BEAM_ANGLE_OFFSET_DEG;
     root.style.setProperty('--beamAngle', ang.toFixed(2) + 'deg');
     var spotXPct = ((lastX - b.left) / b.width) * 100;
     var spotYPct = ((lastY - b.top) / b.height) * 100;
