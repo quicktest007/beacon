@@ -9,6 +9,9 @@
   <style>
     html { margin: 0; padding: 0; min-height: 100%; scroll-behavior: smooth; }
     body { margin: 0; padding: 0; min-height: 100vh; background: #0E1628; }
+    /* Ensure modals show when open regardless of stacking/scope */
+    .overlay[aria-hidden="false"] { display: flex !important; }
+    .demo-overlay[aria-hidden="false"] { display: flex !important; }
   </style>
 </head>
 <body>
@@ -1690,6 +1693,7 @@
 </div>
 
 <script>
+function initModalsAndBeam(){
 (function(){
   var root = document.getElementById('beacon-hero');
   if(!root) return;
@@ -1706,6 +1710,8 @@
   var nameErr = document.getElementById('beacon-name-err');
   var emailErr = document.getElementById('beacon-email-err');
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if(!overlay || !modal){ return; }
 
   /* =========================
      MODAL
@@ -2044,7 +2050,7 @@
     trapFocus(e);
   });
   demoModal.addEventListener('click', function(e){ e.stopPropagation(); });
-  demoOpenBtn.addEventListener('click', function(){ openDemo(demoOpenBtn); });
+  if(demoOpenBtn) demoOpenBtn.addEventListener('click', function(){ openDemo(demoOpenBtn); });
   if(demoSearchInput){
     demoSearchInput.addEventListener('input', function(){
       var q = (demoSearchInput.value || '').trim().toLowerCase();
@@ -2097,6 +2103,12 @@
   var demoReloadBtn = demoModal.querySelector('.demo-nav-btn[aria-label="Reload"]');
   if(demoReloadBtn) demoReloadBtn.addEventListener('click', function(){ resetDemo(); });
 })();
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initModalsAndBeam);
+} else {
+  initModalsAndBeam();
+}
 </script>
 </section>
 </body>
