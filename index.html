@@ -48,7 +48,7 @@
   background: var(--navy);
   color: var(--white);
   position:relative;
-  overflow:hidden;
+  /* overflow:hidden removed so fixed modals (Join Waitlist, Demo) are not clipped */
   display:flex;
   flex-direction:column;
 }
@@ -64,6 +64,7 @@
   z-index:0;
   pointer-events:none;
   isolation:isolate;
+  overflow:hidden;
   /* no contain:paint - it can cause stacking/clipping bugs and "vanishing" in Safari */
 }
 #beacon-hero .hero-photo{
