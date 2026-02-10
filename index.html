@@ -1072,56 +1072,216 @@
 #beacon-hero .demo-content{
   flex: 1;
   overflow-y: auto;
-  padding: 1.25rem;
+  padding: 0;
   min-height: 280px;
+  position: relative;
 }
-#beacon-hero .demo-welcome-view{ text-align: center; }
-#beacon-hero .demo-welcome-badge{ font-size: 2rem; margin-bottom: .5rem; }
-#beacon-hero .demo-welcome-title{ margin: 0 0 .25rem; font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; }
-#beacon-hero .demo-welcome-tagline{ margin: 0 0 1.25rem; color: rgba(255,255,255,.75); font-size: .95rem; }
-#beacon-hero .demo-search-wrap{ position: relative; margin-bottom: 1rem; max-width: 320px; margin-left: auto; margin-right: auto; }
-#beacon-hero .demo-search-input{
-  width: 100%;
-  padding: .7rem 1rem;
+
+/* Chrome-style new tab: light background, centered */
+#beacon-hero .demo-welcome-view{
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: #fff;
+  color: #202124;
+  position: relative;
+}
+#beacon-hero .demo-welcome-utils{
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: .8125rem;
+  color: #5f6368;
+}
+#beacon-hero .demo-util-link{
+  cursor: default;
+  padding: .2rem 0;
+}
+#beacon-hero .demo-util-link:hover{ color: #202124; text-decoration: underline; }
+#beacon-hero .demo-util-icon{
+  width: 1.25rem;
+  height: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1rem;
-  background: rgba(255,255,255,.08);
-  border: 2px solid rgba(255,255,255,.14);
-  border-radius: 12px;
-  color: var(--white);
+  color: #5f6368;
+  cursor: default;
+}
+#beacon-hero .demo-util-avatar{
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a73e8, #34a853);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .6rem;
+  color: #fff;
+  cursor: default;
+}
+#beacon-hero .demo-welcome-center{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem 4rem;
+}
+#beacon-hero .demo-welcome-logo{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin-bottom: 1.75rem;
+}
+#beacon-hero .demo-logo-icon{ font-size: 2.75rem; }
+#beacon-hero .demo-logo-text{
+  font-size: 4rem;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+  color: #0E1628;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+#beacon-hero .demo-search-pill{
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 584px;
+  min-height: 44px;
+  padding: 0 1rem 0 1.25rem;
+  margin-bottom: 1.5rem;
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 24px;
+  box-shadow: 0 1px 6px rgba(32,33,36,.28);
+  transition: box-shadow .2s;
+}
+#beacon-hero .demo-search-pill:hover{ box-shadow: 0 1px 8px rgba(32,33,36,.35); }
+#beacon-hero .demo-search-pill:focus-within{ box-shadow: 0 1px 8px rgba(32,33,36,.35), 0 0 0 1px rgba(255,183,3,.4); border-color: var(--amber); }
+#beacon-hero .demo-search-glass{ font-size: 1.1rem; color: #9aa0a6; flex-shrink: 0; margin-right: .5rem; }
+#beacon-hero .demo-search-input{
+  flex: 1;
+  min-width: 0;
+  padding: .5rem .25rem;
+  font-size: 1rem;
+  background: transparent;
+  border: none;
+  color: #202124;
   font-family: inherit;
-  transition: border-color .2s, box-shadow .2s;
 }
-#beacon-hero .demo-search-input::placeholder{ color: rgba(255,255,255,.45); }
-#beacon-hero .demo-search-input:focus{
-  outline: none;
-  border-color: var(--amber);
-  box-shadow: 0 0 0 3px rgba(255,183,3,.2);
+#beacon-hero .demo-search-input::placeholder{ color: #9aa0a6; }
+#beacon-hero .demo-search-input:focus{ outline: none; }
+#beacon-hero .demo-search-mic,
+#beacon-hero .demo-search-camera{
+  font-size: 1rem;
+  color: #4285f4;
+  padding: 0 .35rem;
+  cursor: default;
+  flex-shrink: 0;
 }
-#beacon-hero .demo-suggestions{
+#beacon-hero .demo-search-wrap .demo-suggestions{
   position: absolute;
   left: 0; right: 0;
-  top: 100%;
-  margin: .25rem 0 0;
-  padding: .35rem 0;
+  top: calc(100% + .5rem);
+  margin: 0;
+  padding: .5rem 0;
   list-style: none;
-  background: rgba(14,22,40,.98);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.4);
-  max-height: 220px;
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(32,33,36,.25);
+  max-height: 280px;
   overflow-y: auto;
-  z-index: 5;
+  z-index: 10;
 }
-#beacon-hero .demo-suggestions[hidden]{ display: none !important; }
+#beacon-hero .demo-search-wrap .demo-suggestions[hidden]{ display: none !important; }
 #beacon-hero .demo-suggestion-item{
-  padding: .5rem 1rem;
+  padding: .6rem 1.25rem;
   cursor: pointer;
-  color: rgba(255,255,255,.9);
-  font-size: .9rem;
-  transition: background .15s;
+  color: #202124;
+  font-size: .9375rem;
+  transition: background .1s;
 }
 #beacon-hero .demo-suggestion-item:hover,
-#beacon-hero .demo-suggestion-item:focus{ background: rgba(255,183,3,.15); outline: none; }
+#beacon-hero .demo-suggestion-item:focus{ background: #f1f3f4; outline: none; }
+#beacon-hero .demo-cta-sr-only{
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+#beacon-hero .demo-shortcuts{
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  max-width: 480px;
+}
+#beacon-hero .demo-shortcut{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+  width: 5rem;
+  cursor: default;
+}
+#beacon-hero .demo-shortcut-circle{
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f1f3f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: background .15s;
+}
+#beacon-hero .demo-shortcut:hover .demo-shortcut-circle{ background: #e8eaed; }
+#beacon-hero .demo-shortcut-label{
+  font-size: .75rem;
+  color: #5f6368;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#beacon-hero .demo-welcome-footer{
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+}
+#beacon-hero .demo-customize{
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem .85rem;
+  font-size: .8125rem;
+  color: #1a73e8;
+  background: rgba(26,115,232,.08);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+  transition: background .15s, color .15s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#beacon-hero .demo-customize:hover{ background: rgba(26,115,232,.14); color: #1557b0; }
+#beacon-hero .demo-customize-icon{ font-size: .9rem; opacity: .9; }
 #beacon-hero .demo-cta-primary{
   display: inline-block;
   padding: .7rem 1.4rem;
@@ -1141,26 +1301,11 @@
   box-shadow: 0 10px 28px rgba(255,183,3,.3);
 }
 #beacon-hero .demo-cta-primary:focus-visible{ outline: 2px solid var(--white); outline-offset: 3px; }
-#beacon-hero .demo-tiles{
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: .5rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-width: 320px;
-  margin-left: auto;
-  margin-right: auto;
-}
-#beacon-hero .demo-tile{
-  padding: .5rem .75rem;
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 10px;
-  font-size: .8rem;
-  font-weight: 800;
-  color: rgba(255,255,255,.88);
-  text-align: center;
+#beacon-hero .demo-results-view{
+  padding: 1.5rem 1.25rem;
+  min-height: 100%;
+  background: rgba(14,22,40,.97);
+  color: var(--white);
 }
 #beacon-hero .demo-results-view .demo-results-heading{ margin: 0 0 1rem; font-size: 1.2rem; font-weight: 900; color: rgba(255,255,255,.95); }
 #beacon-hero .demo-result-cards{ display: flex; flex-direction: column; gap: .6rem; list-style: none; padding: 0; margin: 0 0 1rem; }
@@ -1239,7 +1384,11 @@
   #beacon-hero .demo-tab-title{ max-width: 100px; }
   #beacon-hero .demo-bookmarks{ gap: 0; padding: .3rem .5rem; }
   #beacon-hero .demo-bookmark{ padding: .35rem .5rem; font-size: .7rem; }
-  #beacon-hero .demo-tiles{ grid-template-columns: 1fr; }
+  #beacon-hero .demo-shortcuts{ gap: 1.25rem; }
+  #beacon-hero .demo-logo-text{ font-size: 2.75rem; }
+  #beacon-hero .demo-welcome-utils{ top: .75rem; right: .75rem; font-size: .75rem; gap: .75rem; }
+  #beacon-hero .demo-welcome-footer{ bottom: 1rem; right: 1rem; }
+  #beacon-hero .demo-customize{ padding: .4rem .65rem; font-size: .75rem; }
 }
 @media (prefers-reduced-motion: reduce){
   #beacon-hero .demo-cta-primary:hover,
@@ -1462,19 +1611,49 @@
       <!-- Content -->
       <div class="demo-content">
         <div class="demo-welcome-view" id="demo-welcome-view">
-          <div class="demo-welcome-badge" aria-hidden="true">🕯️</div>
-          <h3 class="demo-welcome-title">Welcome to Beacon</h3>
-          <p class="demo-welcome-tagline">A Light in the Darkness</p>
-          <div class="demo-search-wrap">
-            <input type="text" class="demo-search-input" id="demo-search-input" placeholder="Search the web safely…" autocomplete="off" aria-label="Search the web safely" aria-autocomplete="list" aria-controls="demo-suggestions" aria-expanded="false">
-            <ul class="demo-suggestions" id="demo-suggestions" role="listbox" aria-label="Search suggestions" hidden></ul>
+          <div class="demo-welcome-utils">
+            <span class="demo-util-link">Settings</span>
+            <span class="demo-util-link">Sign in</span>
+            <span class="demo-util-icon" aria-hidden="true" title="Beacon apps">⊞</span>
+            <span class="demo-util-avatar" aria-hidden="true" title="Profile">●</span>
           </div>
-          <button type="button" class="demo-cta-primary" id="demo-start-browsing">Start Browsing Safely</button>
-          <div class="demo-tiles" role="list">
-            <div class="demo-tile" role="listitem">SafeSearch</div>
-            <div class="demo-tile" role="listitem">Blocking</div>
-            <div class="demo-tile" role="listitem">Gentle Nudges</div>
-            <div class="demo-tile" role="listitem">Accountability (optional)</div>
+          <div class="demo-welcome-center">
+            <div class="demo-welcome-logo">
+              <span class="demo-logo-icon" aria-hidden="true">🕯️</span>
+              <span class="demo-logo-text">Beacon</span>
+            </div>
+            <div class="demo-search-wrap demo-search-pill">
+              <span class="demo-search-glass" aria-hidden="true">🔍</span>
+              <input type="text" class="demo-search-input" id="demo-search-input" placeholder="Search the web safely or type a URL" autocomplete="off" aria-label="Search the web safely" aria-autocomplete="list" aria-controls="demo-suggestions" aria-expanded="false">
+              <span class="demo-search-mic" aria-hidden="true" title="Voice search">🎤</span>
+              <span class="demo-search-camera" aria-hidden="true" title="Search by image">📷</span>
+              <ul class="demo-suggestions" id="demo-suggestions" role="listbox" aria-label="Search suggestions" hidden></ul>
+            </div>
+            <button type="button" class="demo-cta-primary demo-cta-sr-only" id="demo-start-browsing">Start Browsing Safely</button>
+            <div class="demo-shortcuts" role="list">
+              <div class="demo-shortcut" role="listitem">
+                <div class="demo-shortcut-circle"><span aria-hidden="true">🔍</span></div>
+                <span class="demo-shortcut-label">Safe Search</span>
+              </div>
+              <div class="demo-shortcut" role="listitem">
+                <div class="demo-shortcut-circle"><span aria-hidden="true">👤</span></div>
+                <span class="demo-shortcut-label">Sign in</span>
+              </div>
+              <div class="demo-shortcut" role="listitem">
+                <div class="demo-shortcut-circle"><span aria-hidden="true">🛡️</span></div>
+                <span class="demo-shortcut-label">Blocking</span>
+              </div>
+              <div class="demo-shortcut" role="listitem">
+                <div class="demo-shortcut-circle"><span aria-hidden="true">+</span></div>
+                <span class="demo-shortcut-label">Add shortcut</span>
+              </div>
+            </div>
+          </div>
+          <div class="demo-welcome-footer">
+            <button type="button" class="demo-customize" tabindex="-1">
+              <span class="demo-customize-icon" aria-hidden="true">✎</span>
+              Customize Beacon
+            </button>
           </div>
         </div>
         <div class="demo-results-view" id="demo-results-view" hidden>
@@ -1834,6 +2013,9 @@
     });
     demoSearchInput.addEventListener('blur', function(){
       setTimeout(function(){ demoSuggestions.hidden = true; demoSearchInput.setAttribute('aria-expanded', 'false'); }, 150);
+    });
+    demoSearchInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); demoStartBtn.click(); }
     });
   }
   demoStartBtn.addEventListener('click', function(){
