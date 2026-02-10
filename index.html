@@ -108,24 +108,28 @@
   pointer-events: none;
 }
 
-/* Cursor "spotlight" - smooth falloff, no filter/blend to avoid Safari compositing bugs */
-#beacon-hero .cursor-spot{
+/* Lighthouse orb – static at lighthouse position, fades in/out like a real beacon */
+@keyframes lighthouse-orb{
+  0%, 100%{ opacity: .25; }
+  50%{ opacity: .75; }
+}
+#beacon-hero .hero-orb{
   position:absolute; inset:0;
   background:
-    radial-gradient(ellipse 90% 80% at var(--spotX) var(--spotY),
-      rgba(255,183,3,.10) 0%,
-      rgba(255,183,3,.06) 12%,
-      rgba(255,183,3,.03) 25%,
-      transparent 50%);
-  opacity: calc(var(--spotOn) * .85);
+    radial-gradient(ellipse 70% 55% at var(--beamFocusX) var(--beamFocusY),
+      rgba(255,220,130,.35) 0%,
+      rgba(255,183,3,.18) 22%,
+      rgba(255,183,3,.06) 45%,
+      transparent 65%);
+  animation: lighthouse-orb 4s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* BIG beam (cursor + scroll reactive)
-   - origin anchored at lighthouse
-   - angle aims toward cursor, with scroll adding slow drift
-*/
-/* Beam: smooth conic gradient so edges (especially left) are soft; origin at lighthouse */
+/* Beam: slow sweep like a lighthouse (CSS-driven rotation) */
+@keyframes lighthouse-sweep{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
+}
 #beacon-hero .hero-beam{
   position:absolute;
   left: var(--beamFocusX);
@@ -146,13 +150,12 @@
     rgba(255,183,3,.06) 140deg,
     transparent 170deg
   );
-  transform: rotate(calc(var(--beamAngle) + var(--beamScrollAngle)));
   transform-origin: 50% 50%;
-  will-change: transform;
+  animation: lighthouse-sweep 12s linear infinite;
   pointer-events: none;
 }
 
-/* secondary soft beam - smoother falloff for blended look */
+/* Secondary soft beam – same sweep, slightly offset timing for depth */
 #beacon-hero .hero-beam-soft{
   position:absolute;
   left: calc(var(--beamFocusX) + 1.5%);
@@ -172,13 +175,16 @@
     rgba(255,183,3,.02) 150deg,
     transparent 180deg
   );
-  transform: rotate(calc(var(--beamAngle) + var(--beamScrollAngle)));
   transform-origin: 50% 50%;
-  will-change: transform;
+  animation: lighthouse-sweep 14s linear infinite;
   pointer-events: none;
 }
 
-/* Haze: smooth glow from lighthouse position (no mix-blend to avoid Safari issues) */
+/* Haze: static glow from lighthouse, subtle pulse to match orb */
+@keyframes lighthouse-haze{
+  0%, 100%{ opacity: .7; }
+  50%{ opacity: .9; }
+}
 #beacon-hero .hero-haze{
   position:absolute; inset:0;
   background:
@@ -188,21 +194,24 @@
       rgba(255,183,3,.02) 40%,
       transparent 55%),
     radial-gradient(ellipse 60% 45% at 55% 42%, rgba(255,183,3,.05) 0%, transparent 60%);
-  opacity: .85;
+  animation: lighthouse-haze 4s ease-in-out infinite;
   pointer-events: none;
 }
 
-/* When reduced motion: freeze "reactive" feel */
+/* When reduced motion: disable animations, show static glow */
 @media (prefers-reduced-motion: reduce){
-  #beacon-hero .cursor-spot{ display:none; }
+  #beacon-hero .hero-orb,
+  #beacon-hero .hero-haze{ animation: none; }
+  #beacon-hero .hero-orb{ opacity: .5; }
+  #beacon-hero .hero-haze{ opacity: .8; }
   #beacon-hero .hero-beam,
-  #beacon-hero .hero-beam-soft{ opacity:.14; }
+  #beacon-hero .hero-beam-soft{ animation: none; opacity:.14; }
 }
 
 /* Perf safe mode: disable heavy effects that cause vanishing/choppy scroll (Safari, low-end GPUs) */
 #beacon-hero.perf-safe .hero-beam,
 #beacon-hero.perf-safe .hero-beam-soft,
-#beacon-hero.perf-safe .cursor-spot,
+#beacon-hero.perf-safe .hero-orb,
 #beacon-hero.perf-safe .hero-noise{ display: none !important; }
 #beacon-hero.perf-safe .hero-haze{ opacity: .5; }
 #beacon-hero.perf-safe .hero-stance,
@@ -1426,7 +1435,7 @@
   <div class="hero-beam-soft"></div>
   <div class="hero-haze"></div>
 
-  <div class="cursor-spot"></div>
+  <div class="hero-orb" aria-hidden="true"></div>
 </div>
 
 <header class="hero-bar">
@@ -1799,83 +1808,15 @@ function initModalsAndBeam(){
   });
 
   /* =========================
-     SCROLL + CURSOR REACTIVE BEAM
-     - Cached layout/style: no getComputedStyle in hot path; refresh on resize only.
-     - Single getBoundingClientRect per frame (batch read then batch write).
-     - Perf monitor: if FPS drops ~45 for 1s, add .perf-safe to disable heavy effects.
+     LIGHTHOUSE LIGHT
+     - Orb and beam are CSS-only: static position, fade in/out and slow sweep.
+     - Perf monitor: if FPS drops ~45 for 1s, add .perf-safe to disable animations.
      ========================= */
   if(reduced) return;
 
-  var lastX = window.innerWidth * 0.55;
-  var lastY = window.innerHeight * 0.45;
-  var lastScrollY = -1;
-  var rafPending = false;
-
-  /* Cache beam focus % - only refresh on resize to avoid layout thrash */
-  var beamFocusX = 72;
-  var beamFocusY = 10;
-  function refreshBeamFocusCache(){
-    var cs = getComputedStyle(root);
-    beamFocusX = parseFloat(cs.getPropertyValue('--beamFocusX')) || 72;
-    beamFocusY = parseFloat(cs.getPropertyValue('--beamFocusY')) || 10;
-  }
-  refreshBeamFocusCache();
-  window.addEventListener('resize', refreshBeamFocusCache, { passive: true });
-
-  /* Offset so beam reads as coming from lighthouse (up and right a few degrees) */
-  var BEAM_ANGLE_OFFSET_DEG = -12;
-
-  function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-
-  function setVars(){
-    rafPending = false;
-    var b = root.getBoundingClientRect();
-    var originX = b.left + (b.width * beamFocusX / 100);
-    var originY = b.top + (b.height * beamFocusY / 100);
-    var dx = lastX - originX;
-    var dy = lastY - originY;
-    var ang = Math.atan2(dy, dx) * (180/Math.PI) + BEAM_ANGLE_OFFSET_DEG;
-    root.style.setProperty('--beamAngle', ang.toFixed(2) + 'deg');
-    var spotXPct = ((lastX - b.left) / b.width) * 100;
-    var spotYPct = ((lastY - b.top) / b.height) * 100;
-    root.style.setProperty('--spotX', clamp(spotXPct, 0, 100).toFixed(2) + '%');
-    root.style.setProperty('--spotY', clamp(spotYPct, 0, 100).toFixed(2) + '%');
-    root.style.setProperty('--spotOn', '1');
-    var scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-    lastScrollY = scrollY;
-    var doc = document.documentElement;
-    var max = Math.max(1, (doc.scrollHeight - doc.clientHeight));
-    var t = max > 0 ? scrollY / max : 0;
-    root.style.setProperty('--beamScrollAngle', (t * 360).toFixed(2) + 'deg');
-  }
-
-  function schedule(){
-    if(rafPending) return;
-    rafPending = true;
-    requestAnimationFrame(setVars);
-  }
-
-  root.addEventListener('pointermove', function(e){
-    lastX = e.clientX;
-    lastY = e.clientY;
-    schedule();
-  });
-
-  root.addEventListener('pointerleave', function(){
-    root.style.setProperty('--spotOn', '0');
-  });
-
-  window.addEventListener('scroll', function(){
-    var scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-    if(scrollY !== lastScrollY) schedule();
-  }, { passive: true });
-  schedule();
-
-  /* Perf safe mode: if frame time > ~22ms (45fps) for 1s, add .perf-safe; remove after 2s good */
-  var frameCount = 0;
-  var slowFrameCount = 0;
   var lastFrameTime = performance.now();
   var perfSafeActive = false;
+  var slowFrameCount = 0;
   var goodFrameCount = 0;
   var PERF_SLOW_THRESHOLD_MS = 22;
   var PERF_SLOW_FRAMES_TO_TRIGGER = 45;
@@ -1908,12 +1849,6 @@ function initModalsAndBeam(){
     requestAnimationFrame(perfTick);
   }
   requestAnimationFrame(perfTick);
-
-  var hoverables = root.querySelectorAll('.mk-card, .step, .panel-item, .hero-panel, .imgCard');
-  hoverables.forEach(function(el){
-    el.addEventListener('mouseenter', function(){ root.style.setProperty('--spotOn', '1'); });
-    el.addEventListener('mouseleave', function(){ root.style.setProperty('--spotOn', '0.35'); });
-  });
 })();
 
 (function(){
