@@ -2086,8 +2086,8 @@ function initModalsAndBeam(){
   demoStartBtn.addEventListener('click', function(){
     var q = (demoSearchInput && demoSearchInput.value) ? demoSearchInput.value.trim() : '';
     setDemoUrl('beacon://search?q=' + encodeURIComponent(q || ''));
-    setDemoTabTitle(q.length > 20 ? q.slice(0, 17) + '…' : q || 'Search');
-    if(demoResultsHeading) demoResultsHeading.textContent = q ? 'Protected Results for “‘ + q + '"' : 'Protected Results';
+    setDemoTabTitle(q.length > 20 ? q.slice(0, 17) + '\u2026' : q || 'Search');
+    if(demoResultsHeading) demoResultsHeading.textContent = q ? ("Protected Results for \u201C" + q + "\u201D") : 'Protected Results';
     renderResults(q);
     demoWelcomeView.hidden = true;
     demoResultsView.hidden = false;
