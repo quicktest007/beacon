@@ -566,7 +566,7 @@
 }
 
 /* =========================
-   MARKETING SECTION (light theme)
+   MARKETING SECTION (Firefox-style: single card, shapes, 3 features)
    ========================= */
 #beacon-hero .marketing{
   position:relative;
@@ -574,81 +574,133 @@
   padding: clamp(2.5rem,6vw,4rem) clamp(1.25rem,5vw,3rem) clamp(2.5rem,6vw,4rem);
   background: #f9fafb;
   content-visibility: auto;
-  contain-intrinsic-size: auto 400px;
+  contain-intrinsic-size: auto 500px;
 }
 #beacon-hero .mk-inner{ max-width: 1120px; margin: 0 auto; }
-#beacon-hero .kicker{
-  display:inline-flex;align-items:center;gap:.5rem;
-  padding:.35rem .75rem;
-  border-radius:999px;
-  background: rgba(0,0,0,.06);
-  border:1px solid rgba(0,0,0,.1);
-  color: var(--inkDim);
-  font-weight: 800;
+#beacon-hero .mk-card-wrap{
+  position: relative;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.04);
+  padding: clamp(2rem,5vw,3rem) clamp(1.5rem,4vw,2.5rem) clamp(2rem,5vw,2.5rem);
+  overflow: visible;
 }
-#beacon-hero .kicker .kdot{
-  width:9px;height:9px;border-radius:999px;background: var(--blue);
-  box-shadow:0 0 0 4px rgba(0,96,223,.15);
+/* Decorative shapes (top-left, overlapping card) */
+#beacon-hero .mk-shapes{
+  position: absolute;
+  top: -1rem;
+  left: -1rem;
+  width: 140px;
+  height: 120px;
+  pointer-events: none;
+}
+#beacon-hero .mk-shape{
+  position: absolute;
+  display: block;
+}
+#beacon-hero .mk-shape-ring{
+  width: 48px;
+  height: 48px;
+  border: 3px solid #ff9a56;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  background: transparent;
+}
+#beacon-hero .mk-shape-pill{
+  width: 56px;
+  height: 20px;
+  background: linear-gradient(90deg, #9059ff 0%, #a78bfa 100%);
+  border-radius: 999px;
+  top: 28px;
+  left: 24px;
+}
+#beacon-hero .mk-shape-blob{
+  width: 28px;
+  height: 28px;
+  background: #ff6b9d;
+  border-radius: 50% 45% 55% 50% / 50% 55% 45% 50%;
+  top: 52px;
+  left: 8px;
 }
 #beacon-hero .mk-title{
-  margin: 1rem 0 .75rem;
-  font-size: clamp(1.7rem,3.2vw,2.35rem);
+  margin: 0 0 .5rem;
+  font-size: clamp(1.75rem,3.2vw,2.25rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  line-height:1.2;
+  line-height: 1.2;
   color: var(--ink);
+  text-align: center;
 }
-#beacon-hero .mk-lede{
-  margin:0;
-  max-width: 82ch;
-  color: var(--inkDim);
-  font-size: clamp(1rem,1.6vw,1.1rem);
-  line-height:1.65;
+#beacon-hero .mk-title-underline{
+  display: block;
+  width: 80px;
+  height: 5px;
+  margin: 0 auto 2rem;
+  background: linear-gradient(90deg, #9059ff 0%, #ff9a56 50%, #e85d4a 100%);
+  border-radius: 999px;
 }
-
-/* cards */
 #beacon-hero .mk-grid{
-  margin-top: clamp(1.5rem,3vw,2.2rem);
-  display:grid;
+  display: grid;
   grid-template-columns: 1fr;
-  gap:1rem;
+  gap: 2rem;
 }
-@media(min-width: 900px){
-  #beacon-hero .mk-grid{ grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 768px){
+  #beacon-hero .mk-grid{ grid-template-columns: repeat(3, 1fr); gap: 2rem 1.5rem; }
 }
 #beacon-hero .mk-card{
-  background: #fff;
-  border: 1px solid rgba(0,0,0,.08);
-  border-radius: 12px;
-  padding: 1.25rem 1.15rem;
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
-  transition: transform .2s ease, box-shadow .2s ease;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  transition: none;
 }
-#beacon-hero .mk-card:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,.1);
-}
+#beacon-hero .mk-card:hover{ transform: none; box-shadow: none; }
 #beacon-hero .mk-icon{
-  width:44px;height:44px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  background: rgba(0,96,223,.1);
-  border: 1px solid rgba(0,96,223,.2);
-  margin-bottom: .75rem;
-  font-size: 1.1rem;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 0;
+}
+#beacon-hero .mk-icon.mk-icon-purple{
+  background: transparent;
+  border: none;
+  color: #9059ff;
+}
+#beacon-hero .mk-icon svg{
+  width: 48px;
+  height: 48px;
 }
 #beacon-hero .mk-card h3{
-  margin:0 0 .35rem;
+  margin: 0 0 .5rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-  font-size: 1.02rem;
+  font-size: 1.1rem;
+  line-height: 1.3;
   color: var(--ink);
 }
 #beacon-hero .mk-card p{
-  margin:0;
+  margin: 0;
   color: var(--inkDim);
-  line-height:1.55;
-  font-size:.95rem;
+  line-height: 1.6;
+  font-size: .9375rem;
 }
+#beacon-hero .mk-cta{
+  margin: 2rem 0 0;
+  text-align: center;
+}
+#beacon-hero .mk-cta a{
+  color: var(--blue);
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+}
+#beacon-hero .mk-cta a:hover{ text-decoration: underline; }
 
 /* =========================
    HOW IT WORKS (NEW, LONGER PAGE)
@@ -1579,18 +1631,38 @@
 
 <section class="marketing" id="beacon-features" aria-label="What Beacon Browser does">
   <div class="mk-inner">
-    <div class="kicker"><span class="kdot" aria-hidden="true"></span>Guidance without shame. Protection without surveillance.</div>
-    <h2 class="mk-title">A safer, Christ-centered browsing experience—built with grace.</h2>
-    <p class="mk-lede">
-      Beacon is designed for Christian men, women, and families who want a calmer internet.
-      Install on Apple, Windows, Android, or Chromebooks—strict filtering helps reduce explicit content, while privacy-first design keeps your browsing yours.
-    </p>
-
-    <div class="mk-grid" role="list" aria-label="Key capabilities">
-      <article class="mk-card" role="listitem"><div class="mk-icon" aria-hidden="true">🧭</div><h3>Calm by design</h3><p>Built to reduce temptation loops and keep your mind clear.</p></article>
-      <article class="mk-card" role="listitem"><div class="mk-icon" aria-hidden="true">🔒</div><h3>Privacy-first</h3><p>No creepy tracking. Beacon aims to protect, not surveil.</p></article>
-      <article class="mk-card" role="listitem"><div class="mk-icon" aria-hidden="true">👨‍👩‍👧‍👦</div><h3>Family-safe defaults</h3><p>Guardrails that work across real life—home, school, and on the go.</p></article>
-      <article class="mk-card" role="listitem"><div class="mk-icon" aria-hidden="true">✨</div><h3>Simple to use</h3><p>Clear settings, no jargon, and a calm experience from day one.</p></article>
+    <div class="mk-card-wrap">
+      <div class="mk-shapes" aria-hidden="true">
+        <span class="mk-shape mk-shape-ring"></span>
+        <span class="mk-shape mk-shape-pill"></span>
+        <span class="mk-shape mk-shape-blob"></span>
+      </div>
+      <h2 class="mk-title">Latest Beacon features</h2>
+      <span class="mk-title-underline" aria-hidden="true"></span>
+      <div class="mk-grid" role="list" aria-label="Key capabilities">
+        <article class="mk-card" role="listitem">
+          <div class="mk-icon mk-icon-purple" aria-hidden="true">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M12 14h24v6H12v-6zm0 8h16v4H12v-4zm0 8h20v4H12v-4z" fill="currentColor"/><rect x="8" y="8" width="32" height="28" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <h3>Pick up where you left off</h3>
+          <p>Beacon syncs your tabs and recent history across devices so you can continue browsing calmly on Apple, Windows, Android, or Chromebooks.</p>
+        </article>
+        <article class="mk-card" role="listitem">
+          <div class="mk-icon mk-icon-purple" aria-hidden="true">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 8L10 14v10c0 8 6 14 14 16 8-2 14-8 14-16V14L24 8z" fill="currentColor" opacity=".95"/></svg>
+          </div>
+          <h3>Browse knowing you're protected</h3>
+          <p>Strict SafeSearch and content blocking by default. Beacon keeps results family-friendly without surveillance—your data stays yours.</p>
+        </article>
+        <article class="mk-card" role="listitem">
+          <div class="mk-icon mk-icon-purple" aria-hidden="true">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 36c-1.2 0-2.4-.4-3.4-1.2L8 26V16l16-8 16 8v10l-12.6 8.8c-1 .8-2.2 1.2-3.4 1.2z" fill="currentColor" opacity=".9"/></svg>
+          </div>
+          <h3>Gentle nudges and optional accountability</h3>
+          <p>Faith-forward reminders when you need them, plus optional accountability you control. Clarity, not shame.</p>
+        </article>
+      </div>
+      <p class="mk-cta"><a href="#beacon-how">See how it works</a></p>
     </div>
   </div>
 </section>
