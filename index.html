@@ -16,8 +16,7 @@
   <style>
     html { margin: 0; padding: 0; min-height: 100%; scroll-behavior: smooth; }
     body { margin: 0; padding: 0; min-height: 100vh; background: #fff; color: #1a1a2e; }
-    /* Ensure modals show when open regardless of stacking/scope */
-    .overlay[aria-hidden="false"] { display: flex !important; }
+    /* Ensure demo modal shows when open */
     .demo-overlay[aria-hidden="false"] { display: flex !important; }
   </style>
 </head>
@@ -208,7 +207,7 @@
 #beacon-hero.perf-safe .hero-panel{
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  background: rgba(14,22,40,.72);
+  background: rgba(255,255,255,.9);
 }
 
 /* =========================
@@ -262,6 +261,7 @@
   box-shadow: 0 4px 16px rgba(0,96,223,.35);
 }
 #beacon-hero .hero-cta-pill:focus-visible{ outline: 2px solid var(--blue); outline-offset: 2px; }
+#beacon-hero a.hero-cta-pill{ text-decoration: none; color: #fff; }
 #beacon-hero .hero-bar-ctas{
   display: flex;
   align-items: center;
@@ -493,22 +493,20 @@
 }
 #beacon-hero .browser-card-icon{ font-size: 1.1rem; }
 
-/* Right-side "glass" value panel */
+/* Right-side value panel (light theme) */
 #beacon-hero .hero-panel{
-  background: rgba(14,22,40,.68);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 22px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 16px;
   padding: clamp(1.1rem,2.2vw,1.4rem);
-  box-shadow: 0 30px 80px rgba(0,0,0,.40);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 24px rgba(0,0,0,.08);
 }
 #beacon-hero .panel-title{
   margin:0 0 .75rem;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: -0.02em;
   font-size: 1.05rem;
-  color: rgba(255,255,255,.92);
+  color: var(--ink);
 }
 #beacon-hero .panel-list{
   display:grid;
@@ -523,26 +521,27 @@
   gap:.75rem;
   align-items:start;
   padding:.8rem .85rem;
-  border-radius: 16px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 12px;
+  background: #f9fafb;
+  border: 1px solid rgba(0,0,0,.06);
 }
 #beacon-hero .panel-icon{
-  width:44px;height:44px;border-radius:14px;
+  width:44px;height:44px;border-radius:12px;
   display:flex;align-items:center;justify-content:center;
-  background: rgba(255,183,3,.14);
-  border: 1px solid rgba(255,183,3,.22);
+  background: rgba(0,96,223,.1);
+  border: 1px solid rgba(0,96,223,.18);
   font-size: 1.05rem;
 }
 #beacon-hero .panel-item strong{
   display:block;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: -0.02em;
   margin:0 0 .2rem;
+  color: var(--ink);
 }
 #beacon-hero .panel-item span{
   display:block;
-  color: rgba(255,255,255,.72);
+  color: var(--inkDim);
   line-height:1.45;
   font-size: .95rem;
 }
@@ -554,15 +553,15 @@
   display:inline-flex;align-items:center;gap:.45rem;
   padding:.48rem .7rem;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,.14);
-  background: rgba(255,255,255,.05);
-  color: rgba(255,255,255,.82);
-  font-weight: 900;
+  border:1px solid rgba(0,0,0,.1);
+  background: #f9fafb;
+  color: var(--inkDim);
+  font-weight: 700;
   font-size: .9rem;
 }
 #beacon-hero .chip .dot{
-  width:8px;height:8px;border-radius:999px;background: rgba(255,183,3,.9);
-  box-shadow:0 0 0 4px rgba(255,183,3,.12);
+  width:8px;height:8px;border-radius:999px;background: var(--blue);
+  box-shadow:0 0 0 4px rgba(0,96,223,.15);
 }
 
 /* =========================
@@ -703,7 +702,7 @@
 #beacon-hero .mk-cta a:hover{ text-decoration: underline; }
 
 /* =========================
-   HOW IT WORKS (NEW, LONGER PAGE)
+   HOW IT WORKS (Do it all – 3x2 grid, icon + title + bullets)
    ========================= */
 #beacon-hero .how{
   position:relative;
@@ -712,141 +711,75 @@
   background: #fff;
   overflow:hidden;
   content-visibility: auto;
-  contain-intrinsic-size: auto 500px;
+  contain-intrinsic-size: auto 600px;
 }
-#beacon-hero .how-inner{ max-width:1120px; margin:0 auto; }
-#beacon-hero .how-top{
-  display:grid;
-  grid-template-columns: 1fr;
-  gap: 1.2rem;
-  align-items:end;
-}
-@media(min-width: 980px){
-  #beacon-hero .how-top{ grid-template-columns: 1.1fr .9fr; }
-}
-#beacon-hero .how h2{
-  margin:0;
-  font-size: clamp(1.9rem,3.6vw,2.6rem);
+#beacon-hero .how-inner{ max-width: 1120px; margin: 0 auto; }
+#beacon-hero .how-headline{
+  margin: 0 0 .5rem;
+  font-size: clamp(1.75rem,3.2vw,2.35rem);
   font-weight: 800;
   letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--ink);
+  text-align: center;
+}
+#beacon-hero .how-headline-underline{
+  display: block;
+  width: 80px;
+  height: 5px;
+  margin: 0 auto 2.5rem;
+  background: linear-gradient(90deg, #9059ff 0%, #ff9a56 50%, #e85d4a 100%);
+  border-radius: 999px;
+}
+#beacon-hero .how-blocks{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem 1.5rem;
+}
+@media (min-width: 640px){
+  #beacon-hero .how-blocks{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 960px){
+  #beacon-hero .how-blocks{ grid-template-columns: repeat(3, 1fr); gap: 2rem 2rem; }
+}
+#beacon-hero .how-block{
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+#beacon-hero .how-block-icon{
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+  color: #9059ff;
+}
+#beacon-hero .how-block-icon svg{
+  width: 40px;
+  height: 40px;
+}
+#beacon-hero .how-block-title{
+  margin: 0 0 .75rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
   color: var(--ink);
 }
-#beacon-hero .how p{
-  margin:0;
+#beacon-hero .how-block-list{
+  margin: 0;
+  padding: 0 0 0 1.25rem;
+  list-style: disc;
   color: var(--inkDim);
-  font-size: clamp(1rem,1.6vw,1.1rem);
-  line-height:1.7;
-  max-width: 70ch;
+  font-size: .9375rem;
+  line-height: 1.65;
 }
-
-#beacon-hero .how-grid{
-  margin-top: clamp(1.5rem,3.2vw,2.25rem);
-  display:grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
+#beacon-hero .how-block-list li{
+  margin-bottom: .35rem;
 }
-@media(min-width: 980px){
-  #beacon-hero .how-grid{
-    grid-template-columns: 1.05fr .95fr;
-    gap: 1.25rem;
-    align-items: stretch;
-  }
-}
-
-#beacon-hero .how-steps{
-  display:grid;
-  gap: 1rem;
-}
-#beacon-hero .step{
-  background: #f9fafb;
-  border: 1px solid rgba(0,0,0,.08);
-  border-radius: 12px;
-  padding: 1.25rem 1.15rem;
-  box-shadow: 0 2px 12px rgba(0,0,0,.06);
-}
-#beacon-hero .step .num{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: rgba(0,96,223,.12);
-  border: 1px solid rgba(0,96,223,.2);
-  color: var(--blue);
-  font-weight: 800;
-  margin-bottom: .65rem;
-}
-#beacon-hero .step h3{
-  margin:0 0 .35rem;
-  color: var(--ink);
-  font-weight: 800;
-  letter-spacing:-0.02em;
-}
-#beacon-hero .step p{
-  margin:0;
-  color: var(--inkDim);
-  font-size: .98rem;
-  line-height:1.6;
-}
-
-/* Image collage */
-#beacon-hero .how-media{
-  display:grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-@media(min-width: 980px){
-  #beacon-hero .how-media{
-    grid-template-columns: 1fr;
-    grid-auto-rows: 1fr;
-  }
-}
-#beacon-hero .imgCard{
-  position:relative;
-  border-radius: 22px;
-  overflow:hidden;
-  border: 1px solid rgba(255,255,255,.10);
-  box-shadow: 0 28px 80px rgba(0,0,0,.35);
-  min-height: 240px;
-  aspect-ratio: 16/10;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-color: rgba(14,22,40,.6);
-}
-#beacon-hero .imgCard::after{
-  content:"";
-  position:absolute; inset:0;
-  background:
-    radial-gradient(ellipse 70% 60% at 30% 25%, rgba(255,183,3,.18) 0%, transparent 55%),
-    linear-gradient(to bottom, rgba(14,22,40,.12), rgba(14,22,40,.72));
-}
-#beacon-hero .imgCard .cap{
-  position:absolute;
-  left: 1.1rem;
-  right: 1.1rem;
-  bottom: 1.05rem;
-  z-index: 2;
-  background: rgba(14,22,40,.55);
-  border: 1px solid rgba(255,255,255,.12);
-  padding: .85rem .95rem;
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-#beacon-hero .imgCard .cap strong{
-  display:block;
-  font-weight: 950;
-  letter-spacing:-0.02em;
-  margin:0 0 .2rem;
-}
-#beacon-hero .imgCard .cap span{
-  display:block;
-  color: rgba(255,255,255,.75);
-  line-height:1.5;
-  font-size: .95rem;
-}
+#beacon-hero .how-block-list li:last-child{ margin-bottom: 0; }
 
 /* =========================
    WAITLIST FOOTER (footer image)
@@ -890,144 +823,7 @@
   margin: 0;
 }
 
-/* =========================
-   MODAL
-   ========================= */
-#beacon-hero .overlay{
-  position:fixed; inset:0;
-  background: rgba(0,0,0,.62);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index:100;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding: 1.5rem;
-}
-#beacon-hero .overlay[aria-hidden="false"]{display:flex}
-#beacon-hero .modal{
-  position: relative;
-  background: rgba(14,22,40,.92);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 20px;
-  padding: clamp(1.5rem,4vw,2.5rem);
-  width:100%;
-  max-width: 460px;
-  box-shadow: 0 24px 70px rgba(0,0,0,.55);
-}
-#beacon-hero .modal-close{
-  position: absolute;
-  top: clamp(1rem, 3vw, 1.25rem);
-  right: clamp(1rem, 3vw, 1.25rem);
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  line-height: 1;
-  color: rgba(255,255,255,.85);
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: color .2s, background .2s, border-color .2s;
-  -webkit-appearance: none;
-  appearance: none;
-}
-#beacon-hero .modal-close:hover{
-  color: var(--white);
-  background: rgba(255,255,255,.14);
-  border-color: rgba(255,255,255,.2);
-}
-#beacon-hero .modal-close:focus-visible{
-  outline: 2px solid var(--amber);
-  outline-offset: 2px;
-}
-#beacon-hero .modal h2{
-  font-size: 1.5rem;
-  font-weight: 950;
-  margin:0 0 .65rem;
-  letter-spacing: -0.02em;
-}
-#beacon-hero .modal p{
-  margin:0 0 1.25rem;
-  color: rgba(255,255,255,.74);
-  line-height:1.5;
-}
-#beacon-hero .field{margin-bottom: 1rem}
-#beacon-hero label{display:block;font-size:.875rem;font-weight:900;margin-bottom:.35rem;color:rgba(255,255,255,.92)}
-#beacon-hero input{
-  width:100%;
-  padding:.75rem 1rem;
-  font-size:1rem;
-  background: rgba(255,255,255,.08);
-  border:2px solid rgba(255,255,255,.12);
-  border-radius:12px;
-  color: var(--white);
-  transition:border-color .2s, box-shadow .2s;
-}
-#beacon-hero input::placeholder{color:rgba(255,255,255,.4)}
-#beacon-hero input:focus{
-  outline:none;
-  border-color: var(--amber);
-  box-shadow: 0 0 0 3px rgba(255,183,3,.20);
-}
-#beacon-hero input.error{border-color:#ff8a8a}
-#beacon-hero .err{font-size:.8rem;color:#ffb0b0;min-height:1em;margin-top:.35rem}
-
-#beacon-hero .submit{
-  width:100%;
-  margin-top: 1rem;
-  padding:.9rem 1.5rem;
-  background: var(--amber);
-  color: var(--navy);
-  font-size: 1rem;
-  font-weight: 950;
-  border:none;border-radius:12px;
-  cursor:pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
-  position:relative; overflow:hidden;
-}
-#beacon-hero .submit:hover:not(:disabled){
-  transform: translateY(-1px);
-  box-shadow: 0 12px 34px rgba(255,183,3,.30);
-}
-#beacon-hero .submit:focus-visible{outline:2px solid var(--white);outline-offset:3px}
-#beacon-hero .submit:disabled{cursor:not-allowed;opacity:.88}
-#beacon-hero .submit.joined{
-  background: rgba(255,255,255,.15);
-  color: var(--white);
-  cursor: default;
-}
-#beacon-hero .success{
-  margin-top: 1rem;
-  padding: .75rem;
-  border-radius: 12px;
-  background: rgba(255,183,3,.14);
-  border: 1px solid rgba(255,183,3,.16);
-  font-weight: 900;
-}
-
-/* big success ring */
-#beacon-hero .flash-ring{
-  position:fixed;
-  border-radius:50%;
-  border: 3px solid var(--amber);
-  pointer-events:none;
-  animation: ring .6s ease-out forwards;
-  z-index:999;
-}
-@keyframes ring{
-  from{ width:70px;height:70px;margin:-35px 0 0 -35px;opacity:.9; }
-  to{ width:420px;height:420px;margin:-210px 0 0 -210px;opacity:0; }
-}
-@media(prefers-reduced-motion:reduce){
-  #beacon-hero .flash-ring{animation:none;opacity:0}
-}
-
-/* Demo modal (Beacon Browser simulation) - z-index above waitlist */
+/* Demo modal (Beacon Browser simulation) */
 #beacon-hero .demo-overlay{
   position: fixed; inset: 0;
   background: rgba(14,22,40,.98);
@@ -1077,7 +873,7 @@
   color: var(--white);
   background: rgba(255,255,255,.18);
 }
-#beacon-hero .demo-modal-close:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+#beacon-hero .demo-modal-close:focus-visible{ outline: 2px solid var(--blue); outline-offset: 2px; }
 #beacon-hero .demo-browser{ display: flex; flex-direction: column; min-height: 0; }
 
 /* Tab bar */
@@ -1164,7 +960,7 @@
 }
 #beacon-hero .demo-nav-btn:hover:not(:disabled){ color: var(--white); background: rgba(255,255,255,.1); }
 #beacon-hero .demo-nav-btn:disabled{ color: rgba(255,255,255,.35); cursor: default; }
-#beacon-hero .demo-nav-btn:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+#beacon-hero .demo-nav-btn:focus-visible{ outline: 2px solid var(--blue); outline-offset: 2px; }
 #beacon-hero .demo-address-wrap{
   flex: 1;
   min-width: 0;
@@ -1279,12 +1075,12 @@
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--amber), rgba(255,220,130,.9));
+  background: linear-gradient(135deg, var(--blue), rgba(0,96,223,.85));
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: .6rem;
-  color: var(--navy);
+  color: #fff;
   cursor: default;
 }
 #beacon-hero .demo-welcome-center{
@@ -1326,7 +1122,7 @@
   transition: box-shadow .2s, border-color .2s;
 }
 #beacon-hero .demo-search-pill:hover{ box-shadow: 0 2px 16px rgba(0,0,0,.35); }
-#beacon-hero .demo-search-pill:focus-within{ box-shadow: 0 2px 16px rgba(0,0,0,.35), 0 0 0 2px rgba(255,183,3,.5); border-color: var(--amber); }
+#beacon-hero .demo-search-pill:focus-within{ box-shadow: 0 2px 16px rgba(0,0,0,.35), 0 0 0 2px rgba(0,96,223,.4); border-color: var(--blue); }
 #beacon-hero .demo-search-glass{ font-size: 1.1rem; color: #5f6368; flex-shrink: 0; margin-right: .5rem; }
 #beacon-hero .demo-search-input{
   flex: 1;
@@ -1431,36 +1227,36 @@
   gap: .4rem;
   padding: .5rem .85rem;
   font-size: .8125rem;
-  color: var(--navy);
-  background: var(--amber);
+  color: #fff;
+  background: var(--blue);
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-family: inherit;
   font-weight: 700;
-  transition: background .15s, color .15s, box-shadow .15s;
+  transition: background .15s, box-shadow .15s;
   -webkit-appearance: none;
   appearance: none;
 }
-#beacon-hero .demo-customize:hover{ background: rgba(255,220,130,1); box-shadow: 0 2px 12px rgba(255,183,3,.4); }
+#beacon-hero .demo-customize:hover{ background: var(--blueHover); box-shadow: 0 2px 12px rgba(0,96,223,.35); }
 #beacon-hero .demo-customize-icon{ font-size: .9rem; opacity: .9; }
 #beacon-hero .demo-cta-primary{
   display: inline-block;
   padding: .7rem 1.4rem;
-  background: var(--amber);
-  color: var(--navy);
+  background: var(--blue);
+  color: #fff;
   border: none;
   border-radius: 12px;
-  font-weight: 900;
+  font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
   font-family: inherit;
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: background .2s ease, box-shadow .2s ease;
   margin-bottom: 1.25rem;
 }
 #beacon-hero .demo-cta-primary:hover{
-  transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(255,183,3,.3);
+  background: var(--blueHover);
+  box-shadow: 0 8px 24px rgba(0,96,223,.3);
 }
 #beacon-hero .demo-cta-primary:focus-visible{ outline: 2px solid var(--white); outline-offset: 3px; }
 #beacon-hero .demo-results-view{
@@ -1478,7 +1274,7 @@
   font-size: .95rem;
 }
 #beacon-hero .demo-results-empty p{ margin: 0 0 .5rem; }
-#beacon-hero .demo-results-empty strong{ color: var(--amber); }
+#beacon-hero .demo-results-empty strong{ color: rgba(255,255,255,.95); }
 #beacon-hero .demo-results-empty-hint{ font-size: .85rem; color: rgba(255,255,255,.6); margin-top: .5rem !important; }
 #beacon-hero .demo-result-card{
   padding: .6rem .85rem;
@@ -1512,7 +1308,7 @@
 #beacon-hero .demo-see-why{
   background: none;
   border: none;
-  color: var(--amber);
+  color: #7db8ff;
   font-weight: 800;
   font-size: .85rem;
   cursor: pointer;
@@ -1522,8 +1318,8 @@
   -webkit-appearance: none;
   appearance: none;
 }
-#beacon-hero .demo-see-why:hover{ color: rgba(255,220,130,1); }
-#beacon-hero .demo-see-why:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+#beacon-hero .demo-see-why:hover{ color: rgba(255,255,255,.95); }
+#beacon-hero .demo-see-why:focus-visible{ outline: 2px solid var(--blue); outline-offset: 2px; }
 #beacon-hero .demo-why-panel{
   margin-top: .75rem;
   padding: .6rem;
@@ -1548,7 +1344,7 @@
   transition: background .2s, color .2s;
 }
 #beacon-hero .demo-reset:hover{ background: rgba(255,255,255,.1); color: var(--white); }
-#beacon-hero .demo-reset:focus-visible{ outline: 2px solid var(--amber); outline-offset: 2px; }
+#beacon-hero .demo-reset:focus-visible{ outline: 2px solid var(--blue); outline-offset: 2px; }
 @media (max-width: 480px){
   #beacon-hero .demo-toolbar{ flex-wrap: wrap; }
   #beacon-hero .demo-toolbar-actions{ width: 100%; justify-content: flex-end; }
@@ -1584,7 +1380,7 @@
   </nav>
   <div class="hero-bar-ctas">
     <button type="button" class="hero-cta-demo" id="beacon-demo-open-btn" data-demo-open aria-haspopup="dialog" aria-expanded="false">View Demo</button>
-    <button type="button" class="hero-cta-pill" data-open aria-haspopup="dialog" aria-expanded="false">Join Waitlist</button>
+    <a href="download.html" class="hero-cta-pill">Download Now</a>
   </div>
 </header>
 
@@ -1594,7 +1390,7 @@
     <h1 class="hero-headline">Get the browser that<br>protects what's important.</h1>
     <p class="hero-tagline">Fast, reliable, and private—for peace of mind online. Faith-forward, family-safe.</p>
     <div class="hero-cta-row">
-      <button type="button" class="hero-cta-pill" data-open aria-haspopup="dialog">Join Waitlist</button>
+      <a href="download.html" class="hero-cta-pill">Download Now</a>
       <a href="#beacon-features" class="hero-cta-secondary">What it does</a>
       <a href="#beacon-how" class="hero-cta-secondary">How it works</a>
     </div>
@@ -1669,50 +1465,82 @@
 
 <section class="how" id="beacon-how" aria-label="How Beacon Browser works">
   <div class="how-inner">
-    <div class="how-top">
-      <div>
-        <div class="kicker"><span class="kdot" aria-hidden="true"></span>How it works</div>
-        <h2>Guardrails that feel calm — and actually hold.</h2>
-      </div>
-      <p>
-        Beacon blends strict filtering with thoughtful, faith-forward UX. The goal isn't shame — it's clarity.
-        Set it once on your Mac, PC, Android, or Chromebook, and let the browser do the heavy lifting across devices.
-      </p>
-    </div>
+    <h2 class="how-headline">Browse without having to worry about explicit topics.</h2>
+    <span class="how-headline-underline" aria-hidden="true"></span>
 
-    <div class="how-grid">
-      <div class="how-steps" aria-label="Steps">
-        <article class="step">
-          <div class="num" aria-hidden="true">1</div>
-          <h3>Start with strict SafeSearch</h3>
-          <p>Cleaner results by default so you're not constantly navigating gray areas or surprises.</p>
-        </article>
-        <article class="step">
-          <div class="num" aria-hidden="true">2</div>
-          <h3>Block explicit content before it loads</h3>
-          <p>Protection happens upstream so the moment stays calm — fewer "near misses," less stress.</p>
-        </article>
-        <article class="step">
-          <div class="num" aria-hidden="true">3</div>
-          <h3>Add gentle nudges + optional accountability</h3>
-          <p>Stigma-free reminders in the moment, plus support you can invite on your terms.</p>
-        </article>
-      </div>
-
-      <div class="how-media" aria-label="How it works images">
-        <div class="imgCard" style="background-image:url('https://cdn.prod.website-files.com/6967b271d84e0620304acc1f/6983b0ab7f60426d56c3dac4_pexels-jplenio-1118874.jpg');">
-          <div class="cap">
-            <strong>Calm, consistent defaults</strong>
-            <span>More peace in everyday browsing — not a constant battle.</span>
-          </div>
+    <div class="how-blocks" role="list">
+      <article class="how-block" role="listitem">
+        <div class="how-block-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="18" r="8" stroke="currentColor" stroke-width="2"/><path d="M24 24l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
         </div>
-        <div class="imgCard" style="background-image:url('https://cdn.prod.website-files.com/6967b271d84e0620304acc1f/6983b238b84e6b5746b7c41d_pexels-gabby-k-5997313.jpg'); min-height: 280px;">
-          <div class="cap">
-            <strong>Built for families</strong>
-            <span>Cross-device guardrails that fit real life — home, school, and on the go.</span>
-          </div>
+        <h3 class="how-block-title">Search safer, faster</h3>
+        <ul class="how-block-list">
+          <li>SafeSearch from the address bar</li>
+          <li>Family-friendly results by default</li>
+          <li>No explicit suggestions or autocomplete</li>
+          <li>Search history stays private</li>
+        </ul>
+      </article>
+      <article class="how-block" role="listitem">
+        <div class="how-block-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 8L8 14v8c0 6 5 10 12 12 7-2 12-6 12-12v-8L20 8z" fill="currentColor" opacity=".9"/></svg>
         </div>
-      </div>
+        <h3 class="how-block-title">Block before it loads</h3>
+        <ul class="how-block-list">
+          <li>Explicit content blocked upstream</li>
+          <li>Fewer near-misses, less stress</li>
+          <li>Calm by default across sites</li>
+          <li>Works on Apple, Windows, Android, Chromebooks</li>
+        </ul>
+      </article>
+      <article class="how-block" role="listitem">
+        <div class="how-block-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 32c-1 0-2-.3-2.8-1L6 22V14l14-7 14 7v8l-11.2 7.4c-.8.7-1.8 1-2.8 1z" fill="currentColor" opacity=".9"/></svg>
+        </div>
+        <h3 class="how-block-title">Gentle nudges when you need them</h3>
+        <ul class="how-block-list">
+          <li>Stigma-free reminders in the moment</li>
+          <li>Optional accountability you control</li>
+          <li>Clarity, not shame</li>
+          <li>Adjust sensitivity in settings</li>
+        </ul>
+      </article>
+      <article class="how-block" role="listitem">
+        <div class="how-block-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="10" y="16" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M14 16V14a6 6 0 0112 0v2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+        </div>
+        <h3 class="how-block-title">Protect your privacy</h3>
+        <ul class="how-block-list">
+          <li>No creepy tracking or selling your data</li>
+          <li>Your browsing stays yours</li>
+          <li>No ads based on your history</li>
+          <li>Private browsing when you want it</li>
+        </ul>
+      </article>
+      <article class="how-block" role="listitem">
+        <div class="how-block-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="8" width="12" height="20" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/><rect x="22" y="4" width="12" height="28" rx="1.5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 20h16" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2"/></svg>
+        </div>
+        <h3 class="how-block-title">Family-safe everywhere</h3>
+        <ul class="how-block-list">
+          <li>Sync settings across your devices</li>
+          <li>One set of guardrails, everywhere</li>
+          <li>Fits real life — home, school, on the go</li>
+          <li>Install on all your family devices</li>
+        </ul>
+      </article>
+      <article class="how-block" role="listitem">
+        <div class="how-block-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="20" cy="20" r="3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M20 8v4M20 28v4M8 20h4M28 20h4M11 11l2.8 2.8M26.2 26.2L29 29M11 29l2.8-2.8M26.2 13.8L29 11" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+        <h3 class="how-block-title">Simple to use</h3>
+        <ul class="how-block-list">
+          <li>Clear settings, no jargon</li>
+          <li>Calm experience from day one</li>
+          <li>Themes and customization</li>
+          <li>Built for peace of mind</li>
+        </ul>
+      </article>
     </div>
   </div>
 </section>
@@ -1721,33 +1549,9 @@
   <div class="waitlist-footer-inner">
     <h2>Be there when we light the way.</h2>
     <p>Join the waitlist for early access to Beacon Browser—a calmer internet, rooted in faith.</p>
-    <button type="button" class="hero-cta-pill" data-open aria-haspopup="dialog" aria-expanded="false">Join Waitlist →</button>
+    <a href="download.html" class="hero-cta-pill">Download Now →</a>
   </div>
 </section>
-
-<!-- Modal -->
-<div class="overlay" id="beacon-overlay" role="dialog" aria-modal="true" aria-labelledby="beacon-modal-title" aria-hidden="true">
-  <div class="modal" id="beacon-modal">
-    <button type="button" class="modal-close" id="beacon-modal-close" aria-label="Close">×</button>
-    <h2 id="beacon-modal-title">Join the waitlist</h2>
-    <p>Get early access to Beacon Browser.</p>
-
-    <form id="beacon-form" method="post" action="" novalidate autocomplete="on">
-      <div class="field">
-        <label for="beacon-name">Name</label>
-        <input id="beacon-name" name="name" type="text" placeholder="Your name" autocomplete="name" required maxlength="200" aria-describedby="beacon-name-err" aria-invalid="false">
-        <div class="err" id="beacon-name-err" role="alert"></div>
-      </div>
-      <div class="field">
-        <label for="beacon-email">Email</label>
-        <input id="beacon-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="254" aria-describedby="beacon-email-err" aria-invalid="false">
-        <div class="err" id="beacon-email-err" role="alert"></div>
-      </div>
-      <button class="submit" id="beacon-submit" type="submit">Join waitlist</button>
-      <div class="success" id="beacon-success" aria-live="polite" hidden></div>
-    </form>
-  </div>
-</div>
 
 <!-- Demo modal -->
 <div class="demo-overlay" id="beacon-demo-overlay" role="dialog" aria-modal="true" aria-labelledby="demo-modal-title" aria-describedby="demo-modal-desc" aria-hidden="true">
@@ -1855,155 +1659,6 @@
 
 <script>
 function initModalsAndBeam(){
-(function(){
-  var root = document.getElementById('beacon-hero');
-  if(!root) return;
-
-  var openBtns = root.querySelectorAll('[data-open]');
-  var overlay = document.getElementById('beacon-overlay');
-  var modal = document.getElementById('beacon-modal');
-  var closeBtn = document.getElementById('beacon-modal-close');
-  var form = document.getElementById('beacon-form');
-  var nameInput = document.getElementById('beacon-name');
-  var emailInput = document.getElementById('beacon-email');
-  var submitBtn = document.getElementById('beacon-submit');
-  var success = document.getElementById('beacon-success');
-  var nameErr = document.getElementById('beacon-name-err');
-  var emailErr = document.getElementById('beacon-email-err');
-  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if(!overlay || !modal){ return; }
-
-  /* =========================
-     MODAL
-     ========================= */
-  function focusables(){ return modal.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'); }
-
-  function openModal(btn){
-    overlay.setAttribute('aria-hidden','false');
-    openBtns.forEach(function(b){ b.setAttribute('aria-expanded','true'); });
-    overlay._lastBtn = btn || null;
-    document.body.style.overflow = 'hidden';
-    var first = focusables()[0];
-    if(first) first.focus();
-  }
-  function closeModal(){
-    overlay.setAttribute('aria-hidden','true');
-    openBtns.forEach(function(b){ b.setAttribute('aria-expanded','false'); });
-    document.body.style.overflow = '';
-    if(overlay._lastBtn) overlay._lastBtn.focus();
-  }
-
-  if(closeBtn) closeBtn.addEventListener('click', closeModal);
-  overlay.addEventListener('click', function(e){ if(e.target === overlay) closeModal(); });
-  overlay.addEventListener('keydown', function(e){
-    if(e.key === 'Escape'){ closeModal(); return; }
-    if(e.key !== 'Tab') return;
-    var els = focusables(); if(!els.length) return;
-    var first = els[0], last = els[els.length-1];
-    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
-    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
-  });
-  modal.addEventListener('click', function(e){ e.stopPropagation(); });
-
-  openBtns.forEach(function(btn){
-    btn.addEventListener('click', function(){ openModal(btn); });
-  });
-
-  function setInvalid(input, invalid){
-    input.classList.toggle('error', invalid);
-    input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
-  }
-  function showErr(el,msg){ el.textContent = msg; }
-  function validName(v){ return (v||'').trim().length >= 2; }
-  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim()); }
-
-  function flashRingFrom(el){
-    var r = el.getBoundingClientRect();
-    var ring = document.createElement('div');
-    ring.className = 'flash-ring';
-    ring.style.left = (r.left + r.width/2) + 'px';
-    ring.style.top  = (r.top + r.height/2) + 'px';
-    document.body.appendChild(ring);
-    setTimeout(function(){ ring.remove(); }, 650);
-  }
-
-  function submitPayload(payload){
-    // Use HTTPS endpoint only; validate and rate-limit on server; consider CSRF token if session-based.
-    // REPLACE with real endpoint (Webflow form / Zapier / your API).
-    return Promise.resolve();
-  }
-
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    var n = nameInput.value.trim();
-    var em = emailInput.value.trim();
-    var okN = validName(n);
-    var okE = validEmail(em);
-
-    showErr(nameErr, okN ? '' : 'At least 2 characters');
-    showErr(emailErr, okE ? '' : 'Enter a valid email');
-    setInvalid(nameInput, !okN);
-    setInvalid(emailInput, !okE);
-    if(!okN || !okE) return;
-
-    submitBtn.disabled = true;
-    submitPayload({ name:n, email:em }).then(function(){
-      if(!reduced) flashRingFrom(submitBtn);
-      submitBtn.classList.add('joined');
-      submitBtn.textContent = 'Joined';
-      success.hidden = false;
-      success.textContent = "You're on the list. Welcome.";
-    }).catch(function(){
-      submitBtn.disabled = false;
-      showErr(emailErr, 'Something went wrong. Try again.');
-    });
-  });
-
-  /* =========================
-     LIGHTHOUSE LIGHT
-     - Orb and beam are CSS-only: static position, fade in/out and slow sweep.
-     - Perf monitor: if FPS drops ~45 for 1s, add .perf-safe to disable animations.
-     ========================= */
-  if(reduced) return;
-
-  var lastFrameTime = performance.now();
-  var perfSafeActive = false;
-  var slowFrameCount = 0;
-  var goodFrameCount = 0;
-  var PERF_SLOW_THRESHOLD_MS = 22;
-  var PERF_SLOW_FRAMES_TO_TRIGGER = 45;
-  var PERF_GOOD_FRAMES_TO_RECOVER = 120;
-  var PERF_GOOD_THRESHOLD_MS = 18;
-
-  function perfTick(now){
-    var delta = now - lastFrameTime;
-    lastFrameTime = now;
-    if(delta > PERF_SLOW_THRESHOLD_MS){
-      slowFrameCount++;
-      goodFrameCount = 0;
-      if(!perfSafeActive && slowFrameCount >= PERF_SLOW_FRAMES_TO_TRIGGER){
-        perfSafeActive = true;
-        root.classList.add('perf-safe');
-        slowFrameCount = 0;
-      }
-    } else {
-      slowFrameCount = 0;
-      if(perfSafeActive){
-        if(delta < PERF_GOOD_THRESHOLD_MS) goodFrameCount++;
-        else goodFrameCount = 0;
-        if(goodFrameCount >= PERF_GOOD_FRAMES_TO_RECOVER){
-          perfSafeActive = false;
-          root.classList.remove('perf-safe');
-          goodFrameCount = 0;
-        }
-      }
-    }
-    requestAnimationFrame(perfTick);
-  }
-  requestAnimationFrame(perfTick);
-})();
-
 (function(){
   var demoOverlay = document.getElementById('beacon-demo-overlay');
   var demoModal = document.getElementById('beacon-demo-modal');

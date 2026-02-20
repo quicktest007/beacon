@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Download Beacon Browser — Join the waitlist for early access.">
+  <title>Download Beacon Browser</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self';">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #fff;
+      color: #1a1a2e;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+    }
+    .download-page {
+      width: 100%;
+      max-width: 460px;
+    }
+    .download-page a.back {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: #0060df;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      text-decoration: none;
+      margin-bottom: 2rem;
+    }
+    .download-page a.back:hover { text-decoration: underline; }
+    .download-page h1 {
+      margin: 0 0 1rem;
+      font-size: clamp(1.5rem, 4vw, 1.85rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.3;
+      color: #1a1a2e;
+    }
+    .download-page .lead {
+      margin: 0 0 1.75rem;
+      color: #5a5a6e;
+      font-size: 1.0625rem;
+      line-height: 1.6;
+    }
+    .download-page .card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 16px;
+      padding: 1.75rem 1.5rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,.08);
+    }
+    .download-page .field { margin-bottom: 1rem; }
+    .download-page label {
+      display: block;
+      font-size: .875rem;
+      font-weight: 700;
+      margin-bottom: .35rem;
+      color: #1a1a2e;
+    }
+    .download-page input {
+      width: 100%;
+      padding: .75rem 1rem;
+      font-size: 1rem;
+      background: #f9fafb;
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 10px;
+      color: #1a1a2e;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .download-page input::placeholder { color: #5a5a6e; opacity: .8; }
+    .download-page input:focus {
+      outline: none;
+      border-color: #0060df;
+      box-shadow: 0 0 0 3px rgba(0,96,223,.15);
+    }
+    .download-page input.error { border-color: #d93025; }
+    .download-page .err {
+      font-size: .8rem;
+      color: #d93025;
+      min-height: 1em;
+      margin-top: .35rem;
+    }
+    .download-page .submit {
+      width: 100%;
+      margin-top: 1rem;
+      padding: .9rem 1.5rem;
+      background: #0060df;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .2s ease, box-shadow .2s ease;
+    }
+    .download-page .submit:hover:not(:disabled) {
+      background: #0250bb;
+      box-shadow: 0 4px 16px rgba(0,96,223,.3);
+    }
+    .download-page .submit:focus-visible { outline: 2px solid #0060df; outline-offset: 3px; }
+    .download-page .submit:disabled { cursor: not-allowed; opacity: .88; }
+    .download-page .submit.joined {
+      background: rgba(0,96,223,.2);
+      color: #0060df;
+      cursor: default;
+    }
+    .download-page .success {
+      margin-top: 1rem;
+      padding: .75rem;
+      border-radius: 10px;
+      background: rgba(0,96,223,.1);
+      border: 1px solid rgba(0,96,223,.2);
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+    .download-page .flash-ring {
+      position: fixed;
+      border-radius: 50%;
+      border: 3px solid #0060df;
+      pointer-events: none;
+      animation: ring .6s ease-out forwards;
+      z-index: 999;
+    }
+    @keyframes ring {
+      from { width: 70px; height: 70px; margin: -35px 0 0 -35px; opacity: .9; }
+      to { width: 420px; height: 420px; margin: -210px 0 0 -210px; opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .download-page .flash-ring { animation: none; opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="download-page">
+    <a href="index.html" class="back">← Back to Beacon</a>
+    <h1>Beacon is currently being developed.</h1>
+    <p class="lead">If you would like to join the waitlist, please enter your email below.</p>
+
+    <div class="card">
+      <form id="beacon-form" method="post" action="" novalidate autocomplete="on">
+        <div class="field">
+          <label for="beacon-name">Name</label>
+          <input id="beacon-name" name="name" type="text" placeholder="Your name" autocomplete="name" required maxlength="200" aria-describedby="beacon-name-err" aria-invalid="false">
+          <div class="err" id="beacon-name-err" role="alert"></div>
+        </div>
+        <div class="field">
+          <label for="beacon-email">Email</label>
+          <input id="beacon-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="254" aria-describedby="beacon-email-err" aria-invalid="false">
+          <div class="err" id="beacon-email-err" role="alert"></div>
+        </div>
+        <button class="submit" id="beacon-submit" type="submit">Join waitlist</button>
+        <div class="success" id="beacon-success" aria-live="polite" hidden></div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+(function(){
+  var form = document.getElementById('beacon-form');
+  var nameInput = document.getElementById('beacon-name');
+  var emailInput = document.getElementById('beacon-email');
+  var submitBtn = document.getElementById('beacon-submit');
+  var success = document.getElementById('beacon-success');
+  var nameErr = document.getElementById('beacon-name-err');
+  var emailErr = document.getElementById('beacon-email-err');
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if(!form) return;
+
+  function setInvalid(input, invalid){
+    input.classList.toggle('error', invalid);
+    input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+  }
+  function showErr(el, msg){ el.textContent = msg; }
+  function validName(v){ return (v || '').trim().length >= 2; }
+  function validEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v || '').trim()); }
+
+  function flashRingFrom(el){
+    var r = el.getBoundingClientRect();
+    var ring = document.createElement('div');
+    ring.className = 'flash-ring';
+    ring.style.left = (r.left + r.width / 2) + 'px';
+    ring.style.top = (r.top + r.height / 2) + 'px';
+    document.body.appendChild(ring);
+    setTimeout(function(){ ring.remove(); }, 650);
+  }
+
+  function submitPayload(payload){
+    return Promise.resolve();
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var n = nameInput.value.trim();
+    var em = emailInput.value.trim();
+    var okN = validName(n);
+    var okE = validEmail(em);
+
+    showErr(nameErr, okN ? '' : 'At least 2 characters');
+    showErr(emailErr, okE ? '' : 'Enter a valid email');
+    setInvalid(nameInput, !okN);
+    setInvalid(emailInput, !okE);
+    if(!okN || !okE) return;
+
+    submitBtn.disabled = true;
+    submitPayload({ name: n, email: em }).then(function(){
+      if(!reduced) flashRingFrom(submitBtn);
+      submitBtn.classList.add('joined');
+      submitBtn.textContent = 'Joined';
+      success.hidden = false;
+      success.textContent = "You're on the list. Welcome.";
+    }).catch(function(){
+      submitBtn.disabled = false;
+      showErr(emailErr, 'Something went wrong. Try again.');
+    });
+  });
+})();
+  </script>
+</body>
+</html>
